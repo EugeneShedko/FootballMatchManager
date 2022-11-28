@@ -1,7 +1,13 @@
 using FootballMatchManager.DataBase.DBClasses;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CORSPolicy", builder =>
+    {
+        builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000/");
+    });
+});
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -11,6 +17,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+//Убрать потом
 AppDBContext dbcontext = new AppDBContext(DBConfigManager.GetDbOptions()); 
 
 // Configure the HTTP request pipeline.
@@ -22,8 +29,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("CORSPolicy");
+
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
