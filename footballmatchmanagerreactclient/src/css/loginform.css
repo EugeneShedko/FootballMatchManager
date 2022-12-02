@@ -1,0 +1,133 @@
+div {
+    padding: 0;
+    margin: 0;
+}
+
+.logincontainer
+{
+    padding: 1% 2% 2% 2%;
+    height: 70%;
+    margin: 4% 0% 0% 0%;
+    border: 5px white solid;
+    border-radius: 20px;
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    animation-duration: 0.9s;
+    animation-name: loginformin;
+}
+
+.logincontainerout
+{
+    padding: 1% 2% 2% 2%;
+    height: 70%;
+    margin: -50% 0% 0% 0%;
+    border: 5px white solid;
+    border-radius: 20px;
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+    animation-duration: 0.9s;
+    animation-name: loginformout;    
+}
+
+
+@keyframes loginformin
+{
+    from
+    {
+        margin-top: -50%;
+    }
+    to
+    {
+        margin-top: 4%;
+    }
+}
+
+@keyframes loginformout
+{
+    from
+    {
+        margin-top: 4%;
+    }
+    to
+    {
+        margin-top: -50%;
+    }
+}
+
+.loginheadtext
+{
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+#closeicon
+{
+    padding: 0;
+    margin: 0;
+    width: 23px;
+    height: 23px;
+}
+
+#closeicon:hover
+{
+    cursor: pointer;
+}
+
+.input-container
+{
+    height: 11%;
+    margin-top: 5%;
+}
+
+.input-style
+{
+    width: 90%;
+    border: 3px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    font-style: italic;  
+}
+
+.form-text
+{
+    margin: 2% 0 0 0%;
+    color:white
+}
+
+a
+{
+    color: white;
+}
+
+a:hover
+{
+    color:black;
+}
+
+.button-container
+{
+    height: 11%;
+    margin-top: 10%;
+}
+
+.button-element
+{
+    width: 90%;
+    margin: 0 0 5% 0;
+    border: 3px solid white;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+}
+
+.button-element:hover
+{
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+
+

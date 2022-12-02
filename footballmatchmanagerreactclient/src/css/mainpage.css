@@ -23,15 +23,24 @@
 }
 
 #body-content {
-    padding: 10% 0 0 0;
+    padding: 9% 0 0 0;
     height: 100%;
 }
 
-.info-block:hover
+
+.back-block
 {
-    margin: 1% 2% 5% 2%;
-    cursor: pointer;    
+    position: absolute;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.6;
+    border-radius: 20px;
+    z-index: -1;
+    
 }
+
 .info-block
 {
     position: relative;
@@ -42,16 +51,15 @@
     border-radius: 20px;
 }
 
+.info-block:hover
+{
+    margin: 1% 2% 5% 2%;
+    cursor: pointer;    
+}
+
 .info-block-back
 {
-    position: absolute;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: black;
-    opacity: 0.6;
     border-radius: 20px;
-    z-index: -1;
 }
 
 .info-block-content
@@ -68,28 +76,52 @@
     height: 25%;
 }
 
-.info-block-column-left
+.info-block-column
 {
     padding: 0;
     margin: 0;
-    width: 40%;
-    height: 100%;
     text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
     color: white;
-    
+
+}
+
+.info-block-column-left
+{
+    width: 40%;
+    height: 100%;    
 }
 
 .info-block-column-right
 {
-    padding: 0;
-    margin: 0;
     width: 60%;
+    height: 100%;    
+}
+
+
+.search-block
+{
+    position: relative;
+    margin: 2% 2% 0 2%;
+    width: 96%;
+    height: 6%;
+    border: 3px white solid;
+    border-radius: 10px; 
+}
+
+.serach-element
+{
+    padding: 0 5% 0;
+    margin: 0;
+    width: 100%;
     height: 100%;
-    text-align: left;
-    text-overflow: ellipsis;
-    color: white;
-    
+    border: 0px;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    font-style: italic;
 }
 
 #blogin {
@@ -106,6 +138,7 @@
 {
     background-color: white;
     color: black;
+    font-weight: bold;
 }
 
 #blogin:active
@@ -117,4 +150,16 @@
 #logoimg {
     width:300px;
     height:75px;
+}
+
+.logo-container
+{
+    margin-top:7%;
+}
+
+.logo
+{
+    width: 100px;
+    height: 70px;
+    filter: invert(100%); 
 }
