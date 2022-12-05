@@ -1,9 +1,13 @@
 import React, {useState} from "react";
 import ReactDOM from 'react-dom/client';
-import Loginform from "./../loginform";
+import Loginform from "./main/loginform";
+import { Navigate, useNavigate } from "react-router-dom";
+import { LOGIN_ROUTE } from "../Utilts/Consts";
+
 
 export default function Header()
 {
+    const navigate = useNavigate();
     const[isLoginForm, setIsLoginForm] = useState(false);
 
     function hideLoginForm()
@@ -13,8 +17,8 @@ export default function Header()
 
     function login()
     {
-      ReactDOM.createRoot(document.getElementById("body-content")).render(<Loginform onClick={hideLoginForm}/>);
-      setIsLoginForm(true);
+      {/*оно не перезагружает страницу*/}
+      navigate(LOGIN_ROUTE);
     }
   
     return(
