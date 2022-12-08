@@ -1,0 +1,76 @@
+.mpmatches-container
+{
+    padding: 0 3% 0 3%;
+}
+
+.mplefcol
+{
+    padding: 0% 3% 0% 0%;
+}
+
+.mplcrow
+{
+    height: 5%;
+    margin: 0% 0% 4% 0%;
+}
+
+.mpinfo-block
+{
+    margin: 0% 0% 1.5% 0%;
+    padding:0;
+    width: 24vw;
+    height: 20vh;
+}
+
+.mpinfo-block:hover
+{
+    margin: -1% 0% 1.5% 0%;
+    cursor: pointer;
+}
+
+#search-match-element
+{
+    border: 4px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    font-style: italic; 
+}
+
+.mpbutton-style
+{
+    border: 4px solid white;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+}
+
+.mpbutton-style:hover
+{
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+.filter-match-container
+{
+    margin: 0;
+    padding: 3% 3% 3% 3%;
+    border: 4px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);    
+}
+
+label
+{
+    font-size: 18px;
+    color :white;
+}
+
+.checkbox-style
+{
+    margin: 0% 2% 0% 0%;
+    height: 15px;
+    width:  15px;
+}
+

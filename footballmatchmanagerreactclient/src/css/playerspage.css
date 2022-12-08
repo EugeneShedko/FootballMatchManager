@@ -1,0 +1,82 @@
+.ppplayers-container
+{
+    padding: 0 3% 0 3%;
+}
+
+.pplefcol
+{
+    padding: 0% 3% 0% 0%;
+}
+
+.pplcrow
+{
+    height: 5%;
+    margin: 0% 0% 4% 0%;
+}
+
+.ppinfo-block
+{
+    margin: 0% 0% 1.5% 0%;
+    padding:0;
+    width: 24vw;
+    height: 20vh;
+}
+
+.ppinfo-block:hover
+{
+    margin: -1% 0% 1.5% 0%;
+    cursor: pointer;
+}
+
+#search-player-element
+{
+    border: 4px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    font-style: italic; 
+}
+
+.ppbutton-style
+{
+    border: 4px solid white;
+    border-radius: 10px;
+    background-color: black;
+    color: white;    
+}
+
+.ppbutton-style:hover
+{
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+.filter-player-container
+{
+    margin: 0;
+    padding: 3% 3% 3% 3%;
+    border: 4px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);    
+}
+
+label
+{
+    font-size: 18px;
+    color :white;
+}
+
+.checkbox-style
+{
+    margin: 0% 2% 0% 0%;
+    height: 15px;
+    width:  15px;
+}
+
+#profile-image
+{
+    width: 100px;
+    height: 100px;
+}
+

@@ -1,0 +1,39 @@
+.player-container
+{
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: 5px white solid;
+    border-radius: 20px;
+}
+
+
+.player-back-block
+{
+    position: absolute;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.6;
+    border-radius: 20px;
+    z-index: -1;   
+}
+
+.player-block-content
+{
+    margin: 0;
+    padding: 5% 5% 5% 5%;
+}
+
+.player-block-column
+{
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white;
+
+}

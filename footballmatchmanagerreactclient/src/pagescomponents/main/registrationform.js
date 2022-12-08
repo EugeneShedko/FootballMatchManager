@@ -50,7 +50,7 @@ export default function FRegistrationform(props) {
    }
 
    return (
-      <div className="row justify-content-center h-100">
+      <div className="row justify-content-center h-100 m-0">
          <div className={loginContainerStyle}>
             <div className="row justify-content-end">
                <img id="closeicon" src="/image/closecross.png" alt="" onClick={closeLoginForm} />
@@ -116,7 +116,6 @@ function FirstRegPart(props) {
 
 function SecRegPart(props)
 {
-   const navigate = useNavigate();
    if(props.regState.currentStep !== 2)
    {
       return null;

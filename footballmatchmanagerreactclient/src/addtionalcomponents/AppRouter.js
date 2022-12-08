@@ -1,6 +1,5 @@
-import React, { createContext } from "react";
+import React from "react";
 import {Routes, Route, Redirect} from 'react-router-dom'
-import Content from "../pagescomponents/main/content";
 import { AppRoutes } from "./Routes";
 
 const AppRouter = () =>

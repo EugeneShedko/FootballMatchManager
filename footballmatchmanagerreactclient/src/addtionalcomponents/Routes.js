@@ -1,8 +1,9 @@
 import Content from "../pagescomponents/main/content";
 import FRegistrationform from "../pagescomponents/main/registrationform";
 import Loginform from "../pagescomponents/main/loginform";
-import { LOGIN_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE } from "../Utilts/Consts";
+import { LOGIN_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE, MATCHES, USER_PROFILE_PAGE_ROUTE } from "../Utilts/Consts";
 import UserProfile from "../pagescomponents/userprofile/userprofile";
+import Matches from "../pagescomponents/userprofile/matches";
 
 export const AppRoutes = [
 
@@ -24,6 +25,11 @@ export const AppRoutes = [
     {
         path: USER_PROFILE_ROUTE,
         Component: <UserProfile />
+    },
+
+    {
+        path: MATCHES,
+        Component: <Matches />
     }
 
 ]

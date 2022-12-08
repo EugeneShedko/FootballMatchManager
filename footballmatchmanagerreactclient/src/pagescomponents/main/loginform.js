@@ -17,7 +17,7 @@ export default function Loginform(props) {
     }
 
     return (
-        <div className="row justify-content-center h-100">
+        <div className="row justify-content-center m-0">
             <div className={loginContainerStyle}>
                 <div className="row justify-content-end">
                     <img id="closeicon" src="/image/closecross.png" alt="" onClick={closeLoginForm} />
