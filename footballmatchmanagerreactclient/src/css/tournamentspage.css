@@ -1,11 +1,33 @@
+.tptournaments-main-container
+{
+    margin: 0;
+    padding: 2% 0% 0% 0%;
+    height: 100%;
+    overflow: auto;
+}
+
 .tptournaments-container
 {
-    padding: 0 3% 0 3%;
+    position: relative;
+}
+
+.tptournaments-absolute-container
+{
+    display: flex;
+    justify-content: space-evenly;
+    margin: 0;
+    position: absolute;    
 }
 
 .tplefcol
 {
+    position: relative;
+}
+
+.tp-fixed-container
+{
     padding: 0% 3% 0% 0%;
+    position: fixed;
 }
 
 .tplcrow

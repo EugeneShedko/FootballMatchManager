@@ -1,11 +1,33 @@
+.ppplayers-main-container
+{
+    margin: 0;
+    padding: 2% 0% 0% 0%;
+    height: 100%;
+    overflow: auto;
+}
+
 .ppplayers-container
 {
-    padding: 0 3% 0 3%;
+    position: relative;
+}
+
+.ppplayers-absolute-container
+{
+    display: flex;
+    justify-content: space-evenly;
+    margin: 0;
+    position: absolute;    
 }
 
 .pplefcol
 {
+    position: relative;
+}
+
+.pp-fixed-container
+{
     padding: 0% 3% 0% 0%;
+    position: fixed;
 }
 
 .pplcrow

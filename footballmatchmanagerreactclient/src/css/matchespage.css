@@ -1,11 +1,33 @@
+.mpmatches-main-container
+{
+    margin: 0;
+    padding: 2% 0% 0% 0%;
+    height: 100%;
+    overflow: auto;
+}
+
 .mpmatches-container
 {
-    padding: 0 3% 0 3%;
+    position: relative;
+}
+
+.mpmatches-absolute-container
+{
+    display: flex;
+    justify-content: space-evenly;
+    margin: 0;
+    position: absolute;    
 }
 
 .mplefcol
 {
+    position: relative;
+}
+
+.mp-fixed-container
+{
     padding: 0% 3% 0% 0%;
+    position: fixed;
 }
 
 .mplcrow

@@ -1,0 +1,45 @@
+
+.umnav-main-container
+{
+    margin: 0;
+    padding: 0;
+    height: 9.6%;
+}
+
+.umnav-container
+{
+    height: 100%;
+    justify-content: center;
+    border-bottom: 4px white solid;
+    background-color: rgba(0,0,0,0.8);
+}
+
+.umnav-item
+{
+    padding: 0.5% 0% 0% 0%;
+}
+
+.umnav-item:hover
+{
+    background-color: white;    
+}
+
+.umnav-item:hover > .umnav-item-link
+{
+    color: black;
+}
+
+.umnav-item-link
+{
+    font-size: 18px;
+    font-weight: bold;
+    color:white;
+}
+
+.um-content-container
+{
+    margin: 0;
+    padding: 0;
+    height: 90.4%;  
+}
+

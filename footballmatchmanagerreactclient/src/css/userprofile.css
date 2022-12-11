@@ -1,35 +1,34 @@
 #userprofile-container{
-    padding: 10% 0% 0% 0%;
+    padding: 9% 0% 0% 0%;
 }
 
 /*Сделать данный блок фиксированым*/
-.nav-container
+.upnav-container
 {
+    height: 100%;
     border-right: 4px white solid;
     border-top: 4px white solid;
     border-bottom: 4px white solid;
     background-color: rgba(0,0,0,0.8);
-    border-radius: 0px 20px 20px 0px;
-    height: 77vh;
 }
 
-.nav-item
+.upnav-item
 {
     padding: 1% 0 1% 3%;
     border-bottom: 4px white solid;    
 }
 
-.nav-item:hover
+.upnav-item:hover
 {
     background-color: white;    
 }
 
-.nav-item:hover > .nav-item-link
+.upnav-item:hover > .upnav-item-link
 {
     color: black;
 }
 
-.nav-item-link
+.upnav-item-link
 {
     font-size: 18px;
     font-weight: bold;

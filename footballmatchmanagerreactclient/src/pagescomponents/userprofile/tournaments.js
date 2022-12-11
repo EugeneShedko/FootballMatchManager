@@ -56,7 +56,7 @@ export default function Tournaments() {
             playersCount: "10/22"
 
         },
-        
+
         {
             matchName: "Четкие перцы!",
             matchTime: "18.10.2022 15:00",
@@ -68,9 +68,9 @@ export default function Tournaments() {
     ]
 
     return (
-        <div className="row m-0">
+        <div className="row tptournaments-main-container">
             <div className="col-9 tptournaments-container">
-                <div className="row d-flex justify-content-evenly m-0">
+                <div className="row tptournaments-absolute-container">
                     {someTournamentInfo.map((tournament) => (
                         <div className="tpinfo-block">
                             <MatchBlock info={tournament} />
@@ -79,39 +79,41 @@ export default function Tournaments() {
                 </div>
             </div>
             <div className="col-3 tplefcol">
-                <div className="row tplcrow">
-                    <input className="tpbutton-style" 
-                           type="button" 
-                           value="Создать турнир" />
-                </div>
-                <div className="row tplcrow">
-                    <input id="search-tournament-element" 
-                           type="text" 
-                           placeholder="Введите название турнира" />
-                </div>
-                {/*Возможно форматы выводит, сделав запрос, пока что напишу текстом*/}
-                <div className="row filter-tournament-container">
-                    <label>
-                        <input type="checkbox" className="checkbox-style" />
-                        Сегодня
-                    </label>
-                    <label>
-                        <input type="checkbox" className="checkbox-style" />
-                        Завтра
-                    </label>
-                    <label>
-                        <input type="checkbox" className="checkbox-style" />
-                        5x5
-                    </label>
-                    <label>
-                        <input type="checkbox" className="checkbox-style" />
-                        9x9
-                    </label>
-                    <label>
-                        <input type="checkbox" className="checkbox-style" />
-                        11x11
-                    </label>
-                    <input className="tpbutton-style" type="button" value="Применить" />
+                <div className="tp-fixed-container">
+                    <div className="row tplcrow">
+                        <input className="tpbutton-style"
+                            type="button"
+                            value="Создать турнир" />
+                    </div>
+                    <div className="row tplcrow">
+                        <input id="search-tournament-element"
+                            type="text"
+                            placeholder="Введите название турнира" />
+                    </div>
+                    {/*Возможно форматы выводит, сделав запрос, пока что напишу текстом*/}
+                    <div className="row filter-tournament-container">
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            Сегодня
+                        </label>
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            Завтра
+                        </label>
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            5x5
+                        </label>
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            9x9
+                        </label>
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            11x11
+                        </label>
+                        <input className="tpbutton-style" type="button" value="Применить" />
+                    </div>
                 </div>
             </div>
         </div>
