@@ -2,7 +2,7 @@ import Content from "../pagescomponents/main/content";
 import FRegistrationform from "../pagescomponents/main/registrationform";
 import Loginform from "../pagescomponents/main/loginform";
 import { LOGIN_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE, MATCHES, USER_PROFILE_PAGE_ROUTE } from "../Utilts/Consts";
-import UserProfile from "../pagescomponents/userprofile/userprofile";
+import UserProfile from "./../pagescomponents/profilepage";
 import Matches from "../pagescomponents/userprofile/matches";
 
 export const AppRoutes = [

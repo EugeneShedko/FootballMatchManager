@@ -17,7 +17,6 @@ export default function Header()
 
     function login()
     {
-      {/*оно не перезагружает страницу*/}
       navigate(LOGIN_ROUTE);
     }
   

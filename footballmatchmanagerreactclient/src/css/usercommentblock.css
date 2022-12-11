@@ -1,0 +1,30 @@
+.user-comment-container
+{
+    height: 50%; 
+    margin: 0;
+    padding: 1% 1% 1% 1%;
+    border: 4px white solid;
+    border-radius: 20px;
+}
+
+.user-comment-img
+{
+    width: 75px;
+    height: 75px;
+    border-radius: 10px;
+}
+
+.user-comment-name
+{
+    margin: 0;
+    padding: 0% 0% 0% 1%;
+    height: 40%;
+    color:yellowgreen;    
+}
+
+.user-comment-text
+{
+    margin: 0;
+    padding: 0% 0% 0% 1%;
+    height: 60%;
+}

@@ -1,0 +1,142 @@
+
+.profile-container
+{
+    height: 98%;
+    margin: 0% 3% 0% 3%;
+    background-color: rgba(0,0,0,0.6);
+    border:4px white solid;
+    border-radius: 20px;
+}
+
+.profile-info-container
+{
+    padding: 2% 2% 2% 2%;
+    border-bottom: 4px white solid;
+    border-radius: 20px;
+}
+
+.profile-image
+{
+    width: 225px;
+    height: 225px;
+}
+
+.prtext
+{
+    margin: 0;
+    color:white;
+    font-size: 18px;
+}
+
+.pruser-name
+{
+    margin-bottom: 2%;
+    font-size: 30px;
+}
+
+.icon-row
+{
+    margin: 2% 0% 0% 0%;
+}
+
+.foot-field-img
+{
+    width: 70px;
+    height: 65px;
+    filter: invert(80%); 
+}
+
+.foot-ball-img
+{
+    width: 55px;
+    height: 55px;
+    filter: invert(80%);     
+}
+
+.foot-assist-img
+{
+    width: 55px;
+    height: 55px;
+    filter: invert(80%);         
+}
+
+.img-text
+{
+    margin: 0;
+    padding: 0;
+    color:white;
+}
+
+.img-number
+{
+    margin: 0;
+    padding: 0;
+    color:white;
+    line-height: 1;
+    font-size: 40px;
+    color:yellowgreen;          
+}
+
+.profile-comment-container
+{
+    height: 49%;
+    padding: 0;
+    margin: 1% 0% 0% 0%;
+    border-top: 4px white solid;
+    border-radius: 20px;
+    color:white;
+}
+
+.comment-view-container
+{
+    position: relative;
+    margin: 0;
+    padding: 0;
+    height: 80%;
+    overflow: auto;
+}
+
+.some-col
+{
+    position: absolute;
+}
+
+.comment-send-container
+{
+    margin: 0;
+    padding: 0;
+    height: 20%;
+    border-top: 4px white solid;
+}
+
+.comment-send-area
+{
+    padding: 0;
+    margin: 0;
+    border-right: 4px white solid;    
+}
+
+.comment-enter-button
+{
+    padding: 0% 0% 0% 2%;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0px 0px 0px 20px;
+}
+
+.comment-send-button
+{
+    width: 100%;
+    height: 100%;
+    border-radius: 0px 0px 20px 0px;
+    background-color: white;
+}
+
+.comment-send-button:hover
+{
+    background-color: rgb(0,0,0);
+    border-color:white;
+    color:white;
+    font-weight: bold;
+}

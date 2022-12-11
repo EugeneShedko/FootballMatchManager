@@ -1,11 +1,11 @@
-import "./../../css/userprofile.css"
+import "./../css/userprofile.css"
 import { Tab, Nav, Row, Col } from 'react-bootstrap';
-import Matches from "./matches";
-import Tournaments from "./tournaments";
-import Players from "./players";
-import Content from "./../main/content"
+import Matches from "./userprofile/matches";
+import Tournaments from "./userprofile/tournaments";
+import Players from "./userprofile/players";
 import { useNavigate } from "react-router-dom";
-import { MAIN_ROUTE } from "../../Utilts/Consts";
+import { MAIN_ROUTE } from "../Utilts/Consts";
+import Profile from "./userprofile/profile";
 
 export default function UserProfile() {
 
@@ -40,9 +40,8 @@ export default function UserProfile() {
                             </Nav.Item>
                         </Nav>
                     </Col>
-                    {/*Возможно проблемы потом с маршрутами будут*/}
                     <Col sm={9} className="p-0">
-                        <Tab.Content>
+                        <Tab.Content className="h-100">
                             <Tab.Pane eventKey="matches">
                                 <Matches />                          
                             </Tab.Pane>
@@ -52,8 +51,8 @@ export default function UserProfile() {
                             <Tab.Pane eventKey="players">
                                 <Players/>
                             </Tab.Pane>
-                            <Tab.Pane eventKey="profile">
-                                <h1>Профиль</h1>
+                            <Tab.Pane className="h-100" eventKey="profile">
+                                <Profile />
                             </Tab.Pane>
                             <Tab.Pane eventKey="usermatches">
                                 <h1>Матчи пользователя</h1>
