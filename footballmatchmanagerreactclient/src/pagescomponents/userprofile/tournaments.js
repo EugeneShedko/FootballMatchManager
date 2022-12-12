@@ -1,7 +1,8 @@
 import "./../../css/tournamentspage.css"
 import MatchBlock from "../matchblock";
+import TournamentBlock from "../tournamentblock";
 
-export default function Tournaments() {
+export default function Tournaments(props) {
 
     const someTournamentInfo = [
         {
@@ -73,7 +74,8 @@ export default function Tournaments() {
                 <div className="row tptournaments-absolute-container">
                     {someTournamentInfo.map((tournament) => (
                         <div className="tpinfo-block">
-                            <MatchBlock info={tournament} />
+                            <TournamentBlock info         = {tournament} 
+                                             setContState = {props.setContState}/>
                         </div>
                     ))}
                 </div>

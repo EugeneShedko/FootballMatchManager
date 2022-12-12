@@ -1,7 +1,7 @@
 import "./../../css/matchespage.css"
 import MatchBlock from "../matchblock";
 
-export default function Matches() {
+export default function Matches(props) {
     const someMatchInfo = [
 
         {
@@ -91,7 +91,8 @@ export default function Matches() {
                 <div className="row mpmatches-absolute-container">
                     {someMatchInfo.map((match) => (
                         <div className="mpinfo-block">
-                            <MatchBlock info={match} />
+                            <MatchBlock info         = {match} 
+                                        setContState = {props.setContState}/>
                         </div>
                     ))}
                 </div>

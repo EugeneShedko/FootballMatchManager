@@ -1,0 +1,82 @@
+.tournament-info-main-container
+{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.tournament-info-container
+{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0,0,0,0.6);
+    border:4px white solid;
+    border-radius: 20px;
+}
+
+.tournament-info-user-container
+{
+    padding: 0;
+    margin: 0;
+    position: relative;
+    overflow: scroll;
+}
+
+.tournament-info-user-absolute-container
+{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.tournament-info-text-container
+{
+    padding: 4% 4% 4% 4%;
+}
+
+.tournament-info-title
+{
+    margin: 0% 0% 4% 0%;
+    padding: 0;
+    color:yellowgreen;
+    font-size: 35px;       
+}
+
+.tournament-info-header
+{
+    margin: 0;
+    padding: 0;
+    color:white;
+    font-size: 20px;   
+}
+
+.tournament-info-text
+{
+    margin: 0% 0% 2% 0%;
+    padding: 0;
+    color:yellowgreen;
+    font-size: 18px;       
+}
+
+.tournament-join-button-container
+{
+    margin: 20% 0% 0% 0%;
+}
+
+.tournament-join-button
+{
+    margin:0;
+    margin:0;
+    border: 4px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+}
+
+.tournament-join-button:hover
+{
+    background-color: white;
+    color:black;
+    font-weight: bold;
+}

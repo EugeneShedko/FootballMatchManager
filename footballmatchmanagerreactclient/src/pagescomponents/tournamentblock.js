@@ -1,9 +1,16 @@
 import "./../css/tournament.css";
+import TournamentInfoPage from "./tournamentinfopage";
 
 {/*Можно переписать разметку как в файде playerblock*/ }
-export default function TornamentBlock(props) {
+export default function TournamentBlock(props) {
+
+    function setTournamentInfoPage()
+    {
+        props.setContState(<TournamentInfoPage info={props} />);
+    }
+
     return (
-        <div className="tournament-container">
+        <div className="tournament-container" onClick={setTournamentInfoPage}>
             <div className="tournament-back-block" />
             <div className="row tournament-block-content">
                 <div className="col-5 tournament-block-column">
