@@ -12,11 +12,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             _dbcontext = dbcontext;
         }
-
-        public MessageRepository()
-        {
-            _dbcontext = new AppDBContext(DBConfigManager.GetDbOptions());
-        }
         public void AddElement(Message item)
         {
             _dbcontext.Messages.Add(item);

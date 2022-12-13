@@ -8,7 +8,7 @@ namespace FootballMatchManager.DataBase.Models
         [Column("teamid")]
         public int Teamid { get; set; }
         [Column("teamname")]
-        public char TeamName { get; set; }
+        public string TeamName { get; set; }
         [Column("createdate")]
         public DateTime CreateDate {get;set;}
    

@@ -1,7 +1,11 @@
+import axios from "axios";
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom";
-import { MAIN_ROUTE, USER_PROFILE_ROUTE } from "../../Utilts/Consts";
+import { toast } from "react-toastify";
+import { MAIN_ROUTE, USER_PROFILE_ROUTE, LOGIN_ROUTE } from "../../Utilts/Consts";
 import "./../../css/loginform.css";
+import "react-datepicker/dist/react-datepicker.css";
+import ReactDatePicker from "react-datepicker";
 
 export default function FRegistrationform(props) {
 
@@ -9,44 +13,74 @@ export default function FRegistrationform(props) {
    const [loginContainerStyle, setLoginContainerStyle] = useState("col-3 logincontainer");
    const [regFormState, setRegFormState] = useState({
       currentStep: 1,
-      userEmail: 'Хрен Моржовый',
+      userEmail: '',
       userName: '',
       userSurname: '',
       userSex: '',
       userPosition: '',
-      userBirthDay: '',
+      userBirthDay: new Date(),
       userPassword: ''
    });
 
-   function setValue(event)
-   {
-      const {name, value} = event.target;
-      setRegFormState({ ...regFormState, [name]:value})
+   function setValue(event) {
+      const { name, value } = event.target;
+      setRegFormState({ ...regFormState, [name]: value })
    }
 
-   function closeLoginForm() 
-   {
+   function closeLoginForm() {
       setLoginContainerStyle("col-3 logincontainerout");
       setTimeout(() => navigate(MAIN_ROUTE), 500);
    }
 
-   function execLogIn() 
-   {
-      navigate(USER_PROFILE_ROUTE);
-   }
+   function execRegistration(e) {
 
-   function setNextRegForm()
-   {
+      e.preventDefault();
+
+      var modifiedLastName = regFormState.userSurname.trim().replace(/ +/g, ' ');
+      var modifiedName = regFormState.userName.trim().replace(/ +/g, ' ');
+
+      var user = {
+         UserId: 0,
+         UserEmail: regFormState.userEmail,
+         UserPassword: regFormState.userPassword,
+         UserLastName: modifiedLastName,
+         UserName: modifiedName,
+         UserSex: regFormState.userSex,
+         UserBirthDay: regFormState.userBirthDay,
+         UserPosition: regFormState.userPosition
+      };
+
+      axios.post('https://localhost:7277/api/auth/registration', user, { withCredentials: true })
+         .then((response) => {
+               toast.success(response.data, {
+               position: toast.POSITION.BOTTOM_RIGHT,
+               autoClose: 2000,
+               pauseOnFocusLoss: false
+            });
+            navigate(LOGIN_ROUTE);
+         })
+         .catch(userError => {
+            if (userError.response) {
+               toast.error(userError.response.data.message, 
+                  {
+                  position: toast.POSITION.BOTTOM_RIGHT,
+                  autoClose: 2000,
+                  pauseOnFocusLoss: false
+               });
+            }
+         });
+}
+
+   function setNextRegForm() {
       let currentStep = regFormState.currentStep;
-      currentStep = currentStep >=2 ? 2 : currentStep + 1; 
-      setRegFormState({...regFormState, currentStep: currentStep})
+      currentStep = currentStep >= 2 ? 2 : currentStep + 1;
+      setRegFormState({ ...regFormState, currentStep: currentStep })
    }
 
-   function setBackRegForm()
-   {
+   function setBackRegForm() {
       let currentStep = regFormState.currentStep;
       currentStep = currentStep <= 1 ? 1 : currentStep - 1;
-      setRegFormState({...regFormState, currentStep: currentStep})       
+      setRegFormState({ ...regFormState, currentStep: currentStep })
    }
 
    return (
@@ -60,16 +94,17 @@ export default function FRegistrationform(props) {
                   <div className="loginheadtext">
                      Регистрация
                   </div>
-
-                  <FirstRegPart regState       = {regFormState}
-                                setNextForm    = {setNextRegForm} 
-                                setChangeValue = {setValue} 
-                                />
-                  <SecRegPart   regState       = {regFormState}
-                                setBackForm    = {setBackRegForm}
-                                setChangeValue = {setValue}
-                                execLogiIn     = {execLogIn}
-                                />
+                  <form onSubmit={execRegistration}>
+                     <FirstRegPart regState={regFormState}
+                        setNextForm={setNextRegForm}
+                        setChangeValue={setValue}
+                     />
+                     <SecRegPart regState={regFormState}
+                        setBackForm={setBackRegForm}
+                        setChangeValue={setValue}
+                        someFunc={setRegFormState}
+                     />
+                  </form>
                </div>
             </div>
          </div>
@@ -80,18 +115,17 @@ export default function FRegistrationform(props) {
 
 function FirstRegPart(props) {
 
-   if(props.regState.currentStep !== 1)
-   {
+   if (props.regState.currentStep !== 1) {
       return null;
    }
 
    return (
       <div>
          <div className="row justify-content-center input-container">
-            <input name="userEmail" className="input-style" 
-                                    type="text" placeholder="Введите email" 
-                                    value={props.regState.userEmail} 
-                                    onChange={props.setChangeValue} />
+            <input name="userEmail" className="input-style"
+               type="text" placeholder="Введите email"
+               value={props.regState.userEmail}
+               onChange={props.setChangeValue} />
          </div>
          <div className="row justify-content-center input-container">
             <input name="userName" value={props.regState.userName} className="input-style" type="text" placeholder="Введите ваше имя" onChange={props.setChangeValue} />
@@ -108,62 +142,63 @@ function FirstRegPart(props) {
             </select>
          </div>
          <div className="row justify-content-center button-container">
-            <input className="button-element" type="button" value="Далее" onClick={props.setNextForm}/>
+            <input className="button-element" type="button" value="Далее" onClick={props.setNextForm} />
          </div>
       </div>
    );
 }
 
-function SecRegPart(props)
-{
-   if(props.regState.currentStep !== 2)
-   {
+function SecRegPart(props) {
+   if (props.regState.currentStep !== 2) {
       return null;
    }
 
-   return(
+   return (
       <div className="registration-container">
-      <div className="row justify-content-center input-container">
-      {/*Здесь возможно использовать свойство не value, а selected*/}
-        <select name="userPosition" className="form-select form-select-sm input-style" value={props.regState.userPosition} onChange={props.setChangeValue}>
-          <option selected>Выберите позицию</option>
-          <option>Нападающий</option>
-          <option>Левый полузащитник</option>
-          <option>Правый полузащитник</option>
-          <option>Атакующий полузащитник</option>
-          <option>Центральный полузащитник</option>
-          <option>Опорный полузащитник</option>
-          <option>Левый защитник</option>
-          <option>Правый защитник</option>
-          <option>Центральный защитник</option>
-          <option>Вратарь</option>
-        </select>
-      </div>
-      <div className       = "row justify-content-center input-container">
-        <input name        = "userBirthDay" 
-               className   = "input-style"
-               type        = "text"
-               placeholder = "Укажите дату рождения"
-               value       = {props.regState.userBirthDay}
+         <div className="row justify-content-center input-container">
+            {/*Здесь возможно использовать свойство не value, а selected*/}
+            <select name="userPosition" className="form-select form-select-sm input-style" value={props.regState.userPosition} onChange={props.setChangeValue}>
+               <option selected>Выберите позицию</option>
+               <option>Нападающий</option>
+               <option>Левый полузащитник</option>
+               <option>Правый полузащитник</option>
+               <option>Атакующий полузащитник</option>
+               <option>Центральный полузащитник</option>
+               <option>Опорный полузащитник</option>
+               <option>Левый защитник</option>
+               <option>Правый защитник</option>
+               <option>Центральный защитник</option>
+               <option>Вратарь</option>
+            </select>
+         </div>
+         <div className="row justify-content-center input-container">
+            <ReactDatePicker
+                   className   = "input-style"
+                   type        = "text"
+                   placeholder = "Укажите дату рождения"
+                   value       = {props.regState.userBirthDay}
+                   selected    = {props.regState.userBirthDay}
+                   onChange={(date:Date) => props.someFunc({
+                     ...props.regState, userBirthDay:date
+                  })}
+            />
+         </div>
+         <div className="row justify-content-center input-container">
+            <input name="userPassword"
+               className="input-style"
+               type="password"
+               placeholder="Задайте пароль"
+               value={props.regState.userPassword}
                onChange    = {props.setChangeValue}
-         />
+            />
+         </div>
+         <div className="row justify-content-center button-container">
+            <input className="button-element" type="button" value="Назад" onClick={props.setBackForm} />
+            <input className="button-element"
+               type="submit"
+               value="Зарегистрироваться"
+            />
+         </div>
       </div>
-      <div className ="row justify-content-center input-container">
-        <input name        = "userPassword"
-               className   = "input-style"
-               type        = "password"
-               placeholder = "Задайте пароль"
-               value       = {props.regState.userPassword}
-               onChange    = {props.setChangeValue}
-         />
-      </div>
-      <div className="row justify-content-center button-container">
-        <input className="button-element" type="button" value="Назад" onClick={props.setBackForm}/>
-        <input className = "button-element" 
-               type      = "button" 
-               value     = "Зарегистрироваться" 
-               onClick   = {props.execLogiIn}/>
-      </div>
-    </div>
    );
 }

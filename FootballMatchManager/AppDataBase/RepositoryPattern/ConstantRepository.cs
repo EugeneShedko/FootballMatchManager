@@ -12,10 +12,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             _dbcontext = dbcontext;
         }
-        public ConstantRepository()
-        {
-            _dbcontext = new AppDBContext(DBConfigManager.GetDbOptions());
-        }
 
         public void AddElement(Constant item)
         {

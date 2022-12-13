@@ -1,8 +1,11 @@
 import "./../../css/tournamentspage.css"
-import MatchBlock from "../matchblock";
 import TournamentBlock from "../tournamentblock";
+import CreateTournament from "./createtournament";
+import { useState } from "react";
 
 export default function Tournaments(props) {
+
+    const[createTournamentVisible, setCreateTournamentVisible] = useState(false);
 
     const someTournamentInfo = [
         {
@@ -85,7 +88,8 @@ export default function Tournaments(props) {
                     <div className="row tplcrow">
                         <input className="tpbutton-style"
                             type="button"
-                            value="Создать турнир" />
+                            value="Создать турнир" 
+                            onClick={() => setCreateTournamentVisible(true)}/>
                     </div>
                     <div className="row tplcrow">
                         <input id="search-tournament-element"
@@ -118,6 +122,7 @@ export default function Tournaments(props) {
                     </div>
                 </div>
             </div>
+            <CreateTournament show={createTournamentVisible} onHide={setCreateTournamentVisible} />
         </div>
     );
 }  

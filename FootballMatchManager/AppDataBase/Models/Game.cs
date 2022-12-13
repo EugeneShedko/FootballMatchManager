@@ -8,9 +8,9 @@ namespace FootballMatchManager.DataBase.Models
         [Column("gameid")]
         public int GameId { get; set; }
         [Column("gamename")]
-        public char GameName { get; set; }
+        public string GameName { get; set; }
         [Column("gameadress")]
-        public char GameAdress { get; set; }
+        public string GameAdress { get; set; }
         [Column("gamedatetime")]
         public DateTime GameDateTime { get; set; }
         [Column("gamemaxplayers")]
@@ -20,13 +20,13 @@ namespace FootballMatchManager.DataBase.Models
         [Column("gamestatus")]
         public char GameStatus { get; set; }
         [Column("gameformat")]
-        public char GameFormat { get; set; }
+        public string GameFormat { get; set; }
         [Column("gamefirstteamgoals")]
         public int FirstTeamGoals { get; set; }
         [Column("gamesecondteamgoals")]
         public int SecondTeamGoals { get; set; }
         [Column("gametype")]
-        public char GameType { get; set; }
+        public string GameType { get; set; }
         [Column("tournamentid")]
         public int TournamentId { get; set; }
         public Tournament Tournament { get; set; }

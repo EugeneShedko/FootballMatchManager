@@ -8,9 +8,9 @@ namespace FootballMatchManager.DataBase.Models
         [Column("constantid")]
         public int  ConstantId { get; set; }
         [Column("constanttype")]
-        public char ConstantType { get; set; }
+        public string ConstantType { get; set; }
         [Column("constantname")]
-        public char ConstantName { get; set; }
+        public string ConstantName { get; set; }
         [Column("constantvalue")]
         public int  ConstantValue { get; set; }
 

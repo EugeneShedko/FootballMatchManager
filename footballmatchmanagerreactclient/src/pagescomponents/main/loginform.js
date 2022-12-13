@@ -1,19 +1,60 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import "./../../css/loginform.css"
 import { Link, useNavigate } from "react-router-dom";
 import { MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE } from "../../Utilts/Consts";
+import axios from "axios";
+import { Context } from "./../../index";
+import { toast } from "react-toastify";
 
 export default function Loginform(props) {
+
     const [loginContainerStyle, setLoginContainerStyle] = useState("col-3 logincontainer");
     const navigate = useNavigate();
+
+    const [logInState, setLogInState] = useState({
+        userEmail: "",
+        userPassword: ""
+    }
+    );
+
+    const { user } = useContext(Context);
 
     function closeLoginForm() {
         setLoginContainerStyle("col-3 logincontainerout");
         setTimeout(() => navigate(MAIN_ROUTE), 500);
     }
 
-    function execLogIn() {
-        navigate(USER_PROFILE_ROUTE);
+    function execLogIn(event) {
+
+        event.preventDefault();
+
+        const data = new FormData();
+        data.append("userEmail", logInState.userEmail);
+        data.append("userPassword", logInState.userPassword);
+
+        console.log(logInState.userPassword);
+
+        /*Если авторизован, сделать, что бы кнопка входа с панели пропадала*/
+        axios.post('https://localhost:7277/api/auth/authorization', data, { withCredentials: true })
+            .then((response) => {
+                toast.success(response.data, {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false
+                });
+                user.setAuth(true);
+                navigate(USER_PROFILE_ROUTE);
+            })
+            .catch((error) => {
+                if (error.response) {
+                    toast.error(error.response.data.message,
+                        {
+                            position: toast.POSITION.BOTTOM_RIGHT,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
     }
 
     return (
@@ -24,26 +65,36 @@ export default function Loginform(props) {
                 </div>
                 <div id="form-container" className="row">
                     <div>
-                        <div className="loginheadtext">
-                            Войти
-                        </div>
-                        <div className="row justify-content-center input-container">
-                            <input className="input-style" type="text" placeholder="Введите email" />
-                        </div>
-                        <div className="row justify-content-center input-container">
-                            <input className="input-style" type="password" placeholder="Введите пароль" />
-                        </div>
-                        <div className="row form-text">
-                            <div className="col">
-                                Нет аккаунта? <Link to={REGISTRATION_ROUTE}>Зарегистрируйтесь!</Link>
+                        <form onSubmit={execLogIn}>
+                            <div className="loginheadtext">
+                                Войти
                             </div>
-                        </div>
-                        <div className="row justify-content-center button-container">
-                            <input className="button-element" type="button" value="Войти" onClick={execLogIn} />
-                        </div>
-                        <div className="row justify-content-center logo-container">
-                            <img className="logo" src="/image/logohuman.png" alt="" />
-                        </div>
+                            <div className="row justify-content-center input-container">
+                                <input className="input-style"
+                                    type="text"
+                                    placeholder="Введите email"
+                                    onChange = {(event) => setLogInState({ ...logInState, userEmail:event.target.value })}
+                                />
+                            </div>
+                            <div className="row justify-content-center input-container">
+                                <input className="input-style"
+                                    type="password"
+                                    placeholder="Введите пароль"
+                                    onChange = {(event) => setLogInState({ ...logInState, userPassword:event.target.value })}
+                                />
+                            </div>
+                            <div className="row form-text">
+                                <div className="col">
+                                    Нет аккаунта? <Link to={REGISTRATION_ROUTE}>Зарегистрируйтесь!</Link>
+                                </div>
+                            </div>
+                            <div className="row justify-content-center button-container">
+                                <input className="button-element" type="submit" value="Войти" />
+                            </div>
+                            <div className="row justify-content-center logo-container">
+                                <img className="logo" src="/image/logohuman.png" alt="" />
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

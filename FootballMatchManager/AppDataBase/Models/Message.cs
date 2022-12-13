@@ -8,7 +8,7 @@ namespace FootballMatchManager.DataBase.Models
         [Column("messageid")]
         public int      MessageId       { get; set; }
         [Column("messagetext")]
-        public char     MessageText     { get; set; }
+        public string MessageText     { get; set; }
         [Column("messagedatetime")]
         public DateTime MessageDateTime { get; set; }
         [Column("gameid")]

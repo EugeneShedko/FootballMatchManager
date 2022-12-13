@@ -10,7 +10,7 @@ namespace FootballMatchManager.DataBase.Models
         [Column("notificationdate")]
         public DateTime NotificationDate { get; set; }
         [Column("notificationstatus")]
-        public char NotificationStatus { get; set; }
+        public string NotificationStatus { get; set; }
         [Column("notificationrecipient")]
         public int NotificationRecipient { get; set; }
 

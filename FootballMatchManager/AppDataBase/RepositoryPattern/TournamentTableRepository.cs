@@ -13,11 +13,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             _dbcontext = dbcontext;
         }
 
-        public TournamentTableRepository()
-        {
-            _dbcontext = new AppDBContext(DBConfigManager.GetDbOptions());
-        }
-        public void AddElement(TournamentTable item)
+       public void AddElement(TournamentTable item)
         {
             _dbcontext.TournamentsTables.Add(item);
         }

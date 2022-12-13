@@ -12,11 +12,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             _dbcontext = dbcontext;
         }
-
-        public CommentRepository()
-        {
-            _dbcontext = new AppDBContext(DBConfigManager.GetDbOptions());
-        }
         public void AddElement(Comment item)
         {
             _dbcontext.Comments.Add(item);

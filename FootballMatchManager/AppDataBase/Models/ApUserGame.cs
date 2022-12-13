@@ -11,7 +11,7 @@ namespace FootballMatchManager.DataBase.Models
         [Column("userid")]
         public int UserId { get; set; }
         [Column("usertype")]
-        public char UserType { get; set; }
+        public string UserType { get; set; }
 
         public Game Game { get; set; }
         public ApUser ApUser { get; set; }

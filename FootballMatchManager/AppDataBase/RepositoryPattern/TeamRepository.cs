@@ -13,11 +13,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             _dbcontext = dBContext;
         }
 
-        public TeamRepository()
-        { 
-            _dbcontext = new AppDBContext(DBConfigManager.GetDbOptions());
-        }
-
         public void AddElement(Team item)
         {
             _dbcontext.Teams.Add(item);

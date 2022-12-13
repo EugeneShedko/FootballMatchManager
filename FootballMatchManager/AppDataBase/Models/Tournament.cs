@@ -8,7 +8,7 @@ namespace FootballMatchManager.DataBase.Models
         [Column("tournamentid")]
         public int TournamentId { get; set; }
         [Column("tournamenname")]
-        public char TournamentName { get; set; }
+        public string TournamentName { get; set; }
         [Column("tournamentstartdate")]
         public DateTime TournamentStartDate { get; set; }
         [Column("tournamentenddate")]
@@ -18,7 +18,7 @@ namespace FootballMatchManager.DataBase.Models
         [Column("tournamentprizefund")]
         public double TournamentPrizeFund { get; set; }
         [Column("tournamentstatus")]
-        public char TournamentStatus { get; set; }
+        public string TournamentStatus { get; set; }
         [Column("usercreator")]
         public int UserCreator { get; set; }
 

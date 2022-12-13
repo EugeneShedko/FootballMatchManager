@@ -9,7 +9,7 @@ namespace FootballMatchManager.DataBase.Models
         [Column("commentid")]
         public int CommentId {get;set;}
         [Column("commenttext")]
-        public char CommentText { get; set; }
+        public string CommentText { get; set; }
         [Column("commentdatetime")]
         public DateTime CommentDateTime { get; set; }
         [Column("commentrecipient")]

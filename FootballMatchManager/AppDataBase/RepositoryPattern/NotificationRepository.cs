@@ -13,11 +13,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             _dbcontext = dbcontext;
         }
 
-        public NotificationRepository() 
-        { 
-            _dbcontext = new AppDBContext(DBConfigManager.GetDbOptions());
-        }
-
         public void AddElement(Notification item)
         {
             _dbcontext.Notifications.Add(item);

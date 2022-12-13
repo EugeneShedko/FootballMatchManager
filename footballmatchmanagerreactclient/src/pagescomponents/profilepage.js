@@ -8,8 +8,11 @@ import UserMatchesNavigator from "./userprofile/usermatches/usermatchesnavigator
 import Matches from "./userprofile/matches";
 import UserTournamentsNavigator from "./userprofile/usertournaments/usertournamentsnavigator";
 import { useState } from "react";
+import { MAIN_ROUTE } from "../Utilts/Consts";
 
 export default function UserProfile() {
+
+    const navigate = useNavigate();
 
     const [mathesState, setMatchesState] = useState({
         eventKey: <Matches setContState={wrapSetMatchesState} />
@@ -19,12 +22,20 @@ export default function UserProfile() {
         eventKey: <Tournaments setContState={wrapSetTournamentsState} />
     });
 
+    const [playersState, setPlayerState] = useState({
+        eventKey: <Players setContState={wrapSetTournamentsState} />
+    });
+
     function wrapSetMatchesState(comp) {
         setMatchesState({ eventKey: comp });
     }
 
     function wrapSetTournamentsState(comp) {
         setTournamentState({ eventKey: comp });
+    }
+
+    function wrapSetPlayersState(comp) {
+        setPlayerState({ eventKey: comp });
     }
 
     function setMatchesKey() {
@@ -43,6 +54,14 @@ export default function UserProfile() {
         }
     }
 
+    function setPlayerKey() {
+        if (playersState.eventKey !== "players") {
+            setPlayerState({
+                eventKey: <Players setContState={wrapSetPlayersState} />
+            })
+        }
+    }
+
     return (
         <div id="userprofile-container" className='row m-0 h-100'>
             <Tab.Container defaultActiveKey="matches">
@@ -56,7 +75,7 @@ export default function UserProfile() {
                                 <Nav.Link className="upnav-item-link" eventKey="tournaments" onClick={setTournamentKey}>Турниры</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="players">Игроки</Nav.Link>
+                                <Nav.Link className="upnav-item-link" eventKey="players" onClick={setPlayerKey}>Игроки</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="profile">Профиль</Nav.Link>
@@ -68,7 +87,7 @@ export default function UserProfile() {
                                 <Nav.Link className="upnav-item-link" eventKey="usertournaments">Мои турниры</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="exit">Выход</Nav.Link>
+                                <Nav.Link className="upnav-item-link" eventKey="exit" onClick={() => navigate(MAIN_ROUTE)}>Выход</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
@@ -76,17 +95,12 @@ export default function UserProfile() {
                         <Tab.Content className="h-100">
                             <Tab.Pane className="h-100" eventKey="matches">
                                 {mathesState.eventKey}
-                                {/*
-                                <Matches contState    = {mathesState} 
-                                         setContState = {setMatchesState}
-                                 />        
-                                 */}
                             </Tab.Pane>
                             <Tab.Pane className="h-100" eventKey="tournaments">
                                 {tournamenstState.eventKey}
                             </Tab.Pane>
                             <Tab.Pane className="h-100" eventKey="players">
-                                <Players />
+                                {playersState.eventKey}
                             </Tab.Pane>
                             <Tab.Pane className="h-100" eventKey="profile">
                                 <Profile />
@@ -96,18 +110,6 @@ export default function UserProfile() {
                             </Tab.Pane>
                             <Tab.Pane className="h-100" eventKey="usertournaments">
                                 <UserTournamentsNavigator />
-                            </Tab.Pane>
-                            <Tab.Pane className="h-100" eventKey="currentmatch">
-                                <h1>Hello, current match!</h1>
-                            </Tab.Pane>
-                            <Tab.Pane eventKey="exit">
-                                {
-                                    /*
-                                      Проблема не работает
-                                      Прочитать про useEffect
-                                      navigate(MAIN_ROUTE)
-                                    */
-                                }
                             </Tab.Pane>
                         </Tab.Content>
                     </Col>

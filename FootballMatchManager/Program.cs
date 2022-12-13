@@ -1,11 +1,24 @@
+using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.DataBase.DBClasses;
+using FootballMatchManager.Utilts;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<AppDBContext>(options =>
+options.UseSqlServer(connection));
+
+builder.Services.AddTransient<UnitOfWork>();
+builder.Services.AddTransient<JwtService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CORSPolicy", builder =>
     {
-        builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000/");
+        builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000").AllowCredentials();
     });
 });
 // Add services to the container.
@@ -16,9 +29,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
-//Убрать потом
-AppDBContext dbcontext = new AppDBContext(DBConfigManager.GetDbOptions()); 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

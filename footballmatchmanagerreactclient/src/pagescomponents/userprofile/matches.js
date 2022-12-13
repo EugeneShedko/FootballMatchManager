@@ -1,106 +1,32 @@
 import "./../../css/matchespage.css"
 import MatchBlock from "../matchblock";
+import { useState } from "react";
+import CreateMatch from "./creatematch";
 
 export default function Matches(props) {
-    const someMatchInfo = [
 
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-    ]
+    const [createMatchVisible, setcreateMatchVisible] = useState(false);
 
     //Плохо работае наведение на послдений блок матчей(не знаю, почему)
     return (
         <div className="row mpmatches-main-container">
             <div className="col-9 mpmatches-container">
                 <div className="row mpmatches-absolute-container">
+                    {/*
                     {someMatchInfo.map((match) => (
                         <div className="mpinfo-block">
                             <MatchBlock info         = {match} 
                                         setContState = {props.setContState}/>
                         </div>
                     ))}
+
+                    */}
                 </div>
             </div>
             <div className="col-3 mplefcol">
                 <div className="mp-fixed-container">
                     <div className="row mplcrow">
-                        <input className="mpbutton-style" type="button" value="Создать матч" />
+                        <input className="mpbutton-style" type="button" value="Создать матч" onClick={() => setcreateMatchVisible(true)} />
                     </div>
                     <div className="row mplcrow">
                         <input id="search-match-element" type="text" placeholder="Введите название матча" />
@@ -147,6 +73,7 @@ export default function Matches(props) {
                     </div>
                 </div>
             </div>
+            <CreateMatch show={createMatchVisible} onHide={setcreateMatchVisible} />
         </div>
     );
 }  

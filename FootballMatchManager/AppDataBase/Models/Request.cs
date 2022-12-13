@@ -8,7 +8,7 @@ namespace FootballMatchManager.DataBase.Models
         [Column("requestid")]
         public int RequestId { get; set; }
         [Column("requesttype")]
-        public char RequestType { get; set; }
+        public string RequestType { get; set; }
         [Column("requestdate")]
         public DateTime RequestDate { get; set; }
         [Column("requestrecipient")]

@@ -1,7 +1,7 @@
 import "./../../css/playerspage.css"
 import PlayerBlock from "../playerblock";
 
-export default function Players() {
+export default function Players(props) {
 
     const somePlayerInfo = [
 
@@ -55,7 +55,8 @@ export default function Players() {
                 <div className="row ppplayers-absolute-container">
                     {somePlayerInfo.map((player) => (
                         <div className="ppinfo-block">
-                            <PlayerBlock info={player} />
+                            <PlayerBlock info={player} 
+                                         setContState = {props.setContState}/>                                                                                 />
                         </div>
                     ))}
                 </div>

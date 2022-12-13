@@ -1,8 +1,16 @@
 import "./../css/player.css"
+import Profile from "./userprofile/profile";
 
 export default function PlayerBlock(props) {
+
+    function setPlayerInfoPage()
+    {
+        {/*Получается страничка не совсем профиль, а карточка пользователя что-то типо этого*/}
+        props.setContState(<Profile />);
+    }
+
     return (
-        <div className="player-container">
+        <div className="player-container" onClick={setPlayerInfoPage}>
             <div className="player-back-block" />
             <div className="row player-block-content">
                 <div className="col-5">

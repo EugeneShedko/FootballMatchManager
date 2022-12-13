@@ -1,9 +1,8 @@
-import React from "react";
-import PlayerBlock from "../playerblock";
-import MatchBlock from "./../matchblock";
-import TornamentBlock from "./../tournamentblock";
+import PlayerBlock from "../../playerblock";
+import MatchBlock from "../../matchblock";
+import TornamentBlock from "../../tournamentblock";
 
-export default function Content() {
+export default function MainContent(props) {
 
     const someMatchInfo = [
 
@@ -160,10 +159,9 @@ export default function Content() {
         },
     ]
 
-
+    /*Проблема с выравниванием!*/
     return (
-
-        <div id="body-content" className="row justify-content-center m-0">
+        <div className="row justify-content-center m-0">
             <div className="col-3 p-0">
                 <div className="search-block">
                     <input className="serach-element" type="text" placeholder="Введите для поиска матча ..." />
@@ -171,7 +169,8 @@ export default function Content() {
                 {
                     someMatchInfo.map((match) => (
                         <div className="row info-block">
-                            <MatchBlock info={match} />
+                            <MatchBlock info={match}
+                                setContState={props.setContState} />
                         </div>
                     ))
                 }
@@ -183,7 +182,8 @@ export default function Content() {
                 {
                     someTournamentInfo.map((tournament) => (
                         <div className="row info-block">
-                            <TornamentBlock info={tournament} />
+                            <TornamentBlock info={tournament} 
+                                            setContState={props.setContState}/>
                         </div>
                     ))
                 }
@@ -193,9 +193,13 @@ export default function Content() {
                     <input className="serach-element" type="text" placeholder="Введите для поиска игрока ..." />
                 </div>
                 {
+                    /*Плохо отображается профиль, но покуда оставлю так -> хреново*/
+                    /*Почему-то матчи не расстягиваются*/
+                    /*Подумать потом, как сделать универсально*/
                     somePlayerInfo.map((player) => (
                         <div className="row info-block">
-                            <PlayerBlock info={player} />
+                            <PlayerBlock info={player} 
+                                         setContState={props.setContState}/>
                         </div>
                     ))
                 }

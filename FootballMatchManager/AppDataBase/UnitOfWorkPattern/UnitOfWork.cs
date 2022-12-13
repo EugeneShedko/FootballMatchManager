@@ -1,5 +1,6 @@
 ﻿using FootballMatchManager.AppDataBase.RepositoryPattern;
 using FootballMatchManager.DataBase.DBClasses;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
 {
@@ -18,9 +19,10 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
         private TeamRepository _teamRepository;
         private TournamentRepository _tournamentRepository;
         private TournamentTableRepository _tournamentTableRepository;
-        public UnitOfWork()
+
+        public UnitOfWork(AppDBContext dBContext)
         {
-            _dbcontext = new AppDBContext(DBConfigManager.GetDbOptions());
+            this._dbcontext = dBContext;
         }
 
         public ApUserGameRepository ApUserGameRepository
