@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { MAIN_ROUTE, USER_PROFILE_ROUTE, LOGIN_ROUTE } from "../../Utilts/Consts";
+import { MAIN_ROUTE, LOGIN_ROUTE } from "../../Utilts/Consts";
 import "./../../css/loginform.css";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
@@ -157,7 +157,11 @@ function SecRegPart(props) {
       <div className="registration-container">
          <div className="row justify-content-center input-container">
             {/*Здесь возможно использовать свойство не value, а selected*/}
-            <select name="userPosition" className="form-select form-select-sm input-style" value={props.regState.userPosition} onChange={props.setChangeValue}>
+            <select name="userPosition" 
+                    className="form-select form-select-sm input-style" 
+                    value={props.regState.userPosition} 
+                    onChange={props.setChangeValue}>
+
                <option selected>Выберите позицию</option>
                <option>Нападающий</option>
                <option>Левый полузащитник</option>
@@ -171,6 +175,7 @@ function SecRegPart(props) {
                <option>Вратарь</option>
             </select>
          </div>
+         {/*Здесь проблема с placeholder*/}
          <div className="row justify-content-center input-container">
             <ReactDatePicker
                    className   = "input-style"

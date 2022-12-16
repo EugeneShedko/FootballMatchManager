@@ -71,6 +71,8 @@
 {
     margin: 0;
     padding: 0;
+    height: 100%;
+    width: 100;
     color:white;
     line-height: 1;
     font-size: 40px;
@@ -139,4 +141,55 @@
     border-color:white;
     color:white;
     font-weight: bold;
+}
+
+.user-type
+{
+    color: yellowgreen;
+    font-size: 20px;
+    justify-content: center;
+}
+
+.admin-button
+{
+    height: 7%;
+    margin-top: 2%;
+}
+
+.just-button
+{
+    background-color: white;
+}
+
+.just-button:hover
+{
+    background-color: yellowgreen;
+}
+
+.danger-button
+{
+    color: white;
+    background-color: red;
+}
+
+.danger-button:hover
+{
+    background-color: #8B0000;    
+}
+
+.save-button
+{
+    background-color: yellowgreen;        
+}
+
+.save-button:hover
+{
+    background-color: darkgreen;        
+}
+
+.admin-edit
+{
+    font-size: 30px;
+    width: 90%;
+    height: 60%;
 }

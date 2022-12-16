@@ -8,23 +8,29 @@ namespace FootballMatchManager.DataBase.Models
         [Column("apuserid")]
         public int ApUserId { get; set; }
         [Column("useremail")]
-        public string UserEmail { get; set; }
+        public string? UserEmail { get; set; }
         [Column("userpassword")]
-        public string UserPassword { get; set; }
+        public string? UserPassword { get; set; }
         [Column("userrole")]
-        public string UserRole { get; set; }
+        public string? UserRole { get; set; }
         [Column("userfirstname")]
-        public string UserFirstName { get; set; }
+        public string? UserFirstName { get; set; }
         [Column("userlastname")]
-        public string UserLastName { get; set; }
+        public string? UserLastName { get; set; }
         [Column("usersex")]
-        public string UserSex { get; set; }
+        public string? UserSex { get; set; }
         [Column("userposition")]
-        public string UserPosition { get; set; }
+        public string? UserPosition { get; set; }
         [Column("userdateofbirth")]
-        public DateTime UserDateOfBirth {get;set;}
+        public DateTime? UserDateOfBirth {get;set;}
+        [Column("gamesnumber")]
+        public string? GamesNumber { get; set; } = "0";
+        [Column("goalsnumber")]
+        public string? GoalsNumber { get; set; } = "0";
+        [Column("assistsnumber")]
+        public string? AssistsNumber { get; set; } = "0";
         [Column("userstatus")]
-        public string UserStatus { get; set; }
+        public string? UserStatus { get; set; }
 
         public List<Request> UserRequestsRecipients { get; set; }
         public List<Request> UserRequestsSenders { get; set; }

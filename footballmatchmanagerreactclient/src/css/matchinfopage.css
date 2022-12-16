@@ -82,3 +82,21 @@
     color:black;
     font-weight: bold;
 }
+
+.match-admin-button
+{
+    margin: 10% 0% 0% 0%;
+    height: 7%;
+}
+
+.match-danger-button
+{
+    color: white;
+    background-color: red;
+}
+
+.match-danger-button:hover
+{
+    cursor: pointer;
+    background-color: #8B0000;    
+}

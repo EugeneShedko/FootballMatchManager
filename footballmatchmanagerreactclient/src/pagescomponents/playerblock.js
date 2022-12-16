@@ -6,7 +6,9 @@ export default function PlayerBlock(props) {
     function setPlayerInfoPage()
     {
         {/*Получается страничка не совсем профиль, а карточка пользователя что-то типо этого*/}
-        props.setContState(<Profile />);
+        console.log("pred" + props.info.apUserId);
+        props.setContState(<Profile apUserId={props.info.apUserId}
+                                    setContState={props.setContState}/>);
     }
 
     return (
@@ -18,16 +20,17 @@ export default function PlayerBlock(props) {
                 </div>
                 <div className="col-7 player-block-column">
                     <div className="row m-0">
-                        {props.info.playerName}
+                        {props.info.userFirstName + ' ' + props.info.userLastName}
                     </div>
                     <div className="row m-0">
-                        {props.info.playerBithDate}
+                        {(new Date(props.info.userDateOfBirth)).toLocaleString().substring(0, (new Date(props.info.userDateOfBirth)).toLocaleString().length - 3)}
                     </div>
                     <div className="row m-0">
-                        {props.info.playerPosition}
+                        {props.info.userPosition}
                     </div>
+                    {/*Выводить сюда не команду, а email -> потом выводить комманду*/}
                     <div className="row m-0">
-                        {props.info.playerTeam}
+                        {props.info.userEmail}
                     </div>
                 </div>
             </div>

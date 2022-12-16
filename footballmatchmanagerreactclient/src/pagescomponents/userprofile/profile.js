@@ -1,8 +1,42 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import "./../../css/profile.css"
 import UserCommentBlock from "./usercommentblock";
 
-export default function Profile() {
+export default function Profile(props) {
 
+    /*Проблема рендера несколько раз*/
+    const[userId, setUserId] = useState(props.apUserId);
+    const[profileInfo, setProfileInfo] = useState({});
+
+    useEffect(() => {
+
+            console.log("profile" + userId);
+
+            const data = new FormData();
+            data.append("userId", userId);
+
+            axios.post('https://localhost:7277/api/profile/userprofile', data, { withCredentials: true })
+                .then((response) => {
+                    setProfileInfo(response.data);
+                    console.log(response.data);
+                })
+                .catch(userError => {
+                    if (userError.response) {
+                        toast.error("Ошибка получения профиля",
+                            {
+                                position: toast.POSITION.TOP_CENTER,
+                                autoClose: 2000,
+                                pauseOnFocusLoss: false
+                            });
+                    }
+                });
+            ;
+        }, []
+    );
+
+    /*
     const userComment = [
         {
             commentUserImg: "/image/default-profile-icon.jpg",
@@ -32,6 +66,7 @@ export default function Profile() {
             commentText: "Жека, ты крутой4!" 
         }
     ]
+    */
 
     return (
         <div className="row profile-container">
@@ -41,17 +76,19 @@ export default function Profile() {
                 </div>
                 <div className="col-9 p-0">
                     <div className="row prtext pruser-name">
-                        Шедько Евгений Александрович
+                        {profileInfo.userFirstName + ' ' + profileInfo.userLastName}
                     </div>
                     <div className="row prtext">
-                        Дата рождения: 18.05.2002
+                        Дата рождения: {(new Date(profileInfo.userDateOfBirth)).toLocaleString().substring(0, (new Date(profileInfo.userDateOfBirth)).toLocaleString().length - 10)}
                     </div>
                     <div className="row prtext">
-                        Позиция: Нападающий
+                        Позиция: {profileInfo.userPosition}
                     </div>
+                    {/*пока что будет выводить email*/}
                     <div className="row prtext">
-                        Команда: Манчестер Юнайтед
+                        Email: {profileInfo.userEmail}
                     </div>
+                    {/*Пока что стат, нет полей в бд*/}
                     <div className="row icon-row">
                         <div className="col-2 p-0">
                             <div className="row">
@@ -101,12 +138,13 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
+            {/*
             <div className="row profile-comment-container">
                 <div className="col p-0">
                     <div className="row comment-view-container">
                         <div className="col p-0 some-col">
-                            {/*Формирутеся автоматически*/}
-                            {/*Плохой перенос текста в коммнетарии пользователя*/}
+                            Формирутеся автоматически
+                            Плохой перенос текста в коммнетарии пользователя
                             {userComment.map((comment) => <UserCommentBlock  commentInfo={comment}/>)}                            
                         </div>
                     </div>
@@ -120,6 +158,7 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
+            */}
         </div>
     );
 }

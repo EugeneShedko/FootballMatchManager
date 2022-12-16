@@ -14,21 +14,23 @@ namespace FootballMatchManager.DataBase.Models
         [Column("gamedatetime")]
         public DateTime GameDateTime { get; set; }
         [Column("gamemaxplayers")]
-        public int MaxPlayers { get; set; }
+        public int GameMaxPlayers { get; set; }
         [Column("gamecurrentplayers")]
-        public int CurrentPlayers { get; set; }
+        public int CurrentPlayers { get; set; } = 0;
         [Column("gamestatus")]
-        public char GameStatus { get; set; }
+        public string GameStatus { get; set; } = "active";
         [Column("gameformat")]
         public string GameFormat { get; set; }
         [Column("gamefirstteamgoals")]
-        public int FirstTeamGoals { get; set; }
+        public int? FirstTeamGoals { get; set; }
         [Column("gamesecondteamgoals")]
-        public int SecondTeamGoals { get; set; }
+        public int? SecondTeamGoals { get; set; }
         [Column("gametype")]
+
         public string GameType { get; set; }
         [Column("tournamentid")]
-        public int TournamentId { get; set; }
+
+        public int TournamentId { get; set; } = 1;
         public Tournament Tournament { get; set; }
         public List<ApUserGame> ApUsersGames {get;set;}
         public List<Message> GameMessages { get; set; }

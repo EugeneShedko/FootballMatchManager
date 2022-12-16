@@ -64,7 +64,7 @@ namespace FootballMatchManager.Controllers
 
             var loginUser = _unitOfWork.ApUserRepository.GetItems().FirstOrDefault(u => u.UserEmail == userEmail);
 
-            if(loginUser == null)
+            if (loginUser == null)
             {
                 return BadRequest(new { message = "Пользователя с таким email не существует" });
             }
@@ -88,7 +88,7 @@ namespace FootballMatchManager.Controllers
                 Secure = true
             });
 
-            return Ok("Добро пожаловать!");
+            return Ok(new { message = "Добро пожаловать!", user = loginUser});
         }
 
     }

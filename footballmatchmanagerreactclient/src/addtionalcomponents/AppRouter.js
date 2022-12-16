@@ -2,9 +2,8 @@ import React, { useContext } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route} from 'react-router-dom'
 import { ToastContainer } from "react-toastify";
-import { AppRoutes, AuthAppRoutes } from "./Routes";
+import { AppRoutes, AuthAppRoutes, AdminAppRoutes } from "./Routes";
 import { Context } from "./../index";
-import { MAIN_ROUTE } from "../Utilts/Consts";
 import ContentContainer from "../pagescomponents/main/content/ContentContainer";
 import { observer } from "mobx-react-lite";
 
@@ -25,7 +24,12 @@ const AppRouter = observer(() => {
                         <Route key={path} path={path} element={Component} exact />
                     )
                 }
-                {/*Оставлю пока что так*/}
+                {
+                    user.isAdmin && AdminAppRoutes.map(({ path, Component }) =>
+                        <Route key={path} path={path} element={Component} exact />
+                    )
+                                
+                }
                 <Route key="*" path="*" element={<ContentContainer />} exact/>
             </Routes>
             <ToastContainer />

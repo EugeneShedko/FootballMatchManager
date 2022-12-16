@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react"
 import "./../../css/loginform.css"
 import { Link, useNavigate } from "react-router-dom";
-import { MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE } from "../../Utilts/Consts";
+import { ADMIN_PROFILE_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE } from "../../Utilts/Consts";
 import axios from "axios";
 import { Context } from "./../../index";
 import { toast } from "react-toastify";
@@ -32,18 +32,32 @@ export default function Loginform(props) {
         data.append("userEmail", logInState.userEmail);
         data.append("userPassword", logInState.userPassword);
 
-        console.log(logInState.userPassword);
-
         /*Если авторизован, сделать, что бы кнопка входа с панели пропадала*/
         axios.post('https://localhost:7277/api/auth/authorization', data, { withCredentials: true })
             .then((response) => {
-                toast.success(response.data, {
+                toast.success(response.data.message, {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
                     pauseOnFocusLoss: false
                 });
-                user.setAuth(true);
-                navigate(USER_PROFILE_ROUTE);
+
+
+                if(response.data.user.userRole === "user")
+                {
+                    user.setAdmin(false);
+                    user.setAuth(true);
+                    user.setUserId(response.data.user.apUserId);
+                    user.setUserName(response.data.user.userFirstName + ' ' + response.data.user.userLastName);
+                    navigate(USER_PROFILE_ROUTE);    
+                }
+                else
+                {
+                    user.setAdmin(true);
+                    user.setAuth(false);
+                    user.setUserId(response.data.user.apUserId);
+                    user.setUserName('Администратор');                    
+                    navigate(ADMIN_PROFILE_ROUTE);    
+                }
             })
             .catch((error) => {
                 if (error.response) {

@@ -21,10 +21,18 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         public void DeleteElement(int firstid, int secondid = 0)
         {
             ApUserGame deleteapusergame = _dbcontext.ApUsersGames.Find(firstid, secondid);
-            if(deleteapusergame != null) 
+            if (deleteapusergame != null)
             {
                 _dbcontext.ApUsersGames.Remove(deleteapusergame);
             }
+        }
+
+        public void DeleteElement(ApUserGame deleteapusergame)
+        {
+             if (deleteapusergame != null)
+             {
+                 _dbcontext.ApUsersGames.Remove(deleteapusergame);
+             }
         }
 
         public ApUserGame GetItem(int firstid, int secondid = 0)
@@ -34,7 +42,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public IEnumerable<ApUserGame> GetItems()
         {
-            return _dbcontext.ApUsersGames.AsNoTracking().ToList();
+            return _dbcontext.ApUsersGames.Include(up => up.ApUser).Include(up => up.Game).AsNoTracking().ToList();
         }
 
         public void UpdateElement(ApUserGame item)

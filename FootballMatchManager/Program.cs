@@ -14,6 +14,11 @@ options.UseSqlServer(connection));
 builder.Services.AddTransient<UnitOfWork>();
 builder.Services.AddTransient<JwtService>();
 
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CORSPolicy", builder =>

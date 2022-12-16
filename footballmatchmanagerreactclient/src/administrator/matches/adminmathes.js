@@ -1,25 +1,23 @@
-import "./../../css/matchespage.css"
-import MatchBlock from "../matchblock";
+import "./../../css/matchespage.css";
 import { useEffect, useState } from "react";
-import CreateMatch from "./creatematch";
 import axios from "axios";
 import { toast } from "react-toastify";
+import AdminMatchBlock from "./adminmatchblock";
 
-export default function Matches(props) {
+export default function AdminMatches(props) {
 
-    const [createMatchVisible, setcreateMatchVisible] = useState(false);
     const [matches, setMatches] = useState([]);
 
     useEffect(
         () => {
-            axios.get('https://localhost:7277/api/profile/allmatches', { withCredentials: true })
+            axios.get('https://localhost:7277/api/admin/profile/allmatches', { withCredentials: true })
                 .then((response) => {
                     setMatches(response.data);
-                    console.log(response.data);
+                    console.log("matches" + response.data);
                 })
                 .catch(userError => {
                     if (userError.response) {
-                        toast.error(userError.response.message,
+                        toast.success(userError.response.message,
                             {
                                 position: toast.POSITION.TOP_CENTER,
                                 autoClose: 2000,
@@ -31,7 +29,6 @@ export default function Matches(props) {
         }, []
     );
 
-    //Плохо работае наведение на послдений блок матчей(не знаю, почему)
     return (
         <div className="row mpmatches-main-container">
             <div className="col-9 mpmatches-container">
@@ -39,23 +36,49 @@ export default function Matches(props) {
                     {
                         matches.map((match) => (
                             <div className="mpinfo-block">
-                                <MatchBlock info={match}
-                                    setContState={props.setContState} />
+                                <AdminMatchBlock info={match}
+                                                 setContState={props.setContState}
+                                                 setMatches={setMatches} />
                             </div>
                         ))
                     }
                 </div>
             </div>
-            {props.isPanel ?
             <div className="col-3 mplefcol">
                 <div className="mp-fixed-container">
                     <div className="row mplcrow">
-                        <input className="mpbutton-style" type="button" value="Создать матч" onClick={() => setcreateMatchVisible(true)} />
-                    </div>
-                    <div className="row mplcrow">
                         <input id="search-match-element" type="text" placeholder="Введите название матча" />
                     </div>
+                    {/*Возможно форматы выводит, сделав запрос, пока что напишу текстом*/}
                     <div className="row filter-match-container">
+                        {/*Пока что не знаю, как отфилтровать оставлю только формат*/}
+                        {/*
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            Сегодня
+                        </label>
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            Завтра
+                        </label>
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            9:00 - 12:00
+                        </label>
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            12:00 - 15:00
+                        </label>
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            15:00 - 18:00
+                        </label>
+                        <label>
+                            <input type="checkbox" className="checkbox-style" />
+                            18:00 - 21:00
+                        </label>
+                        */}
+                        {/*Пока что не знаю, как сделать фильтрацию*/}
                         <label>
                             <input type="checkbox" className="checkbox-style" />
                             5x5
@@ -69,13 +92,9 @@ export default function Matches(props) {
                             11x11
                         </label>
                         <input className="mpbutton-style" type="button" value="Применить" />
-                    </div> 
+                    </div>
                 </div>
-            </div> : null}
-            <CreateMatch show={createMatchVisible} 
-                         onHide={setcreateMatchVisible} 
-                         setAllMatches={setMatches} 
-                         />
+            </div>
         </div>
     );
 }  

@@ -7,6 +7,11 @@
     border-radius: 20px;
 }
 
+.player-container :hover
+{
+    cursor: pointer;
+}
+
 
 .player-back-block
 {
@@ -36,4 +41,16 @@
     text-overflow: ellipsis;
     color: white;
 
+}
+
+.pl-danger-button
+{
+    color: white;
+    background-color: red;
+    z-index: 1;
+}
+
+.pl-danger-button:hover
+{
+    background-color: red;
 }

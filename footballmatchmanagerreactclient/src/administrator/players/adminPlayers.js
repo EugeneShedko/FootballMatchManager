@@ -1,28 +1,26 @@
 import "./../../css/playerspage.css"
-import PlayerBlock from "../playerblock";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import AdminPlayerBlock from "./adminPlayerBlock";
+import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
 
-export default function Players(props) {
+
+const AdminPlayers = observer((props) => {
 
     const [players, setPlayers] = useState([]);
-    const [searchString, setSearchString] = useState("");
-
-    const searchPlayers = players.filter(searchingPlayer =>{
-        return String(searchingPlayer.userFirstName + ' ' + searchingPlayer.userLastName).toLowerCase().includes(searchString.toLowerCase().trim())
-    })
 
     useEffect(
         () => {
-            axios.get('https://localhost:7277/api/profile/allplayers', { withCredentials: true })
+            axios.get('https://localhost:7277/api/admin/profile/allusers', { withCredentials: true })
                 .then((response) => {
                     setPlayers(response.data);
-                    console.log(response.data);
+                    console.log("allplayers" + response.data);
                 })
                 .catch(userError => {
                     if (userError.response) {
-                        toast.error("Ошибка получения матчей",
+                        toast.error(userError.response.message,
                             {
                                 position: toast.POSITION.TOP_CENTER,
                                 autoClose: 2000,
@@ -33,25 +31,30 @@ export default function Players(props) {
             ;
         }, []
     );
+
     return (
         <div className="row ppplayers-main-container">
             <div className="col-9 ppplayers-container">
                 <div className="row ppplayers-absolute-container">
-                    {(searchPlayers.length === 0 && searchString != '') && <div>Пользователей нет</div>}
-                    {searchPlayers?.map((player) => (
+                    {players.map((player) =>
+                     (
                         <div className="ppinfo-block">
-                            <PlayerBlock info={player} 
-                                         setContState = {props.setContState}/> 
+                            
+                            <AdminPlayerBlock info={player} 
+                                              setContState = {props.setContState}
+                                              setPlayers={setPlayers}
+                                              isMatch={false}/>
                         </div>
                     ))}
                 </div>
             </div>
-           
             <div className="col-3 pplefcol">
                 <div className="pp-fixed-container">
                     <div className="row pplcrow">
-                        <input id="search-player-element" value={searchString} onChange={(e) => setSearchString(e.target.value)} type="text" placeholder="Введите имя игрока" />
+                        <input id="search-player-element" type="text" placeholder="Введите имя игрока" />
                     </div>
+                    {/*Возможно форматы выводит, сделав запрос, пока что напишу текстом*/}
+                    {/*чек боксам скорее всего нужно будет имена задать, что бы потом их можно было найти*/}
                     <div className="row filter-player-container">
                         <label>
                             <input type="checkbox" className="checkbox-style" />
@@ -97,7 +100,11 @@ export default function Players(props) {
                         <input className="ppbutton-style" type="button" value="Применить" />
                     </div>
                 </div>
-            </div> 
+            </div>
         </div>
     );
 }  
+
+)
+
+export default AdminPlayers;
