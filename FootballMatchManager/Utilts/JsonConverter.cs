@@ -44,5 +44,26 @@ namespace FootballMatchManager.Utilts
 
             return jsonArray.ToJsonString();
         }
+
+        public static string ConvertComment(List<Comment> comments)
+        {
+            JsonArray jsonArray = new JsonArray();
+            foreach (Comment comment in comments)
+            {
+
+                JsonObject jsonObject = new JsonObject();
+
+                /*Возможно я убрал, что бы подтягивался пользователь -> вернуть*/
+                jsonObject.Add("commentUserName", comment.ApUserSender.UserFirstName + comment.ApUserSender.UserLastName);
+                jsonObject.Add("commentDate", comment.CommentDateTime);
+                jsonObject.Add("commentText", comment.CommentText);
+                jsonObject.Add("userSender", comment.CommentSender);
+                jsonObject.Add("commentId", comment.CommentId);
+
+                jsonArray.Add(jsonObject);
+            }
+
+            return jsonArray.ToJsonString();
+        }
     }
 }

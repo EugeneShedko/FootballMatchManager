@@ -39,7 +39,6 @@ namespace FootballMatchManager.Controllers
             {
                 UserEmail = shortApUser.UserEmail,
                 UserPassword = Convert.ToBase64String(md5.ComputeHash(Encoding.UTF8.GetBytes(shortApUser.UserPassword))),
-                //Пока что везде будет один, так как нет администратора
                 UserRole = "user",
                 UserFirstName = shortApUser.UserName,
                 UserLastName = shortApUser.UserLastName,
@@ -67,6 +66,11 @@ namespace FootballMatchManager.Controllers
             if (loginUser == null)
             {
                 return BadRequest(new { message = "Пользователя с таким email не существует" });
+            }
+
+            if (loginUser.UserStatus == "block")
+            {
+                return BadRequest(new {message = "Ваш аккаунт был заблокирован администратором"});
             }
 
             var userPassword = Request.Form["userPassword"];

@@ -1,72 +1,119 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "./../../css/profile.css"
 import UserCommentBlock from "./usercommentblock";
+import "react-datepicker/dist/react-datepicker.css";
+import EditProfile from "./EditProfile";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import {Context} from "./../../index";
 
 export default function Profile(props) {
 
     /*Проблема рендера несколько раз*/
-    const[userId, setUserId] = useState(props.apUserId);
-    const[profileInfo, setProfileInfo] = useState({});
+    const {user} = useContext(Context);
+    const [userId, setUserId] = useState(props.apUserId);
+    const [profileInfo, setProfileInfo] = useState({});
+    const [changes, setChanges] = useState({
+        userFirstName: "",
+        userLastName: "",
+        userDateBirth: new Date(),
+        userPosition: "",
+        userEmail: ""
+    });
+    const [editProfileVisible, setEditProfileVisible] = useState(false);
+    const[currMes, setCurrMes] = useState("");
+    const[connection, setConnection] = useState({});
+    const[userComment, setUserComment] = useState([]);
 
     useEffect(() => {
 
-            console.log("profile" + userId);
+        const data = new FormData();
+        data.append("userId", userId);
 
-            const data = new FormData();
-            data.append("userId", userId);
-
-            axios.post('https://localhost:7277/api/profile/userprofile', data, { withCredentials: true })
+        axios.post('https://localhost:7277/api/profile/userprofile', data, { withCredentials: true })
+            .then((response) => {
+                setProfileInfo(response.data);
+                console.log("profile" + response.data.apUserId);
+            })
+            .then(() => {
+                axios.get('https://localhost:7277/api/profile/allcomments/' + userId,{ withCredentials: true })
                 .then((response) => {
-                    setProfileInfo(response.data);
-                    console.log(response.data);
+                    setUserComment(response.data);
                 })
                 .catch(userError => {
                     if (userError.response) {
-                        toast.error("Ошибка получения профиля",
+                        toast.error("Не удалось получить комментарии профиля",
                             {
                                 position: toast.POSITION.TOP_CENTER,
                                 autoClose: 2000,
                                 pauseOnFocusLoss: false
                             });
                     }
-                });
-            ;
-        }, []
+                });                        
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error("Ошибка получения профиля",
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+            const hubConnection = new HubConnectionBuilder().withUrl("https://localhost:7277/commentchat").build();
+            
+            hubConnection.on("Send", (commentUserName, commentDate, commentText, userSender, commentId) => {
+                setUserComment(userComment => [...userComment, {commentUserName, commentDate, commentText, userSender, commentId}]);
+            });                
+            hubConnection.start();
+            setConnection(hubConnection);
+    }, []
     );
 
-    /*
-    const userComment = [
-        {
-            commentUserImg: "/image/default-profile-icon.jpg",
-            commentUserName: "Евгений Шедько",
-            commentDate: "11.12.2022 15:00",
-            commentText: "Жека, ты крутой1!" 
-        },
+    function edit() {
+        setChanges({
+            userFirstName: profileInfo.userFirstName,
+            userLastName: profileInfo.userLastName,
+            userDateBirth: new Date(profileInfo.userDateOfBirth),
+            userPosition: profileInfo.userPosition,
+            userEmail: profileInfo.userEmail
+        });
+        setEditProfileVisible(true)
+    }
 
-        {
-            commentUserImg: "/image/default-profile-icon.jpg",
-            commentUserName: "Евгений Шедько",
-            commentDate: "11.12.2022 15:00",
-            commentText: "Жека, ты крутой2!"             
-        },
+    function sendMessage()
+    {
+        /*Сначала нужно отправить запрос и получить обратно*/
+        const data = new FormData();
+        data.append("CommentText", currMes);
+        data.append("CommentRecipient", userId);
+        data.append("CommentSender", user.getUserId);
 
-        {
-            commentUserImg: "/image/default-profile-icon.jpg",
-            commentUserName: "Евгений Шедько",
-            commentDate: "11.12.2022 15:00",
-            commentText: "Жека, ты крутой3!" 
-        },
+        axios.post('https://localhost:7277/api/profile/addcomment', data, { withCredentials: true })
+            .then((response) => {
+                connection.invoke("Send", user.getUserName, 
+                                          response.data.commentDateTime, 
+                                          response.data.commentText, 
+                                          String(response.data.commentRecipient), 
+                                          String(response.data.commentSender),
+                                          String(response.data.commentId)                                          
+                                          );
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error("Ошибка отправки комментария",
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
 
-        {
-            commentUserImg: "/image/default-profile-icon.jpg",
-            commentUserName: "Евгений Шедько",
-            commentDate: "11.12.2022 15:00",
-            commentText: "Жека, ты крутой4!" 
-        }
-    ]
-    */
+        setCurrMes("");
+    }
 
     return (
         <div className="row profile-container">
@@ -74,8 +121,8 @@ export default function Profile(props) {
                 <div className="col-3 d-flex justify-content-center p-0">
                     <img className="profile-image" src="/image/default-profile-icon.jpg" alt="" />
                 </div>
-                <div className="col-9 p-0">
-                    <div className="row prtext pruser-name">
+                <div className="col-7 p-0 h-100">
+                    <div className="row pruser-name">
                         {profileInfo.userFirstName + ' ' + profileInfo.userLastName}
                     </div>
                     <div className="row prtext">
@@ -90,7 +137,7 @@ export default function Profile(props) {
                     </div>
                     {/*Пока что стат, нет полей в бд*/}
                     <div className="row icon-row">
-                        <div className="col-2 p-0">
+                        <div className="col-3 p-0">
                             <div className="row">
                                 <div className="col-6 p-0">
                                     <img className="foot-field-img" src="/image/soccer-field.png" alt="" />
@@ -100,12 +147,12 @@ export default function Profile(props) {
                                         Игры
                                     </div>
                                     <div className="row img-number align-items-start">
-                                        22
+                                        {profileInfo.gamesNumber}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="col-2 p-0">
+                        <div className="col-3 p-0">
                             <div className="row m-0">
                                 <div className="col-6 d-flex align-items-center p-0">
                                     <img className="foot-ball-img" src="/image/football-ball.png" alt="" />
@@ -115,12 +162,12 @@ export default function Profile(props) {
                                         Голы
                                     </div>
                                     <div className="row img-number align-items-start">
-                                        22
+                                        {profileInfo.goalsNumber}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="col-2 p-0">
+                        <div className="col-3 p-0">
                             <div className="row m-0">
                                 <div className="col-6 d-flex align-items-center p-0">
                                     <img className="foot-assist-img" src="/image/football-assist.png" alt="" />
@@ -130,35 +177,56 @@ export default function Profile(props) {
                                         Передачи
                                     </div>
                                     <div className="row img-number align-items-start">
-                                        22
+                                        {profileInfo.assistsNumber}
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div className="col-2 p-0 h-100">
+                    <div className="row m-0 admin-button">
+                        <input type="button"
+                            value="Изменить"
+                            className="just-button"
+                            onClick={edit} />
+                    </div>
+                </div>
             </div>
-            {/*
             <div className="row profile-comment-container">
                 <div className="col p-0">
                     <div className="row comment-view-container">
                         <div className="col p-0 some-col">
-                            Формирутеся автоматически
-                            Плохой перенос текста в коммнетарии пользователя
-                            {userComment.map((comment) => <UserCommentBlock  commentInfo={comment}/>)}                            
+                            {userComment.map((comment) => <UserCommentBlock commentInfo={comment}
+                                                                            userprif={userId}
+                                                                            setUserComment={setUserComment}
+                                                                            />)}
                         </div>
                     </div>
                     <div className="row comment-send-container">
                         <div className="col-10 comment-send-area">
-                            <input className="comment-enter-button" type="text" placeholder="Оставьте комментарий..." />
+                            <input className="comment-enter-button" 
+                                   type="text" 
+                                   placeholder="Оставьте комментарий..."
+                                   value={currMes} 
+                                   onChange={(e) => setCurrMes(e.target.value)}/>
                         </div>
                         <div className="col-2 p-0">
-                            <input className="comment-send-button" value="Отправить" type="button"/>
+                            <input className="comment-send-button" 
+                                   value="Отправить" 
+                                   type="button" 
+                                   onClick={sendMessage}
+                                   />
                         </div>
                     </div>
                 </div>
             </div>
-            */}
+            {/*Еще нужно передать состояние на сам профиль*/}
+            <EditProfile setProfileInfo={setProfileInfo}
+                info={changes}
+                setInfo={setChanges}
+                show={editProfileVisible}
+                onHide={setEditProfileVisible} />
         </div>
     );
 }

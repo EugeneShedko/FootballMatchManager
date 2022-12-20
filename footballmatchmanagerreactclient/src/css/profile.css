@@ -30,13 +30,15 @@
 
 .pruser-name
 {
-    margin-bottom: 2%;
+    color:white;
+    margin: 0% 0% 2% 0%;
     font-size: 30px;
 }
 
 .icon-row
 {
     margin: 2% 0% 0% 0%;
+    height: 30%;
 }
 
 .foot-field-img
@@ -192,4 +194,10 @@
     font-size: 30px;
     width: 90%;
     height: 60%;
+}
+
+.edit-input
+{
+    height: 100%;
+    width: 30%;
 }

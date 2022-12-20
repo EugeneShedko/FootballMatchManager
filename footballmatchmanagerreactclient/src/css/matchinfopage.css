@@ -66,10 +66,17 @@
     margin: 20% 0% 0% 0%;
 }
 
+.match-type
+{
+    color: yellowgreen;
+    font-size: 20px;
+    justify-content: center;
+}
+
 .match-join-button
 {
     margin:0;
-    margin:0;
+    margin: 2% 0% 0% 0%;
     border: 4px white solid;
     border-radius: 10px;
     background-color: rgba(0,0,0,0.6);
@@ -85,8 +92,18 @@
 
 .match-admin-button
 {
-    margin: 10% 0% 0% 0%;
+    margin: 2% 0% 0% 0%;
     height: 7%;
+}
+
+.match-just-button
+{
+    background-color: white;
+}
+
+.match-just-button:hover
+{
+    background-color: yellowgreen;
 }
 
 .match-danger-button

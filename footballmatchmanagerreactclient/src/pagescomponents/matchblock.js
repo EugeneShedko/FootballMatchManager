@@ -8,7 +8,9 @@ export default function MatchBlock(props) {
 
     function setMatchInfoPage()
     {
-        props.setContState(<MatchInfoPage gameId={props.info.gameId} />);
+        props.setContState(<MatchInfoPage gameId={props.info.gameId}
+                                          setGames={props.setGames}
+                                          setContState={props.setContState} />);
     }
 
     return (

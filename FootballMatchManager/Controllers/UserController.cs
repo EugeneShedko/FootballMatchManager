@@ -6,8 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.DataBase.Models;
 using FootballMatchManager.Utilts;
-
-
+using FootballMatchManager.IncompleteModels;
 
 namespace FootballMatchManager.Controllers
 {
@@ -27,7 +26,30 @@ namespace FootballMatchManager.Controllers
         [Route("allplayers")]
         public ActionResult Get()
         {
-            return Ok(_unitOfWork.ApUserRepository.GetItems().Where(u => u.UserRole != "system"));
+            IEnumerable<ApUser> apUsers =  _unitOfWork.ApUserRepository.GetItems().Where(u => u.UserRole != "system" && u.UserStatus != "block");
+
+            if(apUsers == null)
+            {
+                return BadRequest(new {message = "Нет зарегистрированных пользователей"});
+            }
+
+            return Ok(apUsers);
+        }
+
+        [HttpGet]
+        [Route("allcomments/{userId}")]
+        public ActionResult GetAllComments(int userId)
+        {
+            List<Comment> comments = _unitOfWork.CommentRepository.GetItems().Where(c => c.CommentRecipient == userId).ToList();
+
+            if(comments == null)
+            {
+                return Ok();
+            }
+            else
+            {
+                return Ok(JsonConverter.ConvertComment(comments));
+            }
         }
 
         [HttpPost]
@@ -48,5 +70,56 @@ namespace FootballMatchManager.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("editprofile")]
+        public ActionResult PostEditProfile([FromBody] ShortApUser shortApUser)
+        {
+            ApUser apUser = _unitOfWork.ApUserRepository.GetItem(shortApUser.UserId);
+
+            if(apUser == null)
+            {
+                return BadRequest(new { message = "Пользователя не существует" });
+            }
+
+            apUser.UserFirstName = shortApUser.UserName;
+            apUser.UserLastName = shortApUser.UserLastName;
+            apUser.UserDateOfBirth = shortApUser.UserBirthDay;
+            apUser.UserPosition = shortApUser.UserPosition;
+            apUser.UserEmail= shortApUser.UserEmail;
+
+            _unitOfWork.Save();
+
+            return Ok(new { message = "Данные успешно сохранены", askdata = apUser });
+        }
+
+        [HttpPost]
+        [Route("addcomment")]
+        public ActionResult PostAddComment()
+        {
+            Comment comment = new Comment()
+            {
+                CommentText = Request.Form["CommentText"],
+                CommentDateTime = DateTime.Now,
+                CommentRecipient = int.Parse(Request.Form["CommentRecipient"]),
+                CommentSender = int.Parse(Request.Form["CommentSender"])
+            };
+
+            _unitOfWork.CommentRepository.AddElement(comment);
+
+            _unitOfWork.Save();
+
+            return Ok(comment);
+        }
+
+        [HttpDelete]
+        [Route("deletecomment/{commentId}")]
+        public ActionResult DeleteComment(int commentId)
+        {
+            _unitOfWork.CommentRepository.DeleteElement(commentId);
+
+            _unitOfWork.Save();
+
+            return Ok(new {message = "Комментарий успешно удален"});
+        }
     }
 }

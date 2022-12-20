@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import PlayerBlock from "../../pagescomponents/playerblock";
 import AdminPlayerBlock from "../players/adminPlayerBlock";
 import "./../../css/matchinfopage.css";
 import { Context } from "./../../index"
@@ -38,30 +37,85 @@ export default function AdminMatchInfoPage(props) {
             });
     }, [])
 
-    function deleteMatch()
-    {
+    function deleteMatch() {
 
         axios.delete('https://localhost:7277/api/admin/profile/deletegame/' + game.gameId, { withCredentials: true })
+            .then((response) => {
+                toast.success(response.data.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+                props.setMatches(response.data.rgames);
+                props.setContState(<AdminMatches setContState={props.setContState} />);
+            })
+            .catch((error) => {
+                if (error.response) {
+                    toast.error(error.response.data.message,
+                        {
+                            position: toast.POSITION.BOTTOM_RIGHT,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+    }
+
+    function blockMatch()
+    {
+        const data = new FormData();
+        data.append("gameId", game.gameId);
+
+        axios.post('https://localhost:7277/api/admin/profile/blockgame/', data, { withCredentials: true })
         .then((response) => {
+            setGame(response.data.currgame);
             toast.success(response.data.message,
                 {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
                     pauseOnFocusLoss: false
                 });
-                props.setMatches(response.data.rgames);
-                props.setContState(<AdminMatches setContState={props.setContState} />);   
         })
-        .catch((error) => {
-            if (error.response) {
-                toast.error(error.response.data.message,
+        .catch(userError => {
+            if (userError.response) {
+                toast.error(userError.response.message,
                     {
-                        position: toast.POSITION.BOTTOM_RIGHT,
+                        position: toast.POSITION.TOP_CENTER,
                         autoClose: 2000,
                         pauseOnFocusLoss: false
                     });
             }
-        });
+        });    
+    }
+
+    function unblockMatch()
+    {
+
+        const data = new FormData();
+        data.append("gameId", game.gameId);
+
+        axios.post('https://localhost:7277/api/admin/profile/unblockgame/', data, { withCredentials: true })
+        .then((response) => {
+            setGame(response.data.currgame);
+            toast.success(response.data.message,
+                {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false
+                });
+        })
+        .catch(userError => {
+            if (userError.response) {
+                toast.error(userError.response.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            }
+        });    
+
     }
 
     return (
@@ -103,19 +157,33 @@ export default function AdminMatchInfoPage(props) {
                                 gameUsers.map((player) => (
                                     <div className="row m-0">
                                         <AdminPlayerBlock info={player}
-                                                          setContState={props.setContState}
-                                                          setGame={setGame}
-                                                          setPlayers={setGameUsers}
-                                                          gameId={game.gameId}
-                                                          isMatch={true} />
+                                            setContState={props.setContState}
+                                            setGame={setGame}
+                                            setPlayers={setGameUsers}
+                                            gameId={game.gameId}
+                                            isMatch={true} />
                                     </div>
                                 ))
                             }
                         </div>
                     </div>
                     <div className="col-2 p-0">
+                        <div className="row match-type">
+                            {game.gameStatus === 'block' ? 'Заблокирован' : null}
+                        </div>
                         <div className="row match-admin-button">
-                            <input tupe="button" value="Удалить матч" className="match-danger-button" onClick={deleteMatch}/>
+                            {game.gameStatus === 'block' ? <input type="button" 
+                                                                  value="Разблокировать" 
+                                                                  className="match-just-button" 
+                                                                  onClick={unblockMatch} /> 
+                                                                  : 
+                                                            <input type="button" 
+                                                                   value="Заблокировать" 
+                                                                   className="match-danger-button" 
+                                                                   onClick={blockMatch} />}
+                        </div>
+                        <div className="row match-admin-button">
+                            <input type="button" value="Удалить матч" className="match-danger-button" onClick={deleteMatch} />
                         </div>
                     </div>
                 </div>

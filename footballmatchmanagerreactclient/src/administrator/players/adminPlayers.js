@@ -5,11 +5,13 @@ import { toast } from "react-toastify";
 import AdminPlayerBlock from "./adminPlayerBlock";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
+import AdminPlayerGenerator from "./AdminPlayerGenerator";
 
 
 const AdminPlayers = observer((props) => {
 
     const [players, setPlayers] = useState([]);
+    const [searchString, setSearchString] = useState("");
 
     useEffect(
         () => {
@@ -35,23 +37,20 @@ const AdminPlayers = observer((props) => {
     return (
         <div className="row ppplayers-main-container">
             <div className="col-9 ppplayers-container">
-                <div className="row ppplayers-absolute-container">
-                    {players.map((player) =>
-                     (
-                        <div className="ppinfo-block">
-                            
-                            <AdminPlayerBlock info={player} 
-                                              setContState = {props.setContState}
-                                              setPlayers={setPlayers}
-                                              isMatch={false}/>
-                        </div>
-                    ))}
-                </div>
+                <AdminPlayerGenerator players={players}
+                                      searchString={searchString}
+                                      setContState={props.setContState}
+                                      setPlayers={setPlayers} />  
             </div>
             <div className="col-3 pplefcol">
                 <div className="pp-fixed-container">
                     <div className="row pplcrow">
-                        <input id="search-player-element" type="text" placeholder="Введите имя игрока" />
+                        <input id="search-player-element" 
+                               type="text" 
+                               placeholder="Введите имя игрока" 
+                               value={searchString}
+                               onChange={(e) => setSearchString(e.target.value)} 
+                               />
                     </div>
                     {/*Возможно форматы выводит, сделав запрос, пока что напишу текстом*/}
                     {/*чек боксам скорее всего нужно будет имена задать, что бы потом их можно было найти*/}

@@ -75,6 +75,46 @@ namespace FootballMatchManager.Controllers.Admin
 
         }
 
+        [HttpPost]
+        [Route("blockgame")]
+        public ActionResult PostBlockGame()
+        {
+            var gameId = int.Parse(Request.Form["gameId"]);
+
+            Game game = _unitOfWork.GameRepository.GetItem(gameId);
+
+            if(game == null) 
+            {
+                return BadRequest(new { message = "Игры не существует" });
+            }
+
+            game.GameStatus = "block";
+
+            _unitOfWork.Save();
+
+            return Ok(new {message = "Игра заблокирована", currgame = game});
+        }
+
+        [HttpPost]
+        [Route("unblockgame")]
+        public ActionResult PostUnBlockGame()
+        {
+            var gameId = int.Parse(Request.Form["gameId"]);
+
+            Game game = _unitOfWork.GameRepository.GetItem(gameId);
+
+            if (game == null)
+            {
+                return BadRequest(new { message = "Игры не существует" });
+            }
+
+            game.GameStatus = "active";
+
+            _unitOfWork.Save();
+
+            return Ok(new { message = "Игра разблокирована", currgame = game });
+        }
+
         [HttpDelete]
         [Route("deletegame/{id}")]
         public ActionResult DeleteGame(int id)
@@ -154,6 +194,8 @@ namespace FootballMatchManager.Controllers.Admin
                 return Ok(new { message = "Пользователь удален из матча", users = apUsers, currgame = game});
             }
         }
+
+
 
     }
 }

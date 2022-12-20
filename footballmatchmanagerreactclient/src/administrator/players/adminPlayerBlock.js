@@ -65,7 +65,11 @@ export default function AdminPlayerBlock(props) {
                     </div>
                     {
                         props.isMatch ? <div className="row m-0">
-                                    <input id="delete" type="button" value="Удалить" className="pl-danger-button" onClick={removeFromMatch} />
+                                    <input id="delete" 
+                                           type="button" 
+                                           value="Удалить" 
+                                           className="pl-danger-button" 
+                                           onClick={removeFromMatch} />
                                   </div> : null
                     }
                 </div>

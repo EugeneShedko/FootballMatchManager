@@ -48,7 +48,7 @@ export default function Loginform(props) {
                     user.setAuth(true);
                     user.setUserId(response.data.user.apUserId);
                     user.setUserName(response.data.user.userFirstName + ' ' + response.data.user.userLastName);
-                    navigate(USER_PROFILE_ROUTE);    
+                    navigate(USER_PROFILE_ROUTE);
                 }
                 else
                 {
@@ -63,7 +63,7 @@ export default function Loginform(props) {
                 if (error.response) {
                     toast.error(error.response.data.message,
                         {
-                            position: toast.POSITION.BOTTOM_RIGHT,
+                            position: toast.POSITION.TOP_CENTER,
                             autoClose: 2000,
                             pauseOnFocusLoss: false
                         });

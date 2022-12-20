@@ -7,18 +7,32 @@ import { toast } from "react-toastify";
 import "./../css/matchinfopage.css"
 import PlayerBlock from "./playerblock";
 import { Context } from "./../index"
+import Matches from "./userprofile/matches";
+import EditGame from "./userprofile/EditGame";
 
 export default function MatchInfoPage(props) {
 
     const { user } = useContext(Context);
     const [game, setGame] = useState({});
     const [gameUsers, setGameUsers] = useState([]);
+    const [isPart, setIsPart] = useState(false);
+    const [isCreat, setIsCreat] = useState(false);
+    const [editProfileVisible, setEditProfileVisible] = useState(false);
+    const [changes, setChanges] = useState({
+        gameId: 0,
+        gameName: "",
+        gameDate: new Date(),
+        gameFormat: "",
+        gameAdress: "",
+    });
 
     useEffect(() => {
 
-        axios.get('https://localhost:7277/api/profile/game/' + props.gameId, { withCredentials: true })
+        axios.get('https://localhost:7277/api/profile/game/' + props.gameId + "/" + user.getUserId, { withCredentials: true })
             .then((response) => {
-                setGame(response.data);
+                setGame(response.data.currgame);
+                setIsPart(response.data.isPart);
+                setIsCreat(response.data.isCreat);
             })
             .then(() => {
                 axios.get('https://localhost:7277/api/profile/matchUsers/' + props.gameId, { withCredentials: true })
@@ -46,24 +60,6 @@ export default function MatchInfoPage(props) {
                         });
                 }
             });
-
-        /*
-        axios.get('https://localhost:7277/api/profile/matchprofile/' + props.gameId, { withCredentials: true })
-            .then((response) => {
-                setGameUsers(response.data);
-                console.log("!!!!! " + response.data);
-            })
-            .catch(userError => {
-                if (userError.response) {
-                    toast.error("Ошибка получения данных",
-                        {
-                            position: toast.POSITION.TOP_CENTER,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
-                }
-            });
-        */
     }, [])
 
     function addToMatch() {
@@ -75,7 +71,8 @@ export default function MatchInfoPage(props) {
         axios.post('https://localhost:7277/api/profile/addtomatch', data, { withCredentials: true })
             .then((response) => {
                 setGameUsers(response.data.users);
-                setGame(response.data.currgame);                
+                setGame(response.data.currgame);  
+                setIsPart(true);              
                 toast.success(response.data.message, {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
@@ -94,7 +91,73 @@ export default function MatchInfoPage(props) {
             });
     }
 
-    //Переделать
+    function leaveMatch()
+    {
+
+        axios.delete('https://localhost:7277/api/profile/leavefromgame/' + props.gameId + '/' + user.getUserId, { withCredentials: true })
+        .then((response) => {
+            toast.success(response.data.message,
+                {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false
+                });
+                setGame(response.data.currgame);
+                setGameUsers(response.data.users);
+                setIsPart(false);
+        })
+        .catch((error) => {
+            if (error.response) {
+                toast.error(error.response.data.message,
+                    {
+                        position: toast.POSITION.BOTTOM_RIGHT,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            }
+        });
+
+    }
+
+    function deleteMatch()
+    {
+        /*Изменить путь*/
+        axios.delete('https://localhost:7277/api/profile/deletegame/' + game.gameId, { withCredentials: true })
+        .then((response) => {
+            toast.success(response.data.message,
+                {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false
+                });
+            props.setGames(response.data.rgames);
+            props.setContState(<Matches setContState={props.setContState} />);
+        })
+        .catch((error) => {
+            if (error.response) {
+                toast.error(error.response.data.message,
+                    {
+                        position: toast.POSITION.BOTTOM_RIGHT,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            }
+        });
+
+    }
+
+    function editGame()
+    {
+        setChanges({
+            gameId: game.gameId,
+            gameName: game.gameName,
+            gameDate: new Date(game.gameDateTime),
+            gameFormat: game.gameFormat,
+            gameAdress: game.gameAdress,    
+        });
+        setEditProfileVisible(true);
+    }
+
     return (
         <div className="row justify-content-center match-info-main-container">
             <div className="col-7 match-info-container">
@@ -129,7 +192,19 @@ export default function MatchInfoPage(props) {
                             {game.currentPlayers}
                         </div>
                         <div className="row match-join-button-container">
-                            <input className="match-join-button" type="button" value="Присоединиться" onClick={addToMatch} />
+                        {isPart ? null : <input className="match-join-button" type="button" value="Присоединиться" onClick={addToMatch} />}
+                        {isPart ? <input className="match-join-button" 
+                                         type="button" 
+                                         value="Покинуть"
+                                         onClick={leaveMatch} /> : null}
+                        {isCreat ? <input className="match-join-button" 
+                                          type="button" 
+                                          value="Редактировать"
+                                          onClick={editGame} /> : null }
+                        {isCreat ? <input className="match-join-button" 
+                                          type="button" 
+                                          value="Удалить"
+                                          onClick={deleteMatch} /> : null}
                         </div>
                     </div>
                     {
@@ -147,6 +222,13 @@ export default function MatchInfoPage(props) {
                     }
                 </div>
             </div>
+            <EditGame    setGame={setGame}
+                         info    = {changes}
+                         setInfo = {setChanges}
+                         show    = {editProfileVisible}
+                         onHide  = {setEditProfileVisible} 
+            />
+
         </div>
     );
 }

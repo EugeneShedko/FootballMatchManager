@@ -1,5 +1,6 @@
 using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.DataBase.DBClasses;
+using FootballMatchManager.Hubs;
 using FootballMatchManager.Utilts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,6 +33,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -45,6 +47,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("CORSPolicy");
+
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<CommentHub>("/commentchat");
+});
 
 app.UseAuthorization();
 app.MapControllers();

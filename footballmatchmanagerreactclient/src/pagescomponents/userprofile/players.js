@@ -1,6 +1,6 @@
 import "./../../css/playerspage.css"
-import PlayerBlock from "../playerblock";
 import { useEffect, useState } from "react";
+import PlayerGenerator from "../PlayerGenerator";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -8,10 +8,6 @@ export default function Players(props) {
 
     const [players, setPlayers] = useState([]);
     const [searchString, setSearchString] = useState("");
-
-    const searchPlayers = players.filter(searchingPlayer =>{
-        return String(searchingPlayer.userFirstName + ' ' + searchingPlayer.userLastName).toLowerCase().includes(searchString.toLowerCase().trim())
-    })
 
     useEffect(
         () => {
@@ -33,24 +29,22 @@ export default function Players(props) {
             ;
         }, []
     );
+
     return (
         <div className="row ppplayers-main-container">
             <div className="col-9 ppplayers-container">
-                <div className="row ppplayers-absolute-container">
-                    {(searchPlayers.length === 0 && searchString != '') && <div>Пользователей нет</div>}
-                    {searchPlayers?.map((player) => (
-                        <div className="ppinfo-block">
-                            <PlayerBlock info={player} 
-                                         setContState = {props.setContState}/> 
-                        </div>
-                    ))}
-                </div>
+                <PlayerGenerator players={players}
+                                 searchString={searchString}
+                                 setContState={props.setContState} />
             </div>
            
             <div className="col-3 pplefcol">
                 <div className="pp-fixed-container">
                     <div className="row pplcrow">
-                        <input id="search-player-element" value={searchString} onChange={(e) => setSearchString(e.target.value)} type="text" placeholder="Введите имя игрока" />
+                        <input id="search-player-element" value={searchString} 
+                                                          onChange={(e) => setSearchString(e.target.value)} 
+                                                          type="text" 
+                                                          placeholder="Введите имя игрока" />
                     </div>
                     <div className="row filter-player-container">
                         <label>

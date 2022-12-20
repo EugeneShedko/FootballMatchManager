@@ -24,7 +24,7 @@ namespace FootballMatchManager.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            IEnumerable<Game> games = _unitOfWork.GameRepository.GetItems().OrderByDescending(g => g.GameDateTime);
+            IEnumerable<Game> games = _unitOfWork.GameRepository.GetItems().Where(g => g.GameStatus != "block").OrderByDescending(g => g.GameDateTime);
 
             if(games == null)
             {
@@ -36,20 +36,38 @@ namespace FootballMatchManager.Controllers
             }
         }
 
-        [Route("game/{gameid}")]
+        [Route("game/{gameid}/{userid}")]
         [HttpGet]
-        public IActionResult MatchProfile(int gameId)
+        public IActionResult MatchProfile(int gameId, int userid)
         {
+            bool isParticipant = false;
+            bool isCreator = false;
+
             Game game = _unitOfWork.GameRepository.GetItem(gameId);
 
             if(game == null)
             {
                 return BadRequest(new { message = "Матч не найден" });
             }
-            else
+
+            ApUserGame apUserGamePt = _unitOfWork.ApUserGameRepository.GetItems()
+                                                                      .FirstOrDefault(apug => apug.GameId == gameId && apug.UserId == userid && apug.UserType == "participant");
+
+            ApUserGame apUserGameCr = _unitOfWork.ApUserGameRepository.GetItems()
+                                              .FirstOrDefault(apug => apug.GameId == gameId && apug.UserId == userid && apug.UserType == "creator");
+
+            if (apUserGamePt != null) 
             {
-                return Ok(game);
+                isParticipant = true;
             }
+
+            if (apUserGameCr != null)
+            {
+                isCreator = true;
+            }
+
+
+            return Ok(new { currgame = game, isPart = isParticipant, isCreat = isCreator } );
         }
 
         [HttpGet]
@@ -78,8 +96,6 @@ namespace FootballMatchManager.Controllers
         [HttpPost]
         public IActionResult AddToMatch()
         {
-
-            /*Нужно проверять, не является ли пользователь уже участником матча*/
 
             int gameId = int.Parse(Request.Form["gameId"]);
             int userId = int.Parse(Request.Form["userId"]);
@@ -154,6 +170,7 @@ namespace FootballMatchManager.Controllers
                 GameDateTime = shortGame.GameDate,
                 GameMaxPlayers = gameMaxPlayers,
                 GameFormat = shortGame.GameFormat,
+                CurrentPlayers = 1,
                 GameType = "match"
             };
 
@@ -174,7 +191,6 @@ namespace FootballMatchManager.Controllers
                 UserType = "participant",
             };
 
-            /*Нужно у матча увеличивать количество участников*/
 
             _unitOfWork.ApUserGameRepository.AddElement(apUserGameCr);
             _unitOfWork.ApUserGameRepository.AddElement(apUserGamePt);
@@ -190,7 +206,7 @@ namespace FootballMatchManager.Controllers
         {
             var userID = int.Parse(Request.Form["userId"]);
 
-            List <Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.UserId == userID && ap.UserType == "creator").Select(ap => ap.Game).ToList();
+            List<Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.UserId == userID && ap.UserType == "creator").Select(ap => ap.Game).ToList();
 
             if(games == null)
             {
@@ -216,5 +232,95 @@ namespace FootballMatchManager.Controllers
             return Ok(games);
         }
 
+        [HttpPost]
+        [Route("editgame")]
+        public ActionResult PostEditGame([FromBody] ShortGame shortGame)
+        {
+            Game game = _unitOfWork.GameRepository.GetItem(shortGame.GameId);
+
+            if (game == null)
+            {
+                return BadRequest(new { message = "Данной игры не существует" });
+            }
+
+            game.GameName = shortGame.GameName;
+            game.GameDateTime = shortGame.GameDate;
+            game.GameFormat = shortGame.GameFormat;
+            game.GameAdress = shortGame.GameAdress;
+
+            _unitOfWork.Save();
+
+            return Ok(new { message = "Данные успешно сохранены", askdata = game });
+        }
+
+        [HttpDelete]
+        [Route("leavefromgame/{gameId}/{userId}")]
+        public ActionResult DeleteLeaveFromGame(int gameId, int userId)
+        {
+
+            ApUserGame apUserGame = _unitOfWork.ApUserGameRepository.GetItems()
+                                                                    .FirstOrDefault(apug => apug.GameId == gameId && apug.UserId == userId && apug.UserType == "participant");
+
+            if (apUserGame == null)
+            {
+                return BadRequest(new { message = "Вы не зарегистрированы на матч" });
+            }
+
+            _unitOfWork.ApUserGameRepository.DeleteElement(apUserGame);
+
+            _unitOfWork.Save();
+
+            Game game = _unitOfWork.GameRepository.GetItem(gameId);
+
+            if (game.CurrentPlayers > 0)
+            {
+                game.CurrentPlayers -= 1;
+                _unitOfWork.Save();
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetItems().Where(apug => apug.GameId == gameId && apug.UserType == "participant")
+                                                                                   .Select(apug => apug.ApUser)
+                                                                                   .ToList();
+
+            if (apUsers == null)
+            {
+                return Ok(new { message = "Вы покинули матч", currgame = game });
+            }
+            else
+            {
+                return Ok(new { message = "Вы покинули матч", users = apUsers, currgame = game });
+            }
+        }
+
+        [HttpDelete]
+        [Route("deletegame/{id}")]
+        public ActionResult DeleteGame(int id)
+        {
+            Game game = _unitOfWork.GameRepository.GetItem(id);
+
+            if (game == null)
+            {
+                return BadRequest(new { message = "Данного матча не существует" });
+            }
+
+            _unitOfWork.GameRepository.DeleteElement(id);
+
+            _unitOfWork.Save();
+
+            IEnumerable<Game> games = _unitOfWork.GameRepository.GetItems();
+
+            if (games == null)
+            {
+                return BadRequest(new { message = "Нет созданных матчей" });
+            }
+            else
+            {
+                return Ok(new { message = "Матч удален", rgames = games });
+            }
+        }
     }
 }

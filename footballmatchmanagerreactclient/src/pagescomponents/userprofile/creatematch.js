@@ -22,8 +22,6 @@ export default function CreateMatch(props) {
 
     function createMatch() {
 
-        console.log("Функция вызвалась!");
-
         const match = {
             UserId  : user.getUserId,
             GameName: matchState.gameName,

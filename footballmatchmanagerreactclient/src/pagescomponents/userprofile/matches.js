@@ -1,20 +1,21 @@
 import "./../../css/matchespage.css"
-import MatchBlock from "../matchblock";
 import { useEffect, useState } from "react";
 import CreateMatch from "./creatematch";
+import GameGenerator from "../GameGenerator";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 export default function Matches(props) {
 
     const [createMatchVisible, setcreateMatchVisible] = useState(false);
-    const [matches, setMatches] = useState([]);
+    const [games, setGames] = useState([]);
+    const [searchString, setSearchString] = useState("");
 
     useEffect(
         () => {
             axios.get('https://localhost:7277/api/profile/allmatches', { withCredentials: true })
                 .then((response) => {
-                    setMatches(response.data);
+                    setGames(response.data);
                     console.log(response.data);
                 })
                 .catch(userError => {
@@ -35,25 +36,23 @@ export default function Matches(props) {
     return (
         <div className="row mpmatches-main-container">
             <div className="col-9 mpmatches-container">
-                <div className="row mpmatches-absolute-container">
-                    {
-                        matches.map((match) => (
-                            <div className="mpinfo-block">
-                                <MatchBlock info={match}
-                                    setContState={props.setContState} />
-                            </div>
-                        ))
-                    }
-                </div>
+                <GameGenerator games={games}
+                               setGames={setGames}
+                               searchString={searchString}
+                               setContState={props.setContState} />
             </div>
-            {props.isPanel ?
             <div className="col-3 mplefcol">
                 <div className="mp-fixed-container">
                     <div className="row mplcrow">
                         <input className="mpbutton-style" type="button" value="Создать матч" onClick={() => setcreateMatchVisible(true)} />
                     </div>
                     <div className="row mplcrow">
-                        <input id="search-match-element" type="text" placeholder="Введите название матча" />
+                        <input id="search-match-element"
+                               type="text" 
+                               placeholder="Введите название матча" 
+                               value={searchString}
+                               onChange={(e) => setSearchString(e.target.value)} 
+                               />
                     </div>
                     <div className="row filter-match-container">
                         <label>
@@ -71,11 +70,11 @@ export default function Matches(props) {
                         <input className="mpbutton-style" type="button" value="Применить" />
                     </div> 
                 </div>
-            </div> : null}
+            </div>
             <CreateMatch show={createMatchVisible} 
-                         onHide={setcreateMatchVisible} 
-                         setAllMatches={setMatches} 
-                         />
+                         onHide={setcreateMatchVisible}
+                         setAllMatches={setGames}  
+            />
         </div>
     );
-}  
+}
