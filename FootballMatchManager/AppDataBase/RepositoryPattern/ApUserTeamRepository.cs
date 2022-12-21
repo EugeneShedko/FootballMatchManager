@@ -27,6 +27,14 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             }
         }
 
+        public void DeleteElement(ApUserTeam deleteapuserteam)
+        {
+            if (deleteapuserteam != null)
+            {
+                _dbcontext.ApUsersTeams.Remove(deleteapuserteam);
+            }
+        }
+
         public ApUserTeam GetItem(int firstid, int secondid = 0)
         {
             return _dbcontext.ApUsersTeams.Find(firstid, secondid);
@@ -34,7 +42,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public IEnumerable<ApUserTeam> GetItems()
         {
-            return _dbcontext.ApUsersTeams.AsNoTracking().ToList();
+            return _dbcontext.ApUsersTeams.Include(t => t.ApUser).AsNoTracking().ToList();
         }
 
         public void UpdateElement(ApUserTeam item)

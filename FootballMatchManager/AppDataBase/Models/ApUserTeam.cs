@@ -10,6 +10,8 @@ namespace FootballMatchManager.DataBase.Models
         public int TeamId { get; set; }
         [Column("userid")]
         public int UserId { get; set; }
+        [Column("usertype")]
+        public string UserType { get; set; }
 
         public Team Team { get; set; }
         public ApUser ApUser { get; set; }

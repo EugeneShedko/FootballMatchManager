@@ -6,7 +6,7 @@ namespace FootballMatchManager.DataBase.Models
     public class Team
     {
         [Column("teamid")]
-        public int Teamid { get; set; }
+        public int TeamId { get; set; }
         [Column("teamname")]
         public string TeamName { get; set; }
         [Column("createdate")]

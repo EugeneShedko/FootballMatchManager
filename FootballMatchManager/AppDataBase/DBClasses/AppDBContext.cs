@@ -33,8 +33,8 @@ namespace FootballMatchManager.DataBase.DBClasses
                         .HasData(new ApUser() { ApUserId = 1, UserFirstName = "default", UserRole = "system"},
                                  new ApUser() { ApUserId = 2, UserEmail = "ad", UserPassword = "nEKhNG4zOncJBLKis3+n0w==", UserRole = "system" });
             modelBuilder.Entity<Notification>().HasKey(n => n.NotificationId);
-            modelBuilder.Entity<Team>().HasKey(t => t.Teamid);
-            modelBuilder.Entity<ApUserTeam>().HasKey(aput => new { aput.TeamId, aput.UserId });
+            modelBuilder.Entity<Team>().HasKey(t => t.TeamId);
+            modelBuilder.Entity<ApUserTeam>().HasKey(aput => new { aput.TeamId, aput.UserId, aput.UserType});
             modelBuilder.Entity<Tournament>().HasData(new Tournament() { TournamentId = 1, TournamentName = "default",  });
             modelBuilder.Entity<ApUserGame>().HasKey(apug => new {apug.UserId, apug.GameId, apug.UserType});
             modelBuilder.Entity<Message>().HasKey(m => m.MessageId);
