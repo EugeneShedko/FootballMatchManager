@@ -62,6 +62,7 @@ export default function Profile(props) {
                         });
                 }
             });
+
             const hubConnection = new HubConnectionBuilder().withUrl("https://localhost:7277/commentchat").build();
             
             hubConnection.on("Send", (commentUserName, commentDate, commentText, userSender, commentId) => {
@@ -93,6 +94,7 @@ export default function Profile(props) {
 
         axios.post('https://localhost:7277/api/profile/addcomment', data, { withCredentials: true })
             .then((response) => {
+                /*
                 connection.invoke("Send", user.getUserName, 
                                           response.data.commentDateTime, 
                                           response.data.commentText, 
@@ -100,6 +102,7 @@ export default function Profile(props) {
                                           String(response.data.commentSender),
                                           String(response.data.commentId)                                          
                                           );
+                */                          
             })
             .catch(userError => {
                 if (userError.response) {

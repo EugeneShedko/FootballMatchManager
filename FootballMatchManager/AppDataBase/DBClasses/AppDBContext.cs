@@ -52,8 +52,8 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<Tournament>().HasOne(t => t.TournamentUserCreator).WithMany(apu => apu.UserTournaments).HasForeignKey(t => t.UserCreator).OnDelete(DeleteBehavior.NoAction); 
             modelBuilder.Entity<ApUserGame>().HasOne(apug => apug.ApUser).WithMany(apu => apu.ApUserGame).HasForeignKey(apug => apug.UserId).OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<ApUserGame>().HasOne(apug => apug.Game).WithMany(g => g.ApUsersGames).HasForeignKey(apug => apug.GameId).OnDelete(DeleteBehavior.Cascade); 
-            modelBuilder.Entity<Message>().HasOne(m => m.ApUserSender).WithMany(apu => apu.UserMessages).HasForeignKey(m => m.MessageSender).OnDelete(DeleteBehavior.NoAction); 
-            modelBuilder.Entity<Message>().HasOne(m => m.MessageGame).WithMany(g => g.GameMessages).HasForeignKey(m => m.GameId).OnDelete(DeleteBehavior.NoAction); 
+            modelBuilder.Entity<Message>().HasOne(m => m.ApUserSender).WithMany(apu => apu.UserMessages).HasForeignKey(m => m.MessageSender).OnDelete(DeleteBehavior.Cascade); 
+            modelBuilder.Entity<Message>().HasOne(m => m.MessageGame).WithMany(g => g.GameMessages).HasForeignKey(m => m.GameId).OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<TournamentTable>().HasOne(tt => tt.TournamentTeam).WithMany(t => t.TeamTournamentTable).HasForeignKey(tt => tt.TeamId).OnDelete(DeleteBehavior.NoAction); 
             modelBuilder.Entity<TournamentTable>().HasOne(tt => tt.Tournament).WithMany(t => t.TournamentTable).HasForeignKey(t => t.TournamentId).OnDelete(DeleteBehavior.NoAction); 
             modelBuilder.Entity<Game>().HasOne(g => g.Tournament).WithMany(t => t.TournamentGames).HasForeignKey(g => g.TournamentId).OnDelete(DeleteBehavior.NoAction);

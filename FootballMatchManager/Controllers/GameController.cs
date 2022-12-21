@@ -91,6 +91,23 @@ namespace FootballMatchManager.Controllers
 
         }
 
+        [HttpGet]
+        [Route("allmessages/{gameId}")]
+        public ActionResult GetAllComments(int gameId)
+        {
+
+            List<Message> messages = _unitOfWork.MessageRepository.GetItems().Where(m => m.GameId == gameId).ToList();
+
+            if (messages == null)
+            {
+                return Ok();
+            }
+            else
+            {
+                return Ok(JsonConverter.ConvertMessage(messages));
+            }
+        }
+
 
         [Route("addtomatch")]
         [HttpPost]
@@ -252,6 +269,26 @@ namespace FootballMatchManager.Controllers
 
             return Ok(new { message = "Данные успешно сохранены", askdata = game });
         }
+
+        [HttpPost]
+        [Route("addmessage")]
+        public ActionResult PostAddMessage()
+        {
+            Message message = new Message()
+            {
+                MessageText = Request.Form["MessageText"],
+                MessageDateTime = DateTime.Now,
+                GameId = int.Parse(Request.Form["GameRecipient"]),
+                MessageSender = int.Parse(Request.Form["MessageSender"])
+            };
+
+            _unitOfWork.MessageRepository.AddElement(message);
+
+            _unitOfWork.Save();
+
+            return Ok(message);
+        }
+
 
         [HttpDelete]
         [Route("leavefromgame/{gameId}/{userId}")]

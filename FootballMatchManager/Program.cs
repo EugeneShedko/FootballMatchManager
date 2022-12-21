@@ -52,6 +52,7 @@ app.UseRouting();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<CommentHub>("/commentchat");
+    endpoints.MapHub<MessageHub>("/gamechat");
 });
 
 app.UseAuthorization();

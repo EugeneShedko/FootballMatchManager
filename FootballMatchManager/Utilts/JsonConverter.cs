@@ -65,5 +65,25 @@ namespace FootballMatchManager.Utilts
 
             return jsonArray.ToJsonString();
         }
+
+        public static string ConvertMessage(List<Message> messages)
+        {
+            JsonArray jsonArray = new JsonArray();
+            foreach (Message message in messages)
+            {
+
+                JsonObject jsonObject = new JsonObject();
+
+                /*Возможно я убрал, что бы подтягивался пользователь -> вернуть*/
+                jsonObject.Add("messageUserName", message.ApUserSender.UserFirstName + message.ApUserSender.UserLastName);
+                jsonObject.Add("messageDate", message.MessageDateTime);
+                jsonObject.Add("messageText", message.MessageText);
+
+                jsonArray.Add(jsonObject);
+            }
+
+            return jsonArray.ToJsonString();
+        }
+
     }
 }

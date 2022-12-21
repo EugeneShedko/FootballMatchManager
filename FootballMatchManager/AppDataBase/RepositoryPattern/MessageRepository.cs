@@ -33,7 +33,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public IEnumerable<Message> GetItems()
         {
-            return _dbcontext.Messages.AsNoTracking().ToList();
+            return _dbcontext.Messages.Include(m => m.ApUserSender).AsNoTracking().ToList();
         }
 
         public void UpdateElement(Message item)
