@@ -27,6 +27,14 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             }
         }
 
+        public void DeleteElement(TournamentTable deleteTournamentTable)
+        {
+            if (deleteTournamentTable != null)
+            {
+                _dbcontext.TournamentsTables.Remove(deleteTournamentTable);
+            }
+        }
+
         public TournamentTable GetItem(int firstid, int secondid = 0)
         {
             return _dbcontext.TournamentsTables.Find(firstid, secondid);
@@ -34,7 +42,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public IEnumerable<TournamentTable> GetItems()
         {
-            return _dbcontext.TournamentsTables.AsNoTracking().ToList();
+            return _dbcontext.TournamentsTables.Include(tt => tt.TournamentTeam).AsNoTracking().ToList();
         }
 
         public void UpdateElement(TournamentTable item)

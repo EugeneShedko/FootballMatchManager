@@ -1,86 +1,49 @@
 import "./../../css/tournamentspage.css"
 import TournamentBlock from "../tournamentblock";
 import CreateTournament from "./createtournament";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import TourGenerator from "../TourGenerator";
+import CreateTour from "../CreateTour";
 
 export default function Tournaments(props) {
 
     const[createTournamentVisible, setCreateTournamentVisible] = useState(false);
+    const [tours, setTours] = useState([]);
+    const [searchString, setSearchString] = useState("");
 
-    const someTournamentInfo = [
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-        },
+    useEffect(
+        () => {
+            axios.get('https://localhost:7277/api/profile/alltour', { withCredentials: true })
+                .then((response) => {
+                    setTours(response.data);
+                    console.log(response.data);
+                })
+                .catch(userError => {
+                    if (userError.response) {
+                        toast.error(userError.response.message,
+                            {
+                                position: toast.POSITION.TOP_CENTER,
+                                autoClose: 2000,
+                                pauseOnFocusLoss: false
+                            });
+                    }
+                });
+            ;
+        }, []
+    );
 
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-
-        {
-            matchName: "Четкие перцы!",
-            matchTime: "18.10.2022 15:00",
-            matchFormat: "11x11",
-            matchAdress: "Минская обл,г.Минск,2-й пер.Шевченко 25A",
-            playersCount: "10/22"
-
-        },
-    ]
 
     return (
         <div className="row tptournaments-main-container">
             <div className="col-9 tptournaments-container">
                 <div className="row tptournaments-absolute-container">
-                    {someTournamentInfo.map((tournament) => (
-                        <div className="tpinfo-block">
-                            <TournamentBlock info         = {tournament} 
-                                             setContState = {props.setContState}/>
-                        </div>
-                    ))}
+                <TourGenerator tours={tours}
+                               setTours={setTours}
+                               searchString={searchString}
+                               setContState={props.setContState}
+                                />
                 </div>
             </div>
             <div className="col-3 tplefcol">
@@ -93,8 +56,11 @@ export default function Tournaments(props) {
                     </div>
                     <div className="row tplcrow">
                         <input id="search-tournament-element"
-                            type="text"
-                            placeholder="Введите название турнира" />
+                               type="text"
+                               placeholder="Введите название турнира" 
+                               value={searchString}
+                               onChange={(e) => setSearchString(e.target.value)} 
+                               />
                     </div>
                     {/*Возможно форматы выводит, сделав запрос, пока что напишу текстом*/}
                     <div className="row filter-tournament-container">
@@ -122,7 +88,9 @@ export default function Tournaments(props) {
                     </div>
                 </div>
             </div>
-            <CreateTournament show={createTournamentVisible} onHide={setCreateTournamentVisible} />
+            <CreateTour show={createTournamentVisible} 
+                              onHide={setCreateTournamentVisible}
+                              setAllTours={setTours} />
         </div>
     );
 }  

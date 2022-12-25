@@ -1,7 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 import "./../../css/player.css"
-import Profile from "./../../pagescomponents/userprofile/profile";
+import Profile from "../../pagescomponents/userprofile/Profile";
 import AdminPlayerProfile from "./adminPlayerProfile";
 
 export default function AdminPlayerBlock(props) {

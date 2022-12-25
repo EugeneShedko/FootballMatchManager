@@ -10,21 +10,21 @@ namespace FootballMatchManager.DataBase.Models
         [Column("teamid")]
         public int TeamId { get; set; }
         [Column("gamesnumber")]
-        public int GamesNumber { get; set; }
+        public int? GamesNumber { get; set; } = 0;
         [Column("gameswin")]
-        public int GamesWin { get; set; }
+        public int? GamesWin { get; set; } = 0;
         [Column("gamesdraw")]
-        public int GamesDraw { get; set; }
+        public int? GamesDraw { get; set; } = 0;
         [Column("gamesloss")]
-        public int GamesLoss { get; set; }
+        public int? GamesLoss { get; set; } = 0;
         [Column("goalsscored")]
-        public int GoalsScored { get; set; }
+        public int? GoalsScored { get; set; } = 0;
         [Column("goalsconseded")]
-        public int GoalsConseded { get; set; }
+        public int? GoalsConseded { get; set; } = 0;
         [Column("goalsdifference")]
-        public int GoalsDifference { get; set; }
+        public int? GoalsDifference { get; set; } = 0;
         [Column("points")]
-        public int Points { get; set; }
+        public int? Points { get; set; } = 0;
 
         public Team TournamentTeam { get; set; }
         public Tournament Tournament { get; set; }

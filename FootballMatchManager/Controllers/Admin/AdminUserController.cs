@@ -174,8 +174,14 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest(new { message = "Пользователя не существует" });
             }
 
-            _unitOfWork.ApUserRepository.DeleteElement(id);
+            List<Comment> comments = _unitOfWork.CommentRepository.GetItems().Where(c => c.CommentSender == id || c.CommentRecipient == id).ToList();
 
+            for(int i = 0; i < comments.Count(); i++)
+            {
+                _unitOfWork.CommentRepository.DeleteElement(comments[i].CommentId);
+            }
+
+            _unitOfWork.ApUserRepository.DeleteElement(id);
             _unitOfWork.Save();
 
             IEnumerable<ApUser> apusers = _unitOfWork.ApUserRepository.GetItems();

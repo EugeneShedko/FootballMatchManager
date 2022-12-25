@@ -2,16 +2,16 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "./../../css/profile.css"
-import UserCommentBlock from "./usercommentblock";
+import UserCommentBlock from "./UserCommentBlock";
 import "react-datepicker/dist/react-datepicker.css";
 import EditProfile from "./EditProfile";
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import {Context} from "./../../index";
+import { Context } from "../../index";
 
 export default function Profile(props) {
 
     /*Проблема рендера несколько раз*/
-    const {user} = useContext(Context);
+    const { user } = useContext(Context);
     const [userId, setUserId] = useState(props.apUserId);
     const [profileInfo, setProfileInfo] = useState({});
     const [changes, setChanges] = useState({
@@ -22,12 +22,12 @@ export default function Profile(props) {
         userEmail: ""
     });
     const [editProfileVisible, setEditProfileVisible] = useState(false);
-    const[currMes, setCurrMes] = useState("");
-    const[connection, setConnection] = useState({});
-    const[userComment, setUserComment] = useState([]);
+    const [currMes, setCurrMes] = useState("");
+    const [connection, setConnection] = useState({});
+    const [userComment, setUserComment] = useState([]);
 
     useEffect(() => {
-
+        console.log("Начало метода");
         const data = new FormData();
         data.append("userId", userId);
 
@@ -37,20 +37,20 @@ export default function Profile(props) {
                 console.log("profile" + response.data.apUserId);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/allcomments/' + userId,{ withCredentials: true })
-                .then((response) => {
-                    setUserComment(response.data);
-                })
-                .catch(userError => {
-                    if (userError.response) {
-                        toast.error("Не удалось получить комментарии профиля",
-                            {
-                                position: toast.POSITION.TOP_CENTER,
-                                autoClose: 2000,
-                                pauseOnFocusLoss: false
-                            });
-                    }
-                });                        
+                axios.get('https://localhost:7277/api/profile/allcomments/' + userId, { withCredentials: true })
+                    .then((response) => {
+                        setUserComment(response.data);
+                    })
+                    .catch(userError => {
+                        if (userError.response) {
+                            toast.error("Не удалось получить комментарии профиля",
+                                {
+                                    position: toast.POSITION.TOP_CENTER,
+                                    autoClose: 2000,
+                                    pauseOnFocusLoss: false
+                                });
+                        }
+                    });
             })
             .catch(userError => {
                 if (userError.response) {
@@ -63,30 +63,52 @@ export default function Profile(props) {
                 }
             });
 
-            const hubConnection = new HubConnectionBuilder().withUrl("https://localhost:7277/commentchat").build();
-            
-            hubConnection.on("Send", (commentUserName, commentDate, commentText, userSender, commentId) => {
-                setUserComment(userComment => [...userComment, {commentUserName, commentDate, commentText, userSender, commentId}]);
-            });                
-            hubConnection.start();
-            setConnection(hubConnection);
+        connectComment();
+
     }, []
     );
 
-    function edit() {
-        setChanges({
-            userFirstName: profileInfo.userFirstName,
-            userLastName: profileInfo.userLastName,
-            userDateBirth: new Date(profileInfo.userDateOfBirth),
-            userPosition: profileInfo.userPosition,
-            userEmail: profileInfo.userEmail
+    const connectComment = async () => {
+
+        const hubConnection = new HubConnectionBuilder().withUrl("https://localhost:7277/commentchat").build();
+
+        hubConnection.on("Send", (commentUserName, commentDate, commentText, userSender, commentId) => {
+            setUserComment(userComment => [...userComment, { commentUserName, commentDate, commentText, userSender, commentId }]);
         });
-        setEditProfileVisible(true)
+
+        hubConnection.on("UpdateComments", () => {
+
+            axios.get('https://localhost:7277/api/profile/allcomments/' + userId, { withCredentials: true })
+                .then((response) => {
+                    console.log("Респонс отр " + user.getUserId);
+                    setUserComment(response.data);
+                })
+                .catch(userError => {
+                    if (userError.response) {
+                        toast.error("Не удалось обновить комментарии профиля",
+                            {
+                                position: toast.POSITION.TOP_CENTER,
+                                autoClose: 2000,
+                                pauseOnFocusLoss: false
+
+                            });
+                    }
+                });
+        })
+
+        await hubConnection.start();
+        setConnection(hubConnection);
+
+        await hubConnection.invoke("Connect", String(userId));
     }
 
-    function sendMessage()
-    {
-        /*Сначала нужно отправить запрос и получить обратно*/
+    async function updateComments() {
+
+        console.log("Функция обновления вызваласб")
+        await connection.invoke("UpdateComments", String(userId));
+    }
+
+    function sendMessage() {
         const data = new FormData();
         data.append("CommentText", currMes);
         data.append("CommentRecipient", userId);
@@ -94,15 +116,14 @@ export default function Profile(props) {
 
         axios.post('https://localhost:7277/api/profile/addcomment', data, { withCredentials: true })
             .then((response) => {
-                /*
-                connection.invoke("Send", user.getUserName, 
-                                          response.data.commentDateTime, 
-                                          response.data.commentText, 
-                                          String(response.data.commentRecipient), 
-                                          String(response.data.commentSender),
-                                          String(response.data.commentId)                                          
-                                          );
-                */                          
+                connection.invoke("Send", user.getUserName,
+                    response.data.commentDateTime,
+                    response.data.commentText,
+                    String(response.data.commentRecipient),
+                    String(response.data.commentSender),
+                    String(response.data.commentId)
+                );
+                setConnection(connection);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -116,6 +137,17 @@ export default function Profile(props) {
             });
 
         setCurrMes("");
+    }
+
+    function edit() {
+        setChanges({
+            userFirstName: profileInfo.userFirstName,
+            userLastName: profileInfo.userLastName,
+            userDateBirth: new Date(profileInfo.userDateOfBirth),
+            userPosition: profileInfo.userPosition,
+            userEmail: profileInfo.userEmail
+        });
+        setEditProfileVisible(true)
     }
 
     return (
@@ -200,31 +232,32 @@ export default function Profile(props) {
                 <div className="col p-0">
                     <div className="row comment-view-container">
                         <div className="col p-0 some-col">
-                            {userComment.map((comment) => <UserCommentBlock commentInfo={comment}
-                                                                            userprif={userId}
-                                                                            setUserComment={setUserComment}
-                                                                            />)}
+                            {
+                               userComment.map((comment) => <UserCommentBlock commentInfo={comment}
+                                                                              userprif={userId}
+                                                                              setUserComment={setUserComment}
+                                                                              updateComments={updateComments}/>
+                            )}
                         </div>
                     </div>
                     <div className="row comment-send-container">
                         <div className="col-10 comment-send-area">
-                            <input className="comment-enter-button" 
-                                   type="text" 
-                                   placeholder="Оставьте комментарий..."
-                                   value={currMes} 
-                                   onChange={(e) => setCurrMes(e.target.value)}/>
+                            <input className="comment-enter-button"
+                                type="text"
+                                placeholder="Оставьте комментарий..."
+                                value={currMes}
+                                onChange={(e) => setCurrMes(e.target.value)} />
                         </div>
                         <div className="col-2 p-0">
-                            <input className="comment-send-button" 
-                                   value="Отправить" 
-                                   type="button" 
-                                   onClick={sendMessage}
-                                   />
+                            <input className="comment-send-button"
+                                value="Отправить"
+                                type="button"
+                                onClick={sendMessage}
+                            />
                         </div>
                     </div>
                 </div>
             </div>
-            {/*Еще нужно передать состояние на сам профиль*/}
             <EditProfile setProfileInfo={setProfileInfo}
                 info={changes}
                 setInfo={setChanges}

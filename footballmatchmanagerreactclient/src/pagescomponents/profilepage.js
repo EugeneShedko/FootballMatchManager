@@ -3,7 +3,7 @@ import { Tab, Nav, Row, Col } from 'react-bootstrap';
 import Tournaments from "./userprofile/tournaments";
 import Players from "./userprofile/players";
 import { useNavigate } from "react-router-dom";
-import Profile from "./userprofile/profile";
+import Profile from "./userprofile/Profile";
 import UserMatchesNavigator from "./userprofile/usermatches/usermatchesnavigator";
 import Matches from "./userprofile/matches";
 import UserTournamentsNavigator from "./userprofile/usertournaments/usertournamentsnavigator";
@@ -92,11 +92,6 @@ export default function UserProfile() {
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="matches" onClick={setMatchesKey}>Матчи</Nav.Link>
                             </Nav.Item>
-                            {/*
-                            <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="tournaments" onClick={setTournamentKey}>Турниры</Nav.Link>
-                            </Nav.Item>
-                            */}
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="players" onClick={setPlayerKey}>Игроки</Nav.Link>
                             </Nav.Item>
@@ -110,14 +105,6 @@ export default function UserProfile() {
                                 <Nav.Link className="upnav-item-link" eventKey="usermatches">Мои матчи</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="userteam">Моя команда</Nav.Link>
-                            </Nav.Item>
-                            {/*
-                            <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="usertournaments">Мои турниры</Nav.Link>
-                            </Nav.Item>
-                            */}
-                            <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="exit" onClick={() => { user.setAuth(false); navigate(MAIN_ROUTE); }}>Выход</Nav.Link>
                             </Nav.Item>
                         </Nav>
@@ -127,11 +114,6 @@ export default function UserProfile() {
                             <Tab.Pane className="h-100" eventKey="matches">
                                 {mathesState.eventKey}
                             </Tab.Pane>
-                            {/*
-                            <Tab.Pane className="h-100" eventKey="tournaments">
-                                {tournamenstState.eventKey}
-                            </Tab.Pane>                            
-                            */}
                             <Tab.Pane className="h-100" eventKey="players">
                                 {playersState.eventKey}
                             </Tab.Pane>
@@ -144,18 +126,7 @@ export default function UserProfile() {
                             <Tab.Pane className="h-100" eventKey="usermatches">
                                 <UserMatchesNavigator />
                             </Tab.Pane>
-                            <Tab.Pane className="h-100" eventKey="userteam">
-                                {/*Скорее всего будет проблема с обновлением страницы, если пользователь покинет или 
-                                присоединиться к матчу
-                                <TeamInfoPage />
-                                */}
-                            </Tab.Pane>                            
-                            {/*
-                            <Tab.Pane className="h-100" eventKey="usertournaments">
-                                <UserTournamentsNavigator />
-                            </Tab.Pane>
-                            */}
-                        </Tab.Content>
+                            </Tab.Content>
                     </Col>
                 </Row>
             </Tab.Container>

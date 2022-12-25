@@ -32,7 +32,6 @@ export default function Loginform(props) {
         data.append("userEmail", logInState.userEmail);
         data.append("userPassword", logInState.userPassword);
 
-        /*Если авторизован, сделать, что бы кнопка входа с панели пропадала*/
         axios.post('https://localhost:7277/api/auth/authorization', data, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message, {

@@ -1,5 +1,5 @@
 import "./../css/player.css"
-import Profile from "./userprofile/profile";
+import Profile from "./userprofile/Profile";
 
 export default function PlayerBlock(props) {
 

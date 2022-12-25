@@ -6,18 +6,20 @@ import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "./../css/matchinfopage.css"
 import PlayerBlock from "./playerblock";
-import { Context } from "../index"
+import { Context } from "./../index"
 import Matches from "./userprofile/matches";
 import EditGame from "./userprofile/EditGame";
 import MessageBlock from "./userprofile/MessageBlock";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import MatchBlock from "./matchblock";
+import TeamBlock from "./TeamBlock";
 
 
-export default function MatchInfoPage(props) {
+export default function TourInfoPage(props) {
 
     const { user } = useContext(Context);
-    const [game, setGame] = useState({});
-    const [gameUsers, setGameUsers] = useState([]);
+    const [tour, setTour] = useState({});
+    const [tourTeams, setTourTeams] = useState([]);
     const [isPart, setIsPart] = useState(false);
     const [isCreat, setIsCreat] = useState(false);
     const [editProfileVisible, setEditProfileVisible] = useState(false);
@@ -28,42 +30,23 @@ export default function MatchInfoPage(props) {
         gameFormat: "",
         gameAdress: "",
     });
-    const [curMessage, setCurMessage] = useState("");
-    const [gameMessage, setGameMessage] = useState([]);
-    const [connection, setConnection] = useState({});
 
     useEffect(() => {
 
-        axios.get('https://localhost:7277/api/profile/game/' + props.gameId + "/" + user.getUserId, { withCredentials: true })
+        axios.get('https://localhost:7277/api/profile/tour/' + props.tourId + "/" + user.getUserId, { withCredentials: true })
             .then((response) => {
-                setGame(response.data.currgame);
+                setTour(response.data.currtour);
                 setIsPart(response.data.isPart);
                 setIsCreat(response.data.isCreat);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/matchUsers/' + props.gameId, { withCredentials: true })
+                axios.get('https://localhost:7277/api/profile/tourteams/' + props.tourId, { withCredentials: true })
                     .then((response) => {
-                        setGameUsers(response.data);
+                        setTourTeams(response.data);
                     })
                     .catch(userError => {
                         if (userError.response) {
                             toast.error(userError.response.message,
-                                {
-                                    position: toast.POSITION.TOP_CENTER,
-                                    autoClose: 2000,
-                                    pauseOnFocusLoss: false
-                                });
-                        }
-                    });
-            })
-            .then(() => {
-                axios.get('https://localhost:7277/api/profile/allmessages/' + props.gameId, { withCredentials: true })
-                    .then((response) => {
-                        setGameMessage(response.data);
-                    })
-                    .catch(userError => {
-                        if (userError.response) {
-                            toast.error("Не удалось получить сообщения матча",
                                 {
                                     position: toast.POSITION.TOP_CENTER,
                                     autoClose: 2000,
@@ -83,33 +66,18 @@ export default function MatchInfoPage(props) {
                 }
             });
 
-            connectMessage();  
+    }, []);
 
-        }, []);
-
-    const connectMessage = async () => {
-        const hubConnection = new HubConnectionBuilder().withUrl("https://localhost:7277/gamechat").build();
-
-        hubConnection.on("Send", (messageUserName, messageDate, messageText) => {
-            setGameMessage(gameMessage => [...gameMessage, { messageUserName, messageDate, messageText }]);
-        }); 
-        
-        await hubConnection.start();
-        setConnection(hubConnection);
-
-        await hubConnection.invoke("Connect", String(props.gameId));
-    }    
-
-    function addToMatch() {
+    function addToTour() {
 
         const data = new FormData();
-        data.append("gameId", props.gameId);
+        data.append("tourId", props.tourId);
         data.append("userId", user.getUserId);
 
-        axios.post('https://localhost:7277/api/profile/addtomatch', data, { withCredentials: true })
+        axios.post('https://localhost:7277/api/profile/addtotour', data, { withCredentials: true })
             .then((response) => {
-                setGameUsers(response.data.users);
-                setGame(response.data.currgame);
+                setTourTeams(response.data.tteams);
+                setTour(response.data.currtour);
                 setIsPart(true);
                 toast.success(response.data.message, {
                     position: toast.POSITION.TOP_CENTER,
@@ -119,7 +87,7 @@ export default function MatchInfoPage(props) {
             })
             .catch(userError => {
                 if (userError.response) {
-                    toast.error(userError.response.data.message,
+                    toast.error("Ошибка регистрации на матч",
                         {
                             position: toast.POSITION.TOP_CENTER,
                             autoClose: 2000,
@@ -129,9 +97,9 @@ export default function MatchInfoPage(props) {
             });
     }
 
-    function leaveMatch() {
+    function leaveTour() {
 
-        axios.delete('https://localhost:7277/api/profile/leavefromgame/' + props.gameId + '/' + user.getUserId, { withCredentials: true })
+        axios.delete('https://localhost:7277/api/profile/leavefromtour/' + props.tourId + '/' + user.getUserId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {
@@ -139,8 +107,8 @@ export default function MatchInfoPage(props) {
                         autoClose: 2000,
                         pauseOnFocusLoss: false
                     });
-                setGame(response.data.currgame);
-                setGameUsers(response.data.users);
+                setTour(response.data.currtour);
+                setTourTeams(response.data.tteams);
                 setIsPart(false);
             })
             .catch((error) => {
@@ -156,7 +124,9 @@ export default function MatchInfoPage(props) {
 
     }
 
-    function deleteMatch() {
+    {/*
+
+    function deleteTour() {
         axios.delete('https://localhost:7277/api/profile/deletegame/' + game.gameId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
@@ -181,7 +151,7 @@ export default function MatchInfoPage(props) {
 
     }
 
-    function editGame() {
+    function editTour() {
         setChanges({
             gameId: game.gameId,
             gameName: game.gameName,
@@ -191,133 +161,84 @@ export default function MatchInfoPage(props) {
         });
         setEditProfileVisible(true);
     }
-
-    function sendMessage() {
-        const data = new FormData();
-        data.append("MessageText", curMessage);
-        data.append("GameRecipient", props.gameId);
-        data.append("MessageSender", user.getUserId);
-
-        axios.post('https://localhost:7277/api/profile/addmessage', data, { withCredentials: true })
-            .then((response) => {
-                console.log("запрос ответ");
-                connection.invoke("Send", user.getUserName,
-                    response.data.messageDateTime,
-                    response.data.messageText,
-                    String(response.data.gameId),
-                );
-            })
-            .catch(userError => {
-                if (userError.response) {
-                    toast.error("Ошибка отправки сообщения",
-                        {
-                            position: toast.POSITION.TOP_CENTER,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
-                }
-            });
-
-        setCurMessage("");
-    }
-
+    */}
     return (
         <div className="row justify-content-center match-info-main-container">
             <div className="col-10 match-info-container">
                 <div className="row m-0 h-100">
                     <div className="col-4 match-info-text-container">
                         <div className="row match-info-title">
-                            {game.gameName}
+                            {tour.tournamentName}
                         </div>
                         <div className="row match-info-header">
-                            Время матча
+                            Дата начала турнира
                         </div>
                         <div className="row match-info-text">
-                            {(new Date(game.gameDateTime)).toLocaleString().substring(0, (new Date(game.gameDateTime)).toLocaleString().length - 3)}
+                            {(new Date(tour.tournamentStartDate)).toLocaleString().substring(0, (new Date(tour.tournamentStartDate)).toLocaleString().length - 3)}
                         </div>
                         <div className="row match-info-header">
-                            Формат матча
+                            Дата окончания турнира
+                        </div>
+                        <div className="row match-info-header">
+                            {(new Date(tour.tournamentEndDate)).toLocaleString().substring(0, (new Date(tour.tournamentEndDate)).toLocaleString().length - 3)}
+                        </div>
+                        <div className="row match-info-header">
+                            Количество участников турнира
                         </div>
                         <div className="row match-info-text">
-                            {game.gameFormat}
+                            {tour.teamsNumber}
                         </div>
                         <div className="row match-info-header">
-                            Адрес
-                        </div>
-                        <div className="row match-info-text">
-                            {game.gameAdress}
-                        </div>
-                        <div className="row match-info-header">
-                            Текущее количество игроков
+                            Призовой фон турнира
                         </div>
                         {/*можно вывести еше максимальное*/}
                         <div className="row match-info-text">
-                            {game.currentPlayers}
+                            {tour.tournamentPrizeFund}
                         </div>
                         <div className="row match-join-button-container">
-                            {isPart ? null : <input className="match-join-button" type="button" value="Присоединиться" onClick={addToMatch} />}
+                            {isPart ? null : <input className="match-join-button" 
+                                                    type="button" 
+                                                    value="Присоединиться" 
+                                                    onClick={addToTour} />
+                                                    }
                             {isPart ? <input className="match-join-button"
                                 type="button"
                                 value="Покинуть"
-                                onClick={leaveMatch} /> : null}
+                                onClick={leaveTour} /> : null}
                             {isCreat ? <input className="match-join-button"
                                 type="button"
                                 value="Редактировать"
-                                onClick={editGame} /> : null}
+                                /> : null}
                             {isCreat ? <input className="match-join-button"
                                 type="button"
                                 value="Удалить"
-                                onClick={deleteMatch} /> : null}
+                                /> : null}
                         </div>
                     </div>
                     {
                         <div className="col-4 match-info-user-container">
                             <div className="match-info-user-absolute-container">
                                 {
-                                    gameUsers.map((player) => (
+                                    tourTeams.map((team) => (
                                         <div className="row m-0">
-                                            <PlayerBlock info={player} />
+                                            <TeamBlock info={team} />
                                         </div>
                                     ))
                                 }
                             </div>
                         </div>
                     }
-                    <div className="col-4 h-100 p-0">
-                        <div className="match-info-message-container">
-                            <div className="match-info-message-absolute-container">
-                                <div className="row m-0">
-                                    {
-                                        gameMessage.map((message) => <MessageBlock messageInfo={message} />)
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row message-send-container">
-                            <div className="col-9 message-send-area">
-                                <input className="message-enter-button"
-                                    type="text"
-                                    placeholder="Сообщение..."
-                                    value={curMessage}
-                                    onChange={(e) => setCurMessage(e.target.value)} />
-                            </div>
-                            <div className="col-3 p-0">
-                                <input className="message-send-button"
-                                    value="Отправить"
-                                    type="button"
-                                    onClick={sendMessage} />
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
-            <EditGame setGame={setGame}
+            {/*
+                        <EditGame setGame={setGame}
                 info={changes}
                 setInfo={setChanges}
                 show={editProfileVisible}
                 onHide={setEditProfileVisible}
             />
 
+                */}
         </div>
     );
 }    

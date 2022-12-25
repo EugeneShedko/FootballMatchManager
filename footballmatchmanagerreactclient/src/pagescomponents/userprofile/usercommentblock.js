@@ -2,11 +2,12 @@ import axios from "axios";
 import { useContext } from "react";
 import { toast } from "react-toastify";
 import "./../../css/usercommentblock.css";
-import {Context} from "./../../index";
+import {Context} from "../../index";
 
 export default function UserCommentBlock(props) {
 
     const {user} = useContext(Context);
+
 
     function deleteComment()
     {
@@ -45,6 +46,8 @@ export default function UserCommentBlock(props) {
                     });
             }
         });
+        //Странно работают комментарии
+        props.updateComments();
     }
 
     return (

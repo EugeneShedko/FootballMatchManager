@@ -2,38 +2,37 @@
   и на странице в профиле пользователя, так как контейнеры имеют разные размеры*/
 import { useState } from "react";
 import "./../css/match.css";
-import MatchInfoPage from "./MatchInfoPage";
+import TourInfoPage from "./TourInfoPage";
 
-export default function MatchBlock(props) {
+export default function TourBlock(props) {
 
-    function setMatchInfoPage()
-    {
-        props.setContState(<MatchInfoPage gameId={props.info.gameId}
-                                          setGames={props.setGames}
-                                          setContState={props.setContState} />);
+    function setTourInfoPage() {
+        props.setContState(<TourInfoPage tourId={props.info.tournamentId}
+            setTours={props.setTours}
+            setContState={props.setContState} />);
     }
 
     return (
-        <div className="match-container" onClick={setMatchInfoPage}>
+        <div className="match-container" onClick={setTourInfoPage}>
             <div className="match-back-block" />
             <div className="row match-block-content">
                 <div className="col-5 match-block-column">
                     <div className="row m-0">
-                        {props.info.gameName}
+                        {props.info.tournamentName}
                     </div>
                 </div>
                 <div className="col-7 match-block-column">
                     <div className="row m-0">
-                        {(new Date(props.info.gameDateTime)).toLocaleString().substring(0, (new Date(props.info.gameDateTime)).toLocaleString().length - 3)}
+                        {(new Date(props.info.tournamentStartDate)).toLocaleString().substring(0, (new Date(props.info.tournamentStartDate)).toLocaleString().length - 3)}
                     </div>
                     <div className="row m-0">
-                        {props.info.gameFormat}
+                        {(new Date(props.info.tournamentEndDate)).toLocaleString().substring(0, (new Date(props.info.tournamentEndDate)).toLocaleString().length - 3)}
                     </div>
                     <div className="row m-0">
-                        {props.info.gameAdress}
+                        {props.info.tournamentPrizeFund}
                     </div>
                     <div className="row m-0">
-                        {props.info.currentPlayers}/{props.info.gameMaxPlayers}
+                        {props.info.teamsNumber}
                     </div>
                 </div>
             </div>
