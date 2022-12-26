@@ -5,7 +5,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "./../css/matchinfopage.css"
-import PlayerBlock from "./playerblock";
+import PlayerBlock from "./PlayerBlock";
 import { Context } from "./../index"
 import Matches from "./userprofile/matches";
 import EditGame from "./userprofile/EditGame";

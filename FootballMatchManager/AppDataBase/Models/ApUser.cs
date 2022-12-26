@@ -31,6 +31,8 @@ namespace FootballMatchManager.DataBase.Models
         public string? AssistsNumber { get; set; } = "0";
         [Column("userstatus")]
         public string? UserStatus { get; set; }
+        [Column("userimage")]
+        public string? UserImage { get; set; } = "default-profile-icon.jpg";
 
         public List<Request> UserRequestsRecipients { get; set; }
         public List<Request> UserRequestsSenders { get; set; }

@@ -53,12 +53,12 @@ namespace FootballMatchManager.Utilts
 
                 JsonObject jsonObject = new JsonObject();
 
-                /*Возможно я убрал, что бы подтягивался пользователь -> вернуть*/
                 jsonObject.Add("commentUserName", comment.ApUserSender.UserFirstName + comment.ApUserSender.UserLastName);
                 jsonObject.Add("commentDate", comment.CommentDateTime);
                 jsonObject.Add("commentText", comment.CommentText);
                 jsonObject.Add("userSender", comment.CommentSender);
                 jsonObject.Add("commentId", comment.CommentId);
+                jsonObject.Add("userImage", comment.ApUserSender.UserImage);
 
                 jsonArray.Add(jsonObject);
             }
@@ -74,10 +74,10 @@ namespace FootballMatchManager.Utilts
 
                 JsonObject jsonObject = new JsonObject();
 
-                /*Возможно я убрал, что бы подтягивался пользователь -> вернуть*/
                 jsonObject.Add("messageUserName", message.ApUserSender.UserFirstName + message.ApUserSender.UserLastName);
                 jsonObject.Add("messageDate", message.MessageDateTime);
                 jsonObject.Add("messageText", message.MessageText);
+                jsonObject.Add("userImage", message.ApUserSender.UserImage);
 
                 jsonArray.Add(jsonObject);
             }

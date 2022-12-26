@@ -53,7 +53,9 @@ export default function UserCommentBlock(props) {
     return (
         <div className="row user-comment-container">
             <div className="col-1 d-flex justify-content-center p-0">
-                <img className="user-comment-img" src="/image/default-profile-icon.jpg" alt="" />
+                <img className="user-comment-img" 
+                     src={"https://localhost:7277/" + props.commentInfo.userImage}  
+                     alt="" />
             </div>
             <div className="col-11 p-0">
                 <div className="row user-comment-name">

@@ -19,7 +19,7 @@ export default function Profile(props) {
         userLastName: "",
         userDateBirth: new Date(),
         userPosition: "",
-        userEmail: ""
+        userEmail: "",
     });
     const [editProfileVisible, setEditProfileVisible] = useState(false);
     const [currMes, setCurrMes] = useState("");
@@ -54,7 +54,7 @@ export default function Profile(props) {
             })
             .catch(userError => {
                 if (userError.response) {
-                    toast.error("Ошибка получения профиля",
+                    toast.error(userError.response.data.message,
                         {
                             position: toast.POSITION.TOP_CENTER,
                             autoClose: 2000,
@@ -62,7 +62,6 @@ export default function Profile(props) {
                         });
                 }
             });
-
         connectComment();
 
     }, []
@@ -72,8 +71,8 @@ export default function Profile(props) {
 
         const hubConnection = new HubConnectionBuilder().withUrl("https://localhost:7277/commentchat").build();
 
-        hubConnection.on("Send", (commentUserName, commentDate, commentText, userSender, commentId) => {
-            setUserComment(userComment => [...userComment, { commentUserName, commentDate, commentText, userSender, commentId }]);
+        hubConnection.on("Send", (commentUserName, commentDate, commentText, userSender, commentId, userImage) => {
+            setUserComment(userComment => [...userComment, { commentUserName, commentDate, commentText, userSender, commentId, userImage}]);
         });
 
         hubConnection.on("UpdateComments", () => {
@@ -116,12 +115,14 @@ export default function Profile(props) {
 
         axios.post('https://localhost:7277/api/profile/addcomment', data, { withCredentials: true })
             .then((response) => {
-                connection.invoke("Send", user.getUserName,
+                connection.invoke("Send", 
+                    user.getUserName,
                     response.data.commentDateTime,
                     response.data.commentText,
                     String(response.data.commentRecipient),
                     String(response.data.commentSender),
-                    String(response.data.commentId)
+                    String(response.data.commentId),
+                    /*Нужно как-то отправлять путь к картинке текущего пользователя*/
                 );
                 setConnection(connection);
             })
@@ -150,11 +151,47 @@ export default function Profile(props) {
         setEditProfileVisible(true)
     }
 
+    const handleChangeFile = (event) => {
+        var file = event.target.files[0];
+        sendImage(file);
+    }
+
+    function sendImage(file)
+    {
+        var data = new FormData();
+        data.append("image", file);
+        data.append("userId", user.getUserId);       
+
+        axios.post('https://localhost:7277/api/profile/add-prof-image/', data, {withCredentials:true})
+        .then((response) => {
+            setProfileInfo(response.data.curuser);
+            toast.success(response.data.message, {
+                position: toast.POSITION.TOP_CENTER,
+                autoClose: 2000,
+                pauseOnFocusLoss: false
+            }) 
+        })
+        .catch();
+    }
+
     return (
         <div className="row profile-container">
             <div className="row profile-info-container m-0">
-                <div className="col-3 d-flex justify-content-center p-0">
-                    <img className="profile-image" src="/image/default-profile-icon.jpg" alt="" />
+                <div className="col-3 p-0">
+                    <div className="row justify-content-center m-0">
+                        <img className="profile-image" 
+                             src={"https://localhost:7277/" + profileInfo.userImage}  
+                             alt="" />
+                    </div>
+                    {
+                        user.getUserId === userId ?
+                    <div className="row justify-content-center m-0">
+                        <input type="file"
+                               className="form-control select-file-input"
+                               aria-describedby="basic-addon1"
+                               onChange={handleChangeFile}/>
+                    </div>
+                    : null}
                 </div>
                 <div className="col-7 p-0 h-100">
                     <div className="row pruser-name">
@@ -221,10 +258,14 @@ export default function Profile(props) {
                 </div>
                 <div className="col-2 p-0 h-100">
                     <div className="row m-0 admin-button">
-                        <input type="button"
+                        {
+                            user.getUserId === userId ?
+                            <input type="button"
                             value="Изменить"
                             className="just-button"
                             onClick={edit} />
+                            : null
+                        }
                     </div>
                 </div>
             </div>
@@ -233,11 +274,11 @@ export default function Profile(props) {
                     <div className="row comment-view-container">
                         <div className="col p-0 some-col">
                             {
-                               userComment.map((comment) => <UserCommentBlock commentInfo={comment}
-                                                                              userprif={userId}
-                                                                              setUserComment={setUserComment}
-                                                                              updateComments={updateComments}/>
-                            )}
+                                userComment.map((comment) => <UserCommentBlock commentInfo={comment}
+                                    userprif={userId}
+                                    setUserComment={setUserComment}
+                                    updateComments={updateComments} />
+                                )}
                         </div>
                     </div>
                     <div className="row comment-send-container">

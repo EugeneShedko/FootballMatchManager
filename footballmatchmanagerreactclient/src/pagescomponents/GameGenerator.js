@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import MatchBlock from "./matchblock";
+import MatchBlock from "./MatchBlock";
 
 
 export default function GameGenerator(props) {

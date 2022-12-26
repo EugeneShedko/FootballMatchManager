@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import MatchBlock from "../../matchblock";
+import MatchBlock from "../../MatchBlock";
 import { Context } from "../../../index"
 import GameGenerator from "../../GameGenerator";
 import CreateMatch from "../creatematch";

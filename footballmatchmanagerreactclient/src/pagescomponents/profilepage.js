@@ -1,15 +1,13 @@
 import "./../css/userprofile.css"
 import { Tab, Nav, Row, Col } from 'react-bootstrap';
-import Tournaments from "./userprofile/tournaments";
 import Players from "./userprofile/players";
 import { useNavigate } from "react-router-dom";
 import Profile from "./userprofile/Profile";
 import UserMatchesNavigator from "./userprofile/usermatches/usermatchesnavigator";
 import Matches from "./userprofile/matches";
-import UserTournamentsNavigator from "./userprofile/usertournaments/usertournamentsnavigator";
 import { useContext, useState } from "react";
 import { MAIN_ROUTE } from "../Utilts/Consts";
-import { Context } from "./../index";
+import { Context } from "../index";
 import Teams from "./userprofile/Teams";
 import TeamInfoPage from "./TeamInfoPage";
 
@@ -21,10 +19,6 @@ export default function UserProfile() {
 
     const [mathesState, setMatchesState] = useState({
         eventKey: <Matches setContState={wrapSetMatchesState} isPanel={true} />
-    });
-
-    const [tournamenstState, setTournamentState] = useState({
-        eventKey: <Tournaments setContState={wrapSetTournamentsState} />
     });
 
     const [playersState, setPlayerState] = useState({
@@ -43,10 +37,6 @@ export default function UserProfile() {
         setMatchesState({ eventKey: comp });
     }
 
-    function wrapSetTournamentsState(comp) {
-        setTournamentState({ eventKey: comp });
-    }
-
     function wrapSetPlayersState(comp) {
         setPlayerState({ eventKey: comp });
     }
@@ -63,14 +53,6 @@ export default function UserProfile() {
         if (teamsState.eventKey !== "teams") {
             setTeamsState({
                 eventKey: <Teams setContState={wrapSetTeamsState} />
-            })
-        }
-    }
-
-    function setTournamentKey() {
-        if (tournamenstState.eventKey !== "tournaments") {
-            setTournamentState({
-                eventKey: <Tournaments setContState={wrapSetTournamentsState} />
             })
         }
     }

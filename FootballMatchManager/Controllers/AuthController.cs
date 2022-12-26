@@ -51,6 +51,10 @@ namespace FootballMatchManager.Controllers
             _unitOfWork.ApUserRepository.AddElement(apUser);
             _unitOfWork.Save();
 
+            Directory.CreateDirectory("wwwroot/" + Convert.ToBase64String(
+                                                   md5.ComputeHash(
+                                                   Encoding.UTF8.GetBytes(apUser.UserEmail))));
+
             return Ok("Регистрация прошла успешно!");
         }
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import PlayerBlock from "./playerblock";
+import PlayerBlock from "./PlayerBlock";
 
 export default function PlayerGenerator(props) 
 {

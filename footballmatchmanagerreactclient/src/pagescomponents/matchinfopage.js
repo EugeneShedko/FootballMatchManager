@@ -5,7 +5,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "./../css/matchinfopage.css"
-import PlayerBlock from "./playerblock";
+import PlayerBlock from "./PlayerBlock";
 import { Context } from "../index"
 import Matches from "./userprofile/matches";
 import EditGame from "./userprofile/EditGame";
@@ -90,8 +90,8 @@ export default function MatchInfoPage(props) {
     const connectMessage = async () => {
         const hubConnection = new HubConnectionBuilder().withUrl("https://localhost:7277/gamechat").build();
 
-        hubConnection.on("Send", (messageUserName, messageDate, messageText) => {
-            setGameMessage(gameMessage => [...gameMessage, { messageUserName, messageDate, messageText }]);
+        hubConnection.on("Send", (messageUserName, messageDate, messageText, userImage) => {
+            setGameMessage(gameMessage => [...gameMessage, { messageUserName, messageDate, messageText, userImage}]);
         }); 
         
         await hubConnection.start();
@@ -205,6 +205,7 @@ export default function MatchInfoPage(props) {
                     response.data.messageDateTime,
                     response.data.messageText,
                     String(response.data.gameId),
+                    String(user.getUserId)
                 );
             })
             .catch(userError => {

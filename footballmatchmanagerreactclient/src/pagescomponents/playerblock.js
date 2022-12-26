@@ -16,7 +16,9 @@ export default function PlayerBlock(props) {
             <div className="player-back-block" />
             <div className="row player-block-content">
                 <div className="col-5">
-                    <img id="profile-image" src="/image/default-profile-icon.jpg" alt="" />
+                    <img id="profile-image" 
+                         src={"https://localhost:7277/" + props.info.userImage}  
+                         alt="" />
                 </div>
                 <div className="col-7 player-block-column">
                     <div className="row m-0">

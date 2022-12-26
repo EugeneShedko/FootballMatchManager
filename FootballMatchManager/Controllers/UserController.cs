@@ -111,6 +111,43 @@ namespace FootballMatchManager.Controllers
             return Ok(comment);
         }
 
+        [HttpPost]
+        [Route("add-prof-image")]
+        public ActionResult PostAddProfImage()
+        {
+            try
+            {
+                var file = Request.Form.Files["image"];
+
+                if (file == null)
+                {
+                    return BadRequest(new {message = "Картинка не загружена"});
+                }
+
+                var userId = int.Parse(Request.Form["userId"]);
+
+                ApUser apUser = _unitOfWork.ApUserRepository.GetItem(userId);
+
+                if(apUser == null)
+                {
+                    return BadRequest(new {message = "Пользователя не существует"});
+                }
+
+                string path = FileManager.LoadProfileImage(file, apUser.UserEmail);
+
+                apUser.UserImage = path;
+
+                _unitOfWork.Save();
+
+                return Ok(new { message = "Картинка успешно добавлена", curuser = apUser });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new {messafe = "Ошибка загрузки картинки"});
+            }
+        }
+
+
         [HttpDelete]
         [Route("deletecomment/{commentId}")]
         public ActionResult DeleteComment(int commentId)

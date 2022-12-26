@@ -3,7 +3,7 @@ import ContentContainer from "../pagescomponents/main/content/ContentContainer"
 import FRegistrationform from "../pagescomponents/main/registrationform";
 import Loginform from "../pagescomponents/main/loginform";
 import { LOGIN_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE, ADMIN_PROFILE_ROUTE  } from "../Utilts/Consts";
-import UserProfile from "./../pagescomponents/profilepage";
+import UserProfile from "../pagescomponents/ProfilePage";
 import Matches from "../pagescomponents/userprofile/matches";
 import AdminProfile from "../administrator/adminprofilepage";
 
