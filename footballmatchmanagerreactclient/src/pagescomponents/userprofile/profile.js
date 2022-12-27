@@ -108,6 +108,12 @@ export default function Profile(props) {
     }
 
     function sendMessage() {
+
+        if(currMes === '')
+        {
+            return;
+        }
+
         const data = new FormData();
         data.append("CommentText", currMes);
         data.append("CommentRecipient", userId);

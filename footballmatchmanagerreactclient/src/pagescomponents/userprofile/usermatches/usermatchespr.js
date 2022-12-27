@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import MatchBlock from "../../MatchBlock";
 import {Context} from "../../../index"
 import GameGenerator from "../../GameGenerator";
-import CreateMatch from "../creatematch";
+import CreateMatch from "../CreateMatch";
 
 
 export default function UserMatchesCr(props) {

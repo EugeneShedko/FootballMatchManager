@@ -1,15 +1,17 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import "./../../css/loginform.css"
 import { Link, useNavigate } from "react-router-dom";
 import { ADMIN_PROFILE_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE } from "../../Utilts/Consts";
 import axios from "axios";
-import { Context } from "./../../index";
+import { Context } from "../../index";
 import { toast } from "react-toastify";
 
 export default function Loginform(props) {
 
     const [loginContainerStyle, setLoginContainerStyle] = useState("col-3 logincontainer");
     const navigate = useNavigate();
+    const { user } = useContext(Context);
+    const [isValid, setIsValid] = useState(false);
 
     const [logInState, setLogInState] = useState({
         userEmail: "",
@@ -17,8 +19,65 @@ export default function Loginform(props) {
     }
     );
 
-    const { user } = useContext(Context);
+    const [inputDirty, setInputDirty] = useState({
+        emailDirty: false,
+        passwordDirty: false,
+     });
+  
+     const [inputError, setInputError] = useState({
+        emailError: "Email не может быть пустым",
+        passwordError: 'Пароль не может быть пустым',
+     });
 
+     const blurHandler = (e) => {
+        switch(e.target.name)
+        {
+           case "userEmail": 
+              setInputDirty({...inputDirty, emailDirty:true});
+              break;
+           case "userPassword": 
+              setInputDirty({...inputDirty, passwordDirty:true}); 
+              break;
+        }
+     }
+     useEffect(() => {
+        if(inputError.emailError || inputError.passwordError)
+        {
+            setIsValid(false);
+        }
+        else
+        {
+            setIsValid(true);
+        }
+     }, [inputError])
+
+     function emailHandler(e)
+     {
+        setLogInState({ ...logInState, userEmail:e.target.value })
+        const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+        if(!re.test(String(e.target.value).toLowerCase()))
+        {
+            setInputError({...inputError, emailError: "Email не корректен"});
+        }
+        else
+        {
+            setInputError({...inputError, emailError: ""});         
+        }
+     }
+
+     function passwordHandler(e)
+     {
+        setLogInState({ ...logInState, userPassword:e.target.value })
+        if(e.target.value.length < 5)
+        {
+            setInputError({...inputError, passwordError: 'Длинна пароля менее 5 символов'});     
+        }
+        else
+        {
+            setInputError({...inputError, passwordError: ""});    
+        }
+     }
+  
     function closeLoginForm() {
         setLoginContainerStyle("col-3 logincontainerout");
         setTimeout(() => navigate(MAIN_ROUTE), 500);
@@ -83,17 +142,23 @@ export default function Loginform(props) {
                                 Войти
                             </div>
                             <div className="row justify-content-center input-container">
-                                <input className="input-style"
+                            {(inputDirty.emailDirty && inputError.emailError ) && <div style={{color:'red', marginTop: '-5%'}}>{inputError.emailError}</div>}
+                                <input name="userEmail" 
+                                    className="input-style"
                                     type="text"
                                     placeholder="Введите email"
-                                    onChange = {(event) => setLogInState({ ...logInState, userEmail:event.target.value })}
+                                    onBlur={e => blurHandler(e)}
+                                    onChange = {(event) => emailHandler(event)}
                                 />
                             </div>
                             <div className="row justify-content-center input-container">
-                                <input className="input-style"
+                            {(inputDirty.passwordDirty && inputError.passwordError ) && <div style={{color:'red', marginTop: '-5%'}}>{inputError.passwordError}</div>}
+                                <input name="userPassword" 
+                                    className="input-style"
                                     type="password"
                                     placeholder="Введите пароль"
-                                    onChange = {(event) => setLogInState({ ...logInState, userPassword:event.target.value })}
+                                    onBlur={e => blurHandler(e)}
+                                    onChange = {(event) => passwordHandler(event)}
                                 />
                             </div>
                             <div className="row form-text">
@@ -102,7 +167,10 @@ export default function Loginform(props) {
                                 </div>
                             </div>
                             <div className="row justify-content-center button-container">
-                                <input className="button-element" type="submit" value="Войти" />
+                                <input className="button-element" 
+                                       type="submit" 
+                                       value="Войти"
+                                       disabled={!isValid} />
                             </div>
                             <div className="row justify-content-center logo-container">
                                 <img className="logo" src="/image/logohuman.png" alt="" />

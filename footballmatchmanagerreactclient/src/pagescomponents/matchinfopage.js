@@ -193,6 +193,12 @@ export default function MatchInfoPage(props) {
     }
 
     function sendMessage() {
+
+        if(curMessage === '')
+        {
+            return;
+        }
+
         const data = new FormData();
         data.append("MessageText", curMessage);
         data.append("GameRecipient", props.gameId);

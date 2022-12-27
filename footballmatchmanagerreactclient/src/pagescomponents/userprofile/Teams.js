@@ -1,6 +1,6 @@
 import "./../../css/matchespage.css"
 import { useEffect, useState } from "react";
-import CreateMatch from "./creatematch";
+import CreateMatch from "./CreateMatch";
 import GameGenerator from "../GameGenerator";
 import axios from "axios";
 import { toast } from "react-toastify";

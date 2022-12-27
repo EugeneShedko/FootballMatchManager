@@ -6,3 +6,9 @@ services:
     build:
       context: .
       dockerfile: FootballMatchManager/Dockerfile
+
+  client:
+    image: client
+    build:
+      context: ./footballmatchmanagerreactclient
+      dockerfile: Dockerfile

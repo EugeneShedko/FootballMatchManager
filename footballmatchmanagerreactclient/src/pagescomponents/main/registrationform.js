@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MAIN_ROUTE, LOGIN_ROUTE } from "../../Utilts/Consts";
@@ -115,40 +115,227 @@ export default function FRegistrationform(props) {
 
 function FirstRegPart(props) {
 
+   const [isFFValid, setIsFFValid] = useState(false);
+
+   const [fInputDirty, setFInputDirty] = useState({
+      emailDirty: false,
+      nameDirty: false,
+      surnameDirty: false,
+      sexDirty: false,
+   });
+
+   const [fInputError, setFInputError] = useState({
+      emailError: "Email не может быть пустым",
+      nameError: 'Имя не может быть пустым',
+      surnameError: 'Фамилия не может быть пустой',
+      sexError: 'Пол не может быть пустым',
+   });
+
+   useEffect(() => {
+      if(fInputError.emailError || fInputError.nameError || fInputError.surnameError || fInputError.sexError)
+      {
+         setIsFFValid(false);
+      }
+      else
+      {
+         setIsFFValid(true);
+      }
+   }, [fInputError])
+
+   const blurHandler = (e) => {
+      switch(e.target.name)
+      {
+         case "userEmail": 
+            setFInputDirty({...fInputDirty, emailDirty:true});
+            break;
+         case "userName": 
+            setFInputDirty({...fInputDirty, nameDirty:true}); 
+            break;
+         case "userSurname": 
+            setFInputDirty({...fInputDirty, surnameDirty:true});
+            break;
+         case "userSex": 
+            setFInputDirty({...fInputDirty, sexDirty:true});
+            break;
+      }
+   }
+
    if (props.regState.currentStep !== 1) {
       return null;
+   }
+
+   function emailHandler(e)
+   {
+      const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+      props.setChangeValue(e);
+      if(!re.test(String(e.target.value).toLowerCase()))
+      {
+         setFInputError({...fInputError, emailError: "Email не корректен"});
+      }
+      else
+      {
+         setFInputError({...fInputError, emailError: ""});         
+      }
+   }
+
+   function nameHandler(e)
+   {
+      props.setChangeValue(e);
+      if(e.target.value !== '')
+      {
+         setFInputError({...fInputError, nameError: ""});         
+      }
+      else
+      {
+         setFInputError({...fInputError, nameError: 'Имя не может быть пустым'});
+      }
+   }
+
+   function surNameHandler(e)
+   {
+      props.setChangeValue(e);
+      if(e.target.value !== '')
+      {
+         setFInputError({...fInputError, surnameError: ""});         
+      }
+      else
+      {
+         setFInputError({...fInputError, surnameError: 'Фамилия не может быть пустой'});     
+      }
+   }
+
+   function sexHandler(e)
+   {
+      props.setChangeValue(e);    
+      if(e.target.value !== "Выберите пол")
+      {
+         setFInputError({...fInputError, sexError: ""});          
+      }
+      else
+      {
+         setFInputError({...fInputError, sexError: 'Пол не может быть пустым'});   
+      }  
    }
 
    return (
       <div>
          <div className="row justify-content-center input-container">
-            <input name="userEmail" className="input-style"
-               type="text" placeholder="Введите email"
-               value={props.regState.userEmail}
-               onChange={props.setChangeValue} />
+         {(fInputDirty.emailDirty && fInputError.emailError ) && <div style={{color:'red'}}>{fInputError.emailError}</div>}
+            <input name="userEmail" 
+                   className="input-style"
+                   type="text" placeholder="Введите email"
+                   value={props.regState.userEmail}
+                   onBlur={e => blurHandler(e)}
+                   onChange={e => emailHandler(e)} />
          </div>
          <div className="row justify-content-center input-container">
-            <input name="userName" value={props.regState.userName} className="input-style" type="text" placeholder="Введите ваше имя" onChange={props.setChangeValue} />
+         {(fInputDirty.nameDirty && fInputError.nameError) && <div style={{color:'red', marginTop: '-5%'}}>{fInputError.nameError}</div>}
+            <input name="userName" 
+                   value={props.regState.userName} 
+                   className="input-style" 
+                   type="text" 
+                   placeholder="Введите ваше имя" 
+                   onBlur={e => blurHandler(e)}
+                   onChange={e => nameHandler(e)} />
          </div>
          <div className="row justify-content-center input-container">
-            <input name="userSurname" value={props.regState.userSurname} className="input-style" type="text" placeholder="Введите вашу фамилию" onChange={props.setChangeValue} />
+         {(fInputDirty.surnameDirty && fInputError.surnameError) && <div style={{color:'red', marginTop: '-5%'}}>{fInputError.surnameError}</div>}
+            <input name="userSurname" 
+                   value={props.regState.userSurname} 
+                   className="input-style" 
+                   type="text" 
+                   placeholder="Введите вашу фамилию" 
+                   onBlur={e => blurHandler(e)}
+                   onChange={e => surNameHandler(e)}
+                  />
          </div>
          <div className="row justify-content-center input-container">
-            {/*Здесь возможно использовать свойство не value, а selected*/}
-            <select name="userSex" value={props.regState.userSex} className="form-select form-select-sm input-style" onChange={props.setChangeValue}>
+         {(fInputDirty.sexDirty && fInputError.sexError) && <div style={{color:'red', marginTop: '-5%'}}>{fInputError.sexError}</div>}
+            <select name="userSex" 
+                    value={props.regState.userSex} 
+                    className="form-select form-select-sm input-style" 
+                    onBlur={e => blurHandler(e)}
+                    onChange={e => sexHandler(e)}>
                <option selected>Выберите пол</option>
                <option>Мужской</option>
                <option>Женский</option>
             </select>
          </div>
          <div className="row justify-content-center button-container">
-            <input className="button-element" type="button" value="Далее" onClick={props.setNextForm} />
+            <input className="button-element" 
+                   type="button" 
+                   value="Далее" 
+                   disabled={!isFFValid}
+                   onClick={props.setNextForm} 
+                   />
          </div>
       </div>
    );
 }
 
 function SecRegPart(props) {
+
+   const [isSFValid, setIsSFValid] = useState(false);
+
+   const [sInputDirty, setSInputDirty] = useState({
+      positionDirty:false,
+      passwordDirty:false
+   });
+
+   const [sInputError, setSInputError] = useState({
+      positionError: 'Позиция не может быть пустой',
+      passwordError: 'Пароль не может быть пустым'
+   });
+
+   useEffect(() => {
+      if(sInputError.positionError || sInputError.passwordError)
+      {
+         setIsSFValid(false);
+      }
+      else
+      {
+         setIsSFValid(true);
+      }
+   }, [sInputError])
+
+   const blurHandler = (e) => {
+      switch(e.target.name)
+      {
+         case "userPosition": 
+            setSInputDirty({...sInputDirty, positionDirty:true});
+            break;
+         case "userPassword": 
+            setSInputDirty({...sInputDirty, passwordDirty:true}); 
+            break;
+      }
+   }
+
+   function positionHandler(e)
+   {
+      props.setChangeValue(e);    
+      if(e.target.value !== "Выберите позицию")
+      {
+         setSInputError({...sInputError, positionError: ""});          
+      }
+      else
+      {
+         setSInputError({...sInputError, positionError: 'Пол не может быть пустым'});   
+      }  
+   }
+
+   function passwordHandler(e)
+   {
+      props.setChangeValue(e);
+      if(e.target.value.length < 5)
+      {
+         setSInputError({...sInputError, passwordError: 'Длинна пароля менее 5 символов'});     
+      }
+      else
+      {
+         setSInputError({...sInputError, passwordError: ""});    
+      }
+   }
+
    if (props.regState.currentStep !== 2) {
       return null;
    }
@@ -156,11 +343,12 @@ function SecRegPart(props) {
    return (
       <div className="registration-container">
          <div className="row justify-content-center input-container">
-            {/*Здесь возможно использовать свойство не value, а selected*/}
+         {(sInputDirty.positionDirty && sInputError.positionError ) && <div style={{color:'red', marginTop: '-5%'}}>{sInputError.positionError}</div>}
             <select name="userPosition" 
                     className="form-select form-select-sm input-style" 
-                    value={props.regState.userPosition} 
-                    onChange={props.setChangeValue}>
+                    value={props.regState.userPosition}
+                    onBlur={e => blurHandler(e)} 
+                    onChange={e => positionHandler(e)}>
 
                <option selected>Выберите позицию</option>
                <option>Нападающий</option>
@@ -189,12 +377,14 @@ function SecRegPart(props) {
             />
          </div>
          <div className="row justify-content-center input-container">
+         {(sInputDirty.passwordDirty && sInputError.passwordError ) && <div style={{color:'red', marginTop: '-5%'}}>{sInputError.passwordError}</div>}
             <input name="userPassword"
                className="input-style"
                type="password"
                placeholder="Задайте пароль"
                value={props.regState.userPassword}
-               onChange    = {props.setChangeValue}
+               onBlur={e => blurHandler(e)}
+               onChange = {e => passwordHandler(e)}
             />
          </div>
          <div className="row justify-content-center button-container">
@@ -202,6 +392,7 @@ function SecRegPart(props) {
             <input className="button-element"
                type="submit"
                value="Зарегистрироваться"
+               disabled={!isSFValid}
             />
          </div>
       </div>
