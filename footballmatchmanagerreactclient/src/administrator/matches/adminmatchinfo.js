@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import AdminPlayerBlock from "../players/adminPlayerBlock";
 import "./../../css/matchinfopage.css";
 import { Context } from "./../../index"
-import AdminMatches from "./adminmathes";
+import AdminMatches from "./AdminGames";
 
 export default function AdminMatchInfoPage(props) {
 

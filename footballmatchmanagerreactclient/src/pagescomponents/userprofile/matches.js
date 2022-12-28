@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 export default function Matches(props) {
 
     const [createMatchVisible, setcreateMatchVisible] = useState(false);
+    const [initGames, setInitGames] = useState([]);
     const [games, setGames] = useState([]);
     const [searchString, setSearchString] = useState("");
 
@@ -16,7 +17,8 @@ export default function Matches(props) {
             axios.get('https://localhost:7277/api/profile/allmatches', { withCredentials: true })
                 .then((response) => {
                     setGames(response.data);
-                    console.log(response.data);
+                    setInitGames(response.data);
+                    console.log("запрос!!!!!!!!!!!!!!");
                 })
                 .catch(userError => {
                     if (userError.response) {
@@ -29,8 +31,41 @@ export default function Matches(props) {
                     }
                 });
             ;
-        }, []
+        }, [props]
     );
+
+    function filter()
+    {
+        var resultGames = [];
+        var tempGames = [];
+        var checkList = document.getElementsByName("uallmatch");
+
+        for(var i = 0; i < checkList.length; i++)
+        {
+            if(checkList[i].checked)
+            {
+                tempGames = initGames.filter(game => {
+                    return String(game.gameFormat).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
+                })
+                resultGames = resultGames.concat(tempGames);
+            }
+        }
+
+        if(resultGames.length > 0)
+        {
+            setGames(resultGames);
+        }
+    }
+
+    function reset()
+    {
+        setGames(initGames);
+        var checkList = document.getElementsByName("uallmatch");
+        for(var i = 0; i < checkList.length; i++)
+        {
+            checkList[i].checked = false;
+        }
+    }
 
     //Плохо работае наведение на послдений блок матчей(не знаю, почему)
     return (
@@ -56,18 +91,25 @@ export default function Matches(props) {
                     </div>
                     <div className="row filter-match-container">
                         <label>
-                            <input type="checkbox" className="checkbox-style" />
+                            <input type="checkbox" className="checkbox-style" name="uallmatch" value="5x5" />
                             5x5
                         </label>
                         <label>
-                            <input type="checkbox" className="checkbox-style" />
+                            <input type="checkbox" className="checkbox-style" name="uallmatch" value="9x9" />
                             9x9
                         </label>
                         <label>
-                            <input type="checkbox" className="checkbox-style" />
+                            <input type="checkbox" className="checkbox-style" name="uallmatch" value="11x11" />
                             11x11
                         </label>
-                        <input className="mpbutton-style" type="button" value="Применить" />
+                        <input className="mpbutton-style" 
+                               type="button" 
+                               value="Применить"
+                               onClick={filter} />
+                        <input className="mpbutton-style"
+                               type="button"
+                               value="Сбросить"
+                               onClick={reset} />       
                     </div> 
                 </div>
             </div>

@@ -64,7 +64,7 @@ export default function Profile(props) {
             });
         connectComment();
 
-    }, []
+    }, [props]
     );
 
     const connectComment = async () => {

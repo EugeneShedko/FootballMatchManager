@@ -12,6 +12,7 @@ namespace FootballMatchManager.Controllers
     [ApiController]
     public class TournamentController : ControllerBase
     {
+        /*
         private UnitOfWork _unitOfWork;
         private JwtService _jwtService;
         public TournamentController(UnitOfWork unitOfWork, JwtService jwtService)
@@ -227,8 +228,6 @@ namespace FootballMatchManager.Controllers
                 return Ok(new { message = "Вы покинули матч", tteams = teams, currtour = tour});
             }
         }
-
-
-
+        */
     }
 }

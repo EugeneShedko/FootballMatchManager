@@ -28,11 +28,13 @@ namespace FootballMatchManager.DataBase.Models
         [Column("gametype")]
 
         public string GameType { get; set; }
-        [Column("tournamentid")]
-
-        public int TournamentId { get; set; } = 1;
-        public Tournament Tournament { get; set; }
         public List<ApUserGame> ApUsersGames {get;set;}
         public List<Message> GameMessages { get; set; }
+
+        /*
+        [Column("tournamentid")]
+        public int TournamentId { get; set; } = 1;
+        public Tournament Tournament { get; set; }
+         */
     }
 }

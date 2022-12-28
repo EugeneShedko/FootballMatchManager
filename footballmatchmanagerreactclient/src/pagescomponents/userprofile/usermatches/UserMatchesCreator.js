@@ -12,6 +12,7 @@ export default function UserMatchesCr(props) {
     const { user } = useContext(Context);
 
     const [createMatchVisible, setcreateMatchVisible] = useState(false);
+    const [initUserMatchesCreator, setInitUserMatchesCreator] = useState([]);
     const [userMatchCr, setUserMatchCr] = useState([]);
     const [searchString, setSearchString] = useState("");
 
@@ -24,7 +25,7 @@ export default function UserMatchesCr(props) {
             axios.post('https://localhost:7277/api/profile/userCreatMatch', data, { withCredentials: true })
                 .then((response) => {
                     setUserMatchCr(response.data);
-                    console.log("creator" + response.data);
+                    setInitUserMatchesCreator(response.data);
                 })
                 .catch(userError => {
                     if (userError.response) {
@@ -37,9 +38,41 @@ export default function UserMatchesCr(props) {
                     }
                 });
             ;
-        }, []
+        }, [props]
     );
 
+    function filter()
+    {
+        var resultGames = [];
+        var tempGames = [];
+        var checkList = document.getElementsByName("uAllMatchesCreator");
+
+        for(var i = 0; i < checkList.length; i++)
+        {
+            if(checkList[i].checked)
+            {
+                tempGames = initUserMatchesCreator.filter(game => {
+                    return String(game.gameFormat).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
+                })
+                resultGames = resultGames.concat(tempGames);
+            }
+        }
+
+        if(resultGames.length > 0)
+        {
+            setUserMatchCr(resultGames);
+        }
+    }
+
+    function reset()
+    {
+        setUserMatchCr(initUserMatchesCreator);
+        var checkList = document.getElementsByName("uAllMatchesCreator");
+        for(var i = 0; i < checkList.length; i++)
+        {
+            checkList[i].checked = false;
+        }
+    }
 
     return (
         <div className="row mpmatches-main-container">
@@ -66,18 +99,25 @@ export default function UserMatchesCr(props) {
                     </div>
                     <div className="row filter-match-container">
                         <label>
-                            <input type="checkbox" className="checkbox-style" />
+                            <input type="checkbox" className="checkbox-style" name="uAllMatchesCreator" value="5x5" />
                             5x5
                         </label>
                         <label>
-                            <input type="checkbox" className="checkbox-style" />
+                            <input type="checkbox" className="checkbox-style" name="uAllMatchesCreator" value="9x9" />
                             9x9
                         </label>
                         <label>
-                            <input type="checkbox" className="checkbox-style" />
+                            <input type="checkbox" className="checkbox-style" name="uAllMatchesCreator" value="11x11"/>
                             11x11
                         </label>
-                        <input className="mpbutton-style" type="button" value="Применить" />
+                        <input className="mpbutton-style" 
+                               type="button" 
+                               value="Применить"
+                               onClick={filter} />
+                        <input className="mpbutton-style" 
+                               type="button" 
+                               value="Сбросить"
+                               onClick={reset} />
                     </div>
                 </div>
             </div>

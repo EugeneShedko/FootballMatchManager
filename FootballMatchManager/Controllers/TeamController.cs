@@ -12,6 +12,7 @@ namespace FootballMatchManager.Controllers
     [ApiController]
     public class TeamController : ControllerBase
     {
+        /*
         private UnitOfWork _unitOfWork;
         private JwtService _jwtService;
         public TeamController(UnitOfWork unitOfWork, JwtService jwtService)
@@ -86,7 +87,7 @@ namespace FootballMatchManager.Controllers
             int teamId = int.Parse(Request.Form["teamId"]);
             int userId = int.Parse(Request.Form["userId"]);
 
-            /*Можно было бы добавить количество участников*/
+            //ожно было бы добавить количество участников
             Team team = _unitOfWork.TeamRepository.GetItem(teamId);
 
 
@@ -199,5 +200,6 @@ namespace FootballMatchManager.Controllers
                 return Ok(new { message = "Вы покинули команду", users = apUsers, currteam = team });
             }
         }
+        */
     }
 }

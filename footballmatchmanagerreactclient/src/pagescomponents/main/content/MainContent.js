@@ -68,13 +68,13 @@ export default function MainContent(props) {
                 <GameGenerator games={games}
                                searchString={searchGameString} />
             </div>
-            {
+            {/*
             <div className="col-3 map-el-container">
                 <div className="search-block">
                     <input className="serach-element" type="text" placeholder="Введите для поиска турнира ..." />
                 </div>
             </div>
-            }
+    */}
 
             <div className="col-3 map-el-container">
                 <div className="search-block">

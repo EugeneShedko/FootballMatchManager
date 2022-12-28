@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./../../css/profile.css";
-import AdminPlayers from "./adminPlayers";
+import AdminPlayers from "./AdminPlayers";
 //import UserCommentBlock from "./usercommentblock";
 
 export default function AdminPlayerProfile(props) {

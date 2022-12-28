@@ -45,6 +45,7 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
             }
         }
 
+        /*
         public ApUserTeamRepository ApUserTeamRepository
         {
             get
@@ -55,6 +56,7 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
 
             }
         }
+        */
 
         public CommentRepository CommentRepository
         {
@@ -92,6 +94,7 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                 return _messageRepository;
             }
         }
+        /*
         public NotificationRepository NotificationRepository
         {
             get 
@@ -101,6 +104,8 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                 return _notificationRepository;
             }
         }
+        */
+        /*
         public RequestRepository RequestRepository
         {
             get 
@@ -110,6 +115,8 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                 return _requestRepository;
             }
         }
+        */
+        /*
         public TeamRepository TeamRepository
         {
             get 
@@ -118,6 +125,8 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                     _teamRepository= new TeamRepository(_dbcontext);
                 return _teamRepository;            }
         }
+        */
+        /*
         public TournamentRepository TournamentRepository
         {
             get 
@@ -127,6 +136,8 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                 return _tournamentRepository;
             }
         }
+        */
+        /*
         public TournamentTableRepository TournamentTableRepository
         {
             get
@@ -136,7 +147,7 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                 return _tournamentTableRepository;
             }
         }
-
+        */
         public void Save()
         {
             _dbcontext.SaveChanges();

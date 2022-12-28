@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import "./../css/matchinfopage.css"
 import PlayerBlock from "./PlayerBlock";
 import { Context } from "./../index"
-import Matches from "./userprofile/matches";
+import Matches from "./userprofile/Matches";
 import EditGame from "./userprofile/EditGame";
 import MessageBlock from "./userprofile/MessageBlock";
 import { HubConnectionBuilder } from "@microsoft/signalr";

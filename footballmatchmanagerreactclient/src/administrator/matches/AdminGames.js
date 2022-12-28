@@ -7,6 +7,7 @@ import AdminGameGenerator from "./AdminGameGenerator";
 
 export default function AdminMatches(props) {
 
+    const [initGames, setInitGames] = useState([]);
     const [games, setGames] = useState([]);
     const [searchString, setSearchString] = useState("");
 
@@ -15,7 +16,7 @@ export default function AdminMatches(props) {
             axios.get('https://localhost:7277/api/admin/profile/allmatches', { withCredentials: true })
                 .then((response) => {
                     setGames(response.data);
-                    console.log("matches" + response.data);
+                    setInitGames(response.data);
                 })
                 .catch(userError => {
                     if (userError.response) {
@@ -30,6 +31,39 @@ export default function AdminMatches(props) {
             ;
         }, []
     );
+
+    function filter()
+    {
+        var resultGames = [];
+        var tempGames = [];
+        var checkList = document.getElementsByName("aallmatch");
+
+        for(var i = 0; i < checkList.length; i++)
+        {
+            if(checkList[i].checked)
+            {
+                tempGames = initGames.filter(game => {
+                    return String(game.gameFormat).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
+                })
+                resultGames = resultGames.concat(tempGames);
+            }
+        }
+
+        if(resultGames.length > 0)
+        {
+            setGames(resultGames);
+        }
+    }
+
+    function reset()
+    {
+        setGames(initGames);
+        var checkList = document.getElementsByName("aallmatch");
+        for(var i = 0; i < checkList.length; i++)
+        {
+            checkList[i].checked = false;
+        }
+    }
 
     return (
         <div className="row mpmatches-main-container">
@@ -80,18 +114,25 @@ export default function AdminMatches(props) {
                         */}
                         {/*Пока что не знаю, как сделать фильтрацию*/}
                         <label>
-                            <input type="checkbox" className="checkbox-style" />
+                            <input type="checkbox" className="checkbox-style" name="aallmatch" value="5x5" />
                             5x5
                         </label>
                         <label>
-                            <input type="checkbox" className="checkbox-style" />
+                            <input type="checkbox" className="checkbox-style" name="aallmatch" value="5x5" />
                             9x9
                         </label>
                         <label>
-                            <input type="checkbox" className="checkbox-style" />
+                            <input type="checkbox" className="checkbox-style" name="aallmatch" value="5x5" />
                             11x11
                         </label>
-                        <input className="mpbutton-style" type="button" value="Применить" />
+                        <input className="mpbutton-style" 
+                               type="button" 
+                               value="Применить"
+                               onClick={filter} />
+                        <input className="mpbutton-style"
+                               type="button"
+                               value="Сбросить"
+                               onClick={reset} />    
                     </div>
                 </div>
             </div>

@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { MAIN_ROUTE } from "../Utilts/Consts";
 import { useContext, useState } from "react";
 import {Context} from "./../index"
-import AdminMatches from "./matches/adminmathes";
-import AdminPlayers from "./players/adminPlayers";
+import AdminMatches from "./matches/AdminGames";
+import AdminPlayers from "./players/AdminPlayers";
 
 export default function AdminProfile() {
 

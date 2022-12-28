@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.RepositoryPattern
 {
-    public class RequestRepository : IRepository<Request>
+    public class RequestRepository // : IRepository<Request>
     {
+        /*
         private AppDBContext _dbcontext;
 
         public RequestRepository(AppDBContext dbcontext)
@@ -41,5 +42,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             _dbcontext.Entry(item).State = EntityState.Modified;
         }
+        */
     }
 }

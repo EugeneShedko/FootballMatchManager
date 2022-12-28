@@ -1,11 +1,11 @@
 import "./../css/userprofile.css"
 import { Tab, Nav, Row, Col } from 'react-bootstrap';
-import Players from "./userprofile/players";
+import Players from "./userprofile/Players";
 import { useNavigate } from "react-router-dom";
 import Profile from "./userprofile/Profile";
-import UserMatchesNavigator from "./userprofile/usermatches/usermatchesnavigator";
-import Matches from "./userprofile/matches";
-import { useContext, useState } from "react";
+import UserMatchesNavigator from "./userprofile/usermatches/UserMatchesNavigator";
+import Matches from "./userprofile/Matches";
+import { useContext, useEffect, useState } from "react";
 import { MAIN_ROUTE } from "../Utilts/Consts";
 import { Context } from "../index";
 import Teams from "./userprofile/Teams";
@@ -25,6 +25,15 @@ export default function UserProfile() {
         eventKey: <Players setContState={wrapSetPlayersState} isPanel={true} />
     });
 
+    const [userMatchesNav, setUserMatchNav] = useState({
+        eventKey: <UserMatchesNavigator />
+    });
+
+    useEffect(() => {
+        console.log("render");
+    }, [mathesState])
+
+    /*
     const [teamsState, setTeamsState] = useState({
         eventKey: <Teams setContState={wrapSetTeamsState} />
     });
@@ -32,6 +41,7 @@ export default function UserProfile() {
     function wrapSetTeamsState(comp) {
         setTeamsState({ eventKey: comp });
     }
+    */
 
     function wrapSetMatchesState(comp) {
         setMatchesState({ eventKey: comp });
@@ -49,6 +59,7 @@ export default function UserProfile() {
         }
     }
 
+    /*
     function setTeamsKey() {
         if (teamsState.eventKey !== "teams") {
             setTeamsState({
@@ -56,6 +67,7 @@ export default function UserProfile() {
             })
         }
     }
+    */
 
     function setPlayerKey() {
         if (playersState.eventKey !== "players") {
@@ -63,6 +75,13 @@ export default function UserProfile() {
                 eventKey: <Players setContState={wrapSetPlayersState} />
             })
         }
+    }
+
+    function setNavKey()
+    {
+        setUserMatchNav({
+            eventKey: <UserMatchesNavigator />
+        })    
     }
 
     return (
@@ -77,14 +96,16 @@ export default function UserProfile() {
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="players" onClick={setPlayerKey}>Игроки</Nav.Link>
                             </Nav.Item>
+                            {/*
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="teams" onClick={setTeamsKey}>Команды</Nav.Link>
                             </Nav.Item>
+                            */}
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="profile">Профиль</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="usermatches">Мои матчи</Nav.Link>
+                                <Nav.Link className="upnav-item-link" eventKey="usermatches" onClick={setNavKey}>Мои матчи</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="exit" onClick={() => { user.setAuth(false); navigate(MAIN_ROUTE); }}>Выход</Nav.Link>
@@ -99,16 +120,18 @@ export default function UserProfile() {
                             <Tab.Pane className="h-100" eventKey="players">
                                 {playersState.eventKey}
                             </Tab.Pane>
+                            {/*
                             <Tab.Pane className="h-100" eventKey="teams">
                                 {teamsState.eventKey}
                             </Tab.Pane>
+                            */}
                             <Tab.Pane className="h-100" eventKey="profile">
                                 <Profile apUserId={user.getUserId} />
                             </Tab.Pane>
                             <Tab.Pane className="h-100" eventKey="usermatches">
-                                <UserMatchesNavigator />
+                                {userMatchesNav.eventKey}
                             </Tab.Pane>
-                            </Tab.Content>
+                        </Tab.Content>
                     </Col>
                 </Row>
             </Tab.Container>

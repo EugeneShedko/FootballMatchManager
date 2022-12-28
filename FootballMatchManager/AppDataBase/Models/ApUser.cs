@@ -34,18 +34,17 @@ namespace FootballMatchManager.DataBase.Models
         [Column("userimage")]
         public string? UserImage { get; set; } = "default-profile-icon.jpg";
 
-        public List<Request> UserRequestsRecipients { get; set; }
-        public List<Request> UserRequestsSenders { get; set; }
-
         public List<Comment> UserCommentsRecipients { get; set; }
         public List<Comment> UserCommentSenders { get; set; }
-
         public List<Message> UserMessages { get; set; }
-
-        public List<Notification> UserNotifications { get; set; }
-        public List<ApUserTeam> UserTeams { get; set; }
-        public List<Tournament> UserTournaments { get; set; }
-
         public List<ApUserGame> ApUserGame { get; set; }
+
+        /*
+        public List<Tournament> UserTournaments { get; set; }
+        public List<ApUserTeam> UserTeams { get; set; }
+        public List<Notification> UserNotifications { get; set; }
+        public List<Request> UserRequestsRecipients { get; set; }
+        public List<Request> UserRequestsSenders { get; set; }
+        */
     }
 }

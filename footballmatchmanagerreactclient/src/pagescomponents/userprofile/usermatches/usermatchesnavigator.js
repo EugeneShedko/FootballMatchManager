@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tab, Nav, Row } from "react-bootstrap";
-import Matches from "../matches";
+import Matches from "../Matches";
 import "./../../../css/usermatchesnavigator.css"
-import UserMatchesCr from "./usermatchescr";
-import UserMatchesPr from "./usermatchespr";
+import UserMatchesCr from "./UserMatchesCreator";
+import UserMatchesPr from "./UserMatchesParticipant";
 
-export default function UserMatchesNavigator() {
+export default function UserMatchesNavigator(props) {
 
     const [partMatchesState, setPartMatchesState] = useState({
         eventKey: <UserMatchesPr setContState={wrapSetPartMatchesState} />
@@ -14,6 +14,11 @@ export default function UserMatchesNavigator() {
     const [createMatchesState, setCreateMatchesState] = useState({
         eventKey: <UserMatchesCr setContState={wrapSetCreateMatchesState} />
     });
+
+    useEffect(() => {
+        setPartMatchesKey();
+        setCreateMatchesKey();
+    }, [props])
 
     function wrapSetPartMatchesState(comp) {
         setPartMatchesState({ eventKey: comp });
