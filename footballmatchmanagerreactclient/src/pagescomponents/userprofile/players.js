@@ -12,7 +12,7 @@ export default function Players(props) {
 
     useEffect(
         () => {
-            axios.get('https://localhost:7277/api/profile/allplayers', { withCredentials: true })
+            axios.get('http://localhost:5000/api/profile/allplayers', { withCredentials: true })
                 .then((response) => {
                     setInitPlayers(response.data);
                     setPlayers(response.data);

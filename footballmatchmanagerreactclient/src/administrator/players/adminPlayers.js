@@ -16,7 +16,7 @@ const AdminPlayers = observer((props) => {
 
     useEffect(
         () => {
-            axios.get('https://localhost:7277/api/admin/profile/allusers', { withCredentials: true })
+            axios.get('http://localhost:5000/api/admin/profile/allusers', { withCredentials: true })
                 .then((response) => {
                     setPlayers(response.data);
                     setInitPlayers(response.data);

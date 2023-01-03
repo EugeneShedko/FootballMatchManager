@@ -15,12 +15,12 @@ export default function AdminMatchInfoPage(props) {
 
     useEffect(() => {
 
-        axios.get('https://localhost:7277/api/admin/profile/match/' + props.gameId, { withCredentials: true })
+        axios.get('http://localhost:5000/api/admin/profile/match/' + props.gameId, { withCredentials: true })
             .then((response) => {
                 setGame(response.data);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/admin/profile/matchUsers/' + props.gameId, { withCredentials: true })
+                axios.get('http://localhost:5000/api/admin/profile/matchUsers/' + props.gameId, { withCredentials: true })
                     .then((response) => {
                         setGameUsers(response.data);
                     })
@@ -39,7 +39,7 @@ export default function AdminMatchInfoPage(props) {
 
     function deleteMatch() {
 
-        axios.delete('https://localhost:7277/api/admin/profile/deletegame/' + game.gameId, { withCredentials: true })
+        axios.delete('http://localhost:5000/api/admin/profile/deletegame/' + game.gameId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {
@@ -67,7 +67,7 @@ export default function AdminMatchInfoPage(props) {
         const data = new FormData();
         data.append("gameId", game.gameId);
 
-        axios.post('https://localhost:7277/api/admin/profile/blockgame/', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/admin/profile/blockgame/', data, { withCredentials: true })
         .then((response) => {
             setGame(response.data.currgame);
             toast.success(response.data.message,
@@ -95,7 +95,7 @@ export default function AdminMatchInfoPage(props) {
         const data = new FormData();
         data.append("gameId", game.gameId);
 
-        axios.post('https://localhost:7277/api/admin/profile/unblockgame/', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/admin/profile/unblockgame/', data, { withCredentials: true })
         .then((response) => {
             setGame(response.data.currgame);
             toast.success(response.data.message,

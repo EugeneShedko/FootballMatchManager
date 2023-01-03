@@ -111,7 +111,7 @@ export default function CreateMatch(props) {
             GameFormat: matchState.gameFormat
         }
 
-        axios.post('https://localhost:7277/api/profile/creatematch', match, { withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/creatematch', match, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data, {
                     position: toast.POSITION.TOP_CENTER,
@@ -121,7 +121,7 @@ export default function CreateMatch(props) {
                 props.onHide(false);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/allmatches', { withCredentials: true })
+                axios.get('http://localhost:5000/api/profile/allmatches', { withCredentials: true })
                 .then((response) => {
                     props.setAllMatches(response.data);
                 })

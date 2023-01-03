@@ -15,7 +15,7 @@ export default function Teams(props) {
 
     useEffect(
         () => {
-            axios.get('https://localhost:7277/api/profile/allteams', { withCredentials: true })
+            axios.get('http://localhost:5000/api/profile/allteams', { withCredentials: true })
                 .then((response) => {
                     setTeams(response.data);
                 })

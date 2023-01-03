@@ -18,7 +18,7 @@ export default function AdminPlayerBlock(props) {
 
     function removeFromMatch() {
         //Хорошо бы вынести в константы
-        axios.delete('https://localhost:7277/api/admin/profile/rmusfromgame/' + props.gameId + '/' + props.info.apUserId, { withCredentials: true })
+        axios.delete('http://localhost:5000/api/admin/profile/rmusfromgame/' + props.gameId + '/' + props.info.apUserId, { withCredentials: true })
         .then((response) => {
             toast.success(response.data.message,
                 {

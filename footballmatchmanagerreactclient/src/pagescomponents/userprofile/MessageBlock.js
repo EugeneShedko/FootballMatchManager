@@ -8,7 +8,7 @@ export default function MessageBlock(props) {
             <div className="row message-block-content h-100">
                 <div className="col-3">
                     <img id="message-profile-image" 
-                         src={"https://localhost:7277/" + props.messageInfo.userImage}  
+                         src={"http://localhost:5000/" + props.messageInfo.userImage}  
                          alt="" />
                 </div>
                 <div className="col-9 message-block-column h-100">

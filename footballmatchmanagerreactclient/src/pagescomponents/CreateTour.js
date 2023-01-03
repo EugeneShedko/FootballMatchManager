@@ -32,7 +32,7 @@ export default function CreateTour(props) {
             data.append("TeamNumbers", tourState.tourCount);
             data.append("TourPrizeFound", tourState.tourPrize);
 
-        axios.post('https://localhost:7277/api/profile/createtour', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/createtour', data, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data, {
                     position: toast.POSITION.TOP_CENTER,
@@ -42,7 +42,7 @@ export default function CreateTour(props) {
                 props.onHide(false);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/allmatches', { withCredentials: true })
+                axios.get('http://localhost:5000/api/profile/allmatches', { withCredentials: true })
                     .then((response) => {
                         props.setAllMatches(response.data);
                     })

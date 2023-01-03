@@ -11,7 +11,7 @@ export default function UserCommentBlock(props) {
 
     function deleteComment()
     {
-        axios.delete('https://localhost:7277/api/profile/deletecomment/' + props.commentInfo.commentId, { withCredentials: true })
+        axios.delete('http://localhost:5000/api/profile/deletecomment/' + props.commentInfo.commentId, { withCredentials: true })
         .then((response) => {
             toast.success(response.data.message,
                 {
@@ -21,7 +21,7 @@ export default function UserCommentBlock(props) {
                 });
         })
         .then(() => {
-            axios.get('https://localhost:7277/api/profile/allcomments/' + props.userprif,{ withCredentials: true })
+            axios.get('http://localhost:5000/api/profile/allcomments/' + props.userprif,{ withCredentials: true })
             .then((response) => {
                 props.setUserComment(response.data);
             })
@@ -54,7 +54,7 @@ export default function UserCommentBlock(props) {
         <div className="row user-comment-container">
             <div className="col-1 d-flex justify-content-center p-0">
                 <img className="user-comment-img" 
-                     src={"https://localhost:7277/" + props.commentInfo.userImage}  
+                     src={"http://localhost:5000/" + props.commentInfo.userImage}  
                      alt="" />
             </div>
             <div className="col-11 p-0">

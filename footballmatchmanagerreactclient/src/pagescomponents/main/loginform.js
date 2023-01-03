@@ -91,7 +91,7 @@ export default function Loginform(props) {
         data.append("userEmail", logInState.userEmail);
         data.append("userPassword", logInState.userPassword);
 
-        axios.post('https://localhost:7277/api/auth/authorization', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/auth/authorization', data, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message, {
                     position: toast.POSITION.TOP_CENTER,

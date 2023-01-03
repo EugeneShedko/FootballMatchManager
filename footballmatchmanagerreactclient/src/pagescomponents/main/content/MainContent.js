@@ -14,14 +14,14 @@ export default function MainContent(props) {
 
     useEffect(
         () => {
-            axios.get('https://localhost:7277/api/profile/allplayers', { withCredentials: true })
+            axios.get('http://localhost:5000/api/profile/allplayers', { withCredentials: true })
                 .then((response) => {
                     setPlayers(response.data);
                     console.log(response.data);
                 })
                 .then(() => {
 
-                    axios.get('https://localhost:7277/api/profile/allmatches', { withCredentials: true })
+                    axios.get('http://localhost:5000/api/profile/allmatches', { withCredentials: true })
                         .then((response) => {
                             setGames(response.data);
                             console.log(response.data);
@@ -73,8 +73,7 @@ export default function MainContent(props) {
                 <div className="search-block">
                     <input className="serach-element" type="text" placeholder="Введите для поиска турнира ..." />
                 </div>
-            </div>
-    */}
+            </div>*/}
 
             <div className="col-3 map-el-container">
                 <div className="search-block">

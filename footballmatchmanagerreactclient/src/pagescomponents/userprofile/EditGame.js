@@ -20,7 +20,7 @@ export default function EditGame(props) {
             "GameFormat": props.info.gameFormat,
         };
         
-        axios.post('https://localhost:7277/api/profile/editgame', data,{ withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/editgame', data,{ withCredentials: true })
         .then((response) => {
             toast.success(response.data.message,
                 {

@@ -14,7 +14,7 @@ export default function Matches(props) {
 
     useEffect(
         () => {
-            axios.get('https://localhost:7277/api/profile/allmatches', { withCredentials: true })
+            axios.get('http://localhost:5000/api/profile/allmatches', { withCredentials: true })
                 .then((response) => {
                     setGames(response.data);
                     setInitGames(response.data);

@@ -23,7 +23,7 @@ export default function CreateTeam(props) {
         data.append("userId", user.getUserId); 
         data.append("teamName", teamState.teamName); 
 
-        axios.post('https://localhost:7277/api/profile/createteam', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/createteam', data, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data, {
                     position: toast.POSITION.TOP_CENTER,
@@ -33,7 +33,7 @@ export default function CreateTeam(props) {
                 props.onHide(false);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/allteams', { withCredentials: true })
+                axios.get('http://localhost:5000/api/profile/allteams', { withCredentials: true })
                 .then((response) => {
                     props.setAllTeams(response.data);
                 })

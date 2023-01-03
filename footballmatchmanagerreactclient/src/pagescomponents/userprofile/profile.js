@@ -31,13 +31,13 @@ export default function Profile(props) {
         const data = new FormData();
         data.append("userId", userId);
 
-        axios.post('https://localhost:7277/api/profile/userprofile', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/userprofile', data, { withCredentials: true })
             .then((response) => {
                 setProfileInfo(response.data);
                 console.log("profile" + response.data.apUserId);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/allcomments/' + userId, { withCredentials: true })
+                axios.get('http://localhost:5000/api/profile/allcomments/' + userId, { withCredentials: true })
                     .then((response) => {
                         setUserComment(response.data);
                     })
@@ -69,7 +69,7 @@ export default function Profile(props) {
 
     const connectComment = async () => {
 
-        const hubConnection = new HubConnectionBuilder().withUrl("https://localhost:7277/commentchat").build();
+        const hubConnection = new HubConnectionBuilder().withUrl("http://localhost:5000/commentchat").build();
 
         hubConnection.on("Send", (commentUserName, commentDate, commentText, userSender, commentId, userImage) => {
             setUserComment(userComment => [...userComment, { commentUserName, commentDate, commentText, userSender, commentId, userImage}]);
@@ -77,7 +77,7 @@ export default function Profile(props) {
 
         hubConnection.on("UpdateComments", () => {
 
-            axios.get('https://localhost:7277/api/profile/allcomments/' + userId, { withCredentials: true })
+            axios.get('http://localhost:5000/api/profile/allcomments/' + userId, { withCredentials: true })
                 .then((response) => {
                     console.log("Респонс отр " + user.getUserId);
                     setUserComment(response.data);
@@ -119,7 +119,7 @@ export default function Profile(props) {
         data.append("CommentRecipient", userId);
         data.append("CommentSender", user.getUserId);
 
-        axios.post('https://localhost:7277/api/profile/addcomment', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/addcomment', data, { withCredentials: true })
             .then((response) => {
                 connection.invoke("Send", 
                     user.getUserName,
@@ -168,7 +168,7 @@ export default function Profile(props) {
         data.append("image", file);
         data.append("userId", user.getUserId);       
 
-        axios.post('https://localhost:7277/api/profile/add-prof-image/', data, {withCredentials:true})
+        axios.post('http://localhost:5000/api/profile/add-prof-image/', data, {withCredentials:true})
         .then((response) => {
             setProfileInfo(response.data.curuser);
             toast.success(response.data.message, {
@@ -186,7 +186,7 @@ export default function Profile(props) {
                 <div className="col-3 p-0">
                     <div className="row justify-content-center m-0">
                         <img className="profile-image" 
-                             src={"https://localhost:7277/" + profileInfo.userImage}  
+                             src={"http://localhost:5000/" + profileInfo.userImage}  
                              alt="" />
                     </div>
                     {

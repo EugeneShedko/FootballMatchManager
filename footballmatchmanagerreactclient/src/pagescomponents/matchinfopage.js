@@ -34,14 +34,14 @@ export default function MatchInfoPage(props) {
 
     useEffect(() => {
 
-        axios.get('https://localhost:7277/api/profile/game/' + props.gameId + "/" + user.getUserId, { withCredentials: true })
+        axios.get('http://localhost:5000/api/profile/game/' + props.gameId + "/" + user.getUserId, { withCredentials: true })
             .then((response) => {
                 setGame(response.data.currgame);
                 setIsPart(response.data.isPart);
                 setIsCreat(response.data.isCreat);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/matchUsers/' + props.gameId, { withCredentials: true })
+                axios.get('http://localhost:5000/api/profile/matchUsers/' + props.gameId, { withCredentials: true })
                     .then((response) => {
                         setGameUsers(response.data);
                     })
@@ -57,7 +57,7 @@ export default function MatchInfoPage(props) {
                     });
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/allmessages/' + props.gameId, { withCredentials: true })
+                axios.get('http://localhost:5000/api/profile/allmessages/' + props.gameId, { withCredentials: true })
                     .then((response) => {
                         setGameMessage(response.data);
                     })
@@ -88,7 +88,7 @@ export default function MatchInfoPage(props) {
         }, []);
 
     const connectMessage = async () => {
-        const hubConnection = new HubConnectionBuilder().withUrl("https://localhost:7277/gamechat").build();
+        const hubConnection = new HubConnectionBuilder().withUrl("http://localhost:5000/gamechat").build();
 
         hubConnection.on("Send", (messageUserName, messageDate, messageText, userImage) => {
             setGameMessage(gameMessage => [...gameMessage, { messageUserName, messageDate, messageText, userImage}]);
@@ -106,7 +106,7 @@ export default function MatchInfoPage(props) {
         data.append("gameId", props.gameId);
         data.append("userId", user.getUserId);
 
-        axios.post('https://localhost:7277/api/profile/addtomatch', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/addtomatch', data, { withCredentials: true })
             .then((response) => {
                 setGameUsers(response.data.users);
                 setGame(response.data.currgame);
@@ -131,7 +131,7 @@ export default function MatchInfoPage(props) {
 
     function leaveMatch() {
 
-        axios.delete('https://localhost:7277/api/profile/leavefromgame/' + props.gameId + '/' + user.getUserId, { withCredentials: true })
+        axios.delete('http://localhost:5000/api/profile/leavefromgame/' + props.gameId + '/' + user.getUserId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {
@@ -157,7 +157,7 @@ export default function MatchInfoPage(props) {
     }
 
     function deleteMatch() {
-        axios.delete('https://localhost:7277/api/profile/deletegame/' + game.gameId, { withCredentials: true })
+        axios.delete('http://localhost:5000/api/profile/deletegame/' + game.gameId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {
@@ -204,7 +204,7 @@ export default function MatchInfoPage(props) {
         data.append("GameRecipient", props.gameId);
         data.append("MessageSender", user.getUserId);
 
-        axios.post('https://localhost:7277/api/profile/addmessage', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/addmessage', data, { withCredentials: true })
             .then((response) => {
                 console.log("запрос ответ");
                 connection.invoke("Send", user.getUserName,

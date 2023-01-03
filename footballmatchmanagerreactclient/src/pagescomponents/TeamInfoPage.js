@@ -22,13 +22,13 @@ export default function TeamInfoPage(props) {
 
     useEffect(() => {
 
-        axios.get('https://localhost:7277/api/profile/team/' + props.teamId + "/" + user.getUserId, { withCredentials: true })
+        axios.get('http://localhost:5000/api/profile/team/' + props.teamId + "/" + user.getUserId, { withCredentials: true })
             .then((response) => {
                 setTeam(response.data.currteam);
                 setIsPart(response.data.isPart);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/teamusers/' + props.teamId, { withCredentials: true })
+                axios.get('http://localhost:5000/api/profile/teamusers/' + props.teamId, { withCredentials: true })
                     .then((response) => {
                         setTeamUsers(response.data);
                     })
@@ -62,7 +62,7 @@ export default function TeamInfoPage(props) {
         data.append("teamId", props.teamId);
         data.append("userId", user.getUserId);
 
-        axios.post('https://localhost:7277/api/profile/addtoteam', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/addtoteam', data, { withCredentials: true })
             .then((response) => {
                 setTeamUsers(response.data.users);
                 setTeam(response.data.currteam);
@@ -87,7 +87,7 @@ export default function TeamInfoPage(props) {
 
     function leaveTeam() {
 
-        axios.delete('https://localhost:7277/api/profile/leavefromteam/' + props.teamId + '/' + user.getUserId, { withCredentials: true })
+        axios.delete('http://localhost:5000/api/profile/leavefromteam/' + props.teamId + '/' + user.getUserId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {

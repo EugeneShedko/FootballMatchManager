@@ -33,14 +33,14 @@ export default function TourInfoPage(props) {
 
     useEffect(() => {
 
-        axios.get('https://localhost:7277/api/profile/tour/' + props.tourId + "/" + user.getUserId, { withCredentials: true })
+        axios.get('http://localhost:5000/api/profile/tour/' + props.tourId + "/" + user.getUserId, { withCredentials: true })
             .then((response) => {
                 setTour(response.data.currtour);
                 setIsPart(response.data.isPart);
                 setIsCreat(response.data.isCreat);
             })
             .then(() => {
-                axios.get('https://localhost:7277/api/profile/tourteams/' + props.tourId, { withCredentials: true })
+                axios.get('http://localhost:5000/api/profile/tourteams/' + props.tourId, { withCredentials: true })
                     .then((response) => {
                         setTourTeams(response.data);
                     })
@@ -74,7 +74,7 @@ export default function TourInfoPage(props) {
         data.append("tourId", props.tourId);
         data.append("userId", user.getUserId);
 
-        axios.post('https://localhost:7277/api/profile/addtotour', data, { withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/addtotour', data, { withCredentials: true })
             .then((response) => {
                 setTourTeams(response.data.tteams);
                 setTour(response.data.currtour);
@@ -99,7 +99,7 @@ export default function TourInfoPage(props) {
 
     function leaveTour() {
 
-        axios.delete('https://localhost:7277/api/profile/leavefromtour/' + props.tourId + '/' + user.getUserId, { withCredentials: true })
+        axios.delete('http://localhost:5000/api/profile/leavefromtour/' + props.tourId + '/' + user.getUserId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {
@@ -127,7 +127,7 @@ export default function TourInfoPage(props) {
     {/*
 
     function deleteTour() {
-        axios.delete('https://localhost:7277/api/profile/deletegame/' + game.gameId, { withCredentials: true })
+        axios.delete('http://localhost:5000/api/profile/deletegame/' + game.gameId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {

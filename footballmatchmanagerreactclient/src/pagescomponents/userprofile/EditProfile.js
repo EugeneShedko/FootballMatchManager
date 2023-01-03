@@ -26,7 +26,7 @@ export default function EditProfile(props) {
         };
         
 
-        axios.post('https://localhost:7277/api/profile/editprofile', data,{ withCredentials: true })
+        axios.post('http://localhost:5000/api/profile/editprofile', data,{ withCredentials: true })
         .then((response) => {
             props.setProfileInfo(response.data.askdata);
             toast.success(response.data.message,

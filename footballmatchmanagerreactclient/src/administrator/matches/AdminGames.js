@@ -13,7 +13,7 @@ export default function AdminMatches(props) {
 
     useEffect(
         () => {
-            axios.get('https://localhost:7277/api/admin/profile/allmatches', { withCredentials: true })
+            axios.get('http://localhost:5000/api/admin/profile/allmatches', { withCredentials: true })
                 .then((response) => {
                     setGames(response.data);
                     setInitGames(response.data);

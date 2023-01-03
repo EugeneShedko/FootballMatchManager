@@ -50,7 +50,7 @@ export default function FRegistrationform(props) {
          UserPosition: regFormState.userPosition
       };
 
-      axios.post('https://localhost:7277/api/auth/registration', user, { withCredentials: true })
+      axios.post('http://localhost:5000/api/auth/registration', user, { withCredentials: true })
          .then((response) => {
                toast.success(response.data, {
                position: toast.POSITION.BOTTOM_RIGHT,
