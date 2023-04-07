@@ -1,10 +1,9 @@
-import ContentContainer from "../pagescomponents/main/content/ContentContainer"
-import FRegistrationform from "../pagescomponents/main/RegistrationForm";
-import Loginform from "../pagescomponents/main/LoginForm";
+import ContentContainer from "../Pages/MainPage/Content/ContentContainer"
+import FRegistrationform from "../Pages/MainPage/RegistrationForm";
+import Loginform from "../Pages/MainPage/LoginForm";
 import { LOGIN_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE, ADMIN_PROFILE_ROUTE  } from "../Utilts/Consts";
-import UserProfile from "../pagescomponents/ProfilePage";
-import Matches from "../pagescomponents/userprofile/Matches";
-import AdminProfile from "../administrator/adminprofilepage";
+import UserProfile from "../Pages/AccauntPage";
+import AdminProfile from "../Administrator/AdminProfilePage";
 
 export const AppRoutes = [
 

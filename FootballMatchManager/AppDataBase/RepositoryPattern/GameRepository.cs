@@ -41,5 +41,12 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             _dbcontext.Entry(item).State= EntityState.Modified;
         }
+
+        public List<Game> GetAllGamesForUser()
+        {
+            return GetItems().Where(g => g.Status != "block" )
+                             .OrderByDescending(g => g.DateTime)
+                             .ToList();
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace FootballMatchManager.Controllers.Admin
         public ActionResult GetAllUsers()
         {
 
-            IEnumerable<ApUser> apUsers = _unitOfWork.ApUserRepository.GetItems().Where(u => u.UserRole != "system");  
+            IEnumerable<ApUser> apUsers = _unitOfWork.ApUserRepository.GetItems().Where(u => u.Role != "system");  
 
             if(apUsers != null)
             {
@@ -66,7 +66,7 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest("Пользователя не существует");
             }
 
-            apUser.UserRole = "admin";
+            apUser.Role = "admin";
 
             _unitOfWork.Save();
 
@@ -87,7 +87,7 @@ namespace FootballMatchManager.Controllers.Admin
             }
 
             //Хорошо бы вынести значения в константы
-            apUser.UserRole = "user";
+            apUser.Role = "user";
 
             _unitOfWork.Save();
 
@@ -109,7 +109,7 @@ namespace FootballMatchManager.Controllers.Admin
             }
 
             //Хорошо бы вынести значения в константы
-            apUser.UserStatus = "block";
+            apUser.Status = "block";
 
             _unitOfWork.Save();
 
@@ -130,7 +130,7 @@ namespace FootballMatchManager.Controllers.Admin
             }
 
             //Хорошо бы вынести значения в константы
-            apUser.UserStatus = "active";
+            apUser.Status = "active";
 
             _unitOfWork.Save();
 
@@ -153,9 +153,9 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest("Пользователя не существует");
             }
 
-            apUser.GamesNumber = gamesNumber;
-            apUser.GoalsNumber = goalsNumber;
-            apUser.AssistsNumber = assistsNumber;
+            apUser.GamesQnt = gamesNumber;
+            apUser.GoalsQnt = goalsNumber;
+            apUser.AssistsQnt = assistsNumber;
 
             _unitOfWork.Save();
 
@@ -174,11 +174,11 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest(new { message = "Пользователя не существует" });
             }
 
-            List<Comment> comments = _unitOfWork.CommentRepository.GetItems().Where(c => c.CommentSender == id || c.CommentRecipient == id).ToList();
+            List<Comment> comments = _unitOfWork.CommentRepository.GetItems().Where(c => c.FkSenderId == id || c.FkRecipientId == id).ToList();
 
             for(int i = 0; i < comments.Count(); i++)
             {
-                _unitOfWork.CommentRepository.DeleteElement(comments[i].CommentId);
+                _unitOfWork.CommentRepository.DeleteElement(comments[i].PkId);
             }
 
             _unitOfWork.ApUserRepository.DeleteElement(id);

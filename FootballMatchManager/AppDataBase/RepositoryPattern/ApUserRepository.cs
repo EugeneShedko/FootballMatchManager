@@ -1,5 +1,6 @@
 ﻿using FootballMatchManager.DataBase.DBClasses;
 using FootballMatchManager.DataBase.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.RepositoryPattern
@@ -40,6 +41,13 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         public void UpdateElement(ApUser item)
         {
             _dbcontext.Entry(item).State= EntityState.Modified;
+        }
+
+        // ------------------------------------------------------------ //
+
+        public ApUser GetUserByEmail(string email)
+        {
+            return GetItems().FirstOrDefault(u => u.Email == email);
         }
     }
 }

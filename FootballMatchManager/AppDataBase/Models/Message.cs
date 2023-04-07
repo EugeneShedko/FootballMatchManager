@@ -5,19 +5,27 @@ namespace FootballMatchManager.DataBase.Models
     [Table("MESSAGE")]
     public class Message
     {
-        [Column("messageid")]
-        public int      MessageId       { get; set; }
-        [Column("messagetext")]
-        public string MessageText     { get; set; }
-        [Column("messagedatetime")]
-        public DateTime MessageDateTime { get; set; }
-        [Column("gameid")]
-        public int      GameId          { get; set; }
-        [Column("messagesender")]
-        public int     MessageSender   { get; set; }
+        [Column("pkid")]
+        public int      PkId       { get; set; }
+        [Column("text")]
+        public string Text     { get; set; }
+        [Column("datetime")]
+        public DateTime DateTime { get; set; }
+        [Column("fkgameId")]
+        public int      FkGameId          { get; set; }
+        [Column("fksenderid")]
+        public int     FkSenderId   { get; set; }
 
-        public ApUser ApUserSender { get; set; }
-        public Game   MessageGame { get; set; }
+        public ApUser Sender { get; set; }
+        public Game   Game { get; set; }
+
+        public Message(string text, int fkGameId, int fkSenderId)
+        {
+            this.Text = text;
+            this.FkGameId = fkGameId;
+            this.FkSenderId = fkSenderId;
+            this.DateTime= DateTime.Now;   
+        }
 
     }
 }

@@ -9,5 +9,6 @@
         public DateTime GameDate { get; set; }
 
         public string GameFormat { get; set; }
+        public string GameType { get;set; }
     }
 }

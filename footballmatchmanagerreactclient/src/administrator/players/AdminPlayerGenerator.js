@@ -1,4 +1,4 @@
-import AdminPlayerBlock from "./adminPlayerBlock";
+import AdminPlayerBlock from "./AdminPlayerBlock";
 
 export default function AdminPlayerGenerator(props) {
 

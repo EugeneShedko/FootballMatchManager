@@ -5,46 +5,60 @@ namespace FootballMatchManager.DataBase.Models
     [Table("APUSER")]
     public class ApUser
     {
-        [Column("apuserid")]
-        public int ApUserId { get; set; }
-        [Column("useremail")]
-        public string? UserEmail { get; set; }
-        [Column("userpassword")]
-        public string? UserPassword { get; set; }
-        [Column("userrole")]
-        public string? UserRole { get; set; }
-        [Column("userfirstname")]
-        public string? UserFirstName { get; set; }
-        [Column("userlastname")]
-        public string? UserLastName { get; set; }
-        [Column("usersex")]
-        public string? UserSex { get; set; }
-        [Column("userposition")]
-        public string? UserPosition { get; set; }
-        [Column("userdateofbirth")]
-        public DateTime? UserDateOfBirth {get;set;}
-        [Column("gamesnumber")]
-        public string? GamesNumber { get; set; } = "0";
-        [Column("goalsnumber")]
-        public string? GoalsNumber { get; set; } = "0";
-        [Column("assistsnumber")]
-        public string? AssistsNumber { get; set; } = "0";
-        [Column("userstatus")]
-        public string? UserStatus { get; set; }
-        [Column("userimage")]
-        public string? UserImage { get; set; } = "default-profile-icon.jpg";
+        [Column("pkid")]
+        public int PkId { get; set; }
+        [Column("email")]
+        public string Email { get; set; }
+        [Column("password")]
+        public string Password { get; set; }
+        [Column("role")]
+        public string? Role { get; set; }
+        [Column("firstname")]
+        public string? FirstName { get; set; }
+        [Column("lastname")]
+        public string? LastName { get; set; }
+        [Column("sex")]
+        public string? Sex { get; set; }
+        [Column("position")]
+        public string? Position { get; set; }
+        [Column("birth")]
+        public DateTime? Birth {get;set;}
+        [Column("gamesQnt")]
+        public string? GamesQnt { get; set; }
+        [Column("goalsQnt")]
+        public string? GoalsQnt { get; set; }
+        [Column("assistsQnt")]
+        public string? AssistsQnt { get; set; }
+        [Column("status")]
+        public string? Status { get; set; }
+        [Column("image")]
+        public string? Image { get; set; }
 
-        public List<Comment> UserCommentsRecipients { get; set; }
-        public List<Comment> UserCommentSenders { get; set; }
-        public List<Message> UserMessages { get; set; }
+        public List<Comment> CommentsRecipients { get; set; }
+        public List<Comment> CommentSenders { get; set; }
+        public List<Message> Messages { get; set; }
         public List<ApUserGame> ApUserGame { get; set; }
-
-        /*
-        public List<Tournament> UserTournaments { get; set; }
-        public List<ApUserTeam> UserTeams { get; set; }
-        public List<Notification> UserNotifications { get; set; }
-        public List<Request> UserRequestsRecipients { get; set; }
-        public List<Request> UserRequestsSenders { get; set; }
-        */
+        public List<Tournament> Tournaments { get; set; }
+        public List<ApUserTeam> Teams { get; set; }
+        public List<Notification> NotificationsRecipients { get; set; }
+        public List<Notification> NotificationsSenders { get; set; }
+        public ApUser() { }
+        public ApUser(string email, string password, string role, string firstname, string lastname, string sex, string position,
+                      DateTime birth, string status)
+        {
+            this.Email = email;
+            this.Password = password;
+            this.Role = role;
+            this.FirstName = firstname;
+            this.LastName = lastname;
+            this.Sex = sex;
+            this.Position = position;
+            this.Birth = birth;
+            this.Status = status;
+            this.GamesQnt = "0";
+            this.GoalsQnt = "0";
+            this.AssistsQnt = "0";
+            this.Image = "default-profile-icon.jpg";
+        }
     }
 }

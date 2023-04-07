@@ -1,0 +1,114 @@
+.notif-container
+{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: 5px white solid;
+    border-radius: 20px;
+}
+
+.notif-container :hover
+{
+    cursor: pointer;
+}
+
+.notif-back-block
+{
+    position: absolute;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0.6;
+    border-radius: 20px;
+    z-index: -1;   
+}
+
+.notif-block-content
+{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 1% 1% 1% 1%;
+}
+
+.notif-block-column
+{
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: white;
+
+}
+
+.column-date
+{
+    display: flex;
+    justify-content: center;
+}
+
+.column-button
+{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.butt-wrap
+{
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    margin: 0% 0% 2% 0%;
+}
+
+.notifi-button
+{
+    width: 100%;
+    text-align: center;
+    border: 2px white solid;
+    border-radius: 10px;
+}
+
+.read-button
+{
+    color: white;
+    background-color: green;
+}
+
+.read-button:hover
+{
+    color: green;
+    background-color: white;
+}
+
+.accept-button
+{
+    color: white;
+    background-color: green;    
+}
+
+.accept-button:hover
+{
+    color: green;
+    background-color: white;
+}
+
+.dismiss-button
+{
+    color: white;
+    background-color: red;    
+}
+
+.dismiss-button:hover
+{
+    color: green;
+    background-color: white;
+}

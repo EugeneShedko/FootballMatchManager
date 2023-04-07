@@ -1,8 +1,8 @@
-import "./../../css/matchespage.css";
+import "./../../css/Games.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import AdminMatchBlock from "./adminmatchblock";
+import AdminMatchBlock from "./AdminGameBlock";
 import AdminGameGenerator from "./AdminGameGenerator";
 
 export default function AdminMatches(props) {
@@ -13,7 +13,7 @@ export default function AdminMatches(props) {
 
     useEffect(
         () => {
-            axios.get('http://localhost:5000/api/admin/profile/allmatches', { withCredentials: true })
+            axios.get('http://localhost:5004/api/admin/profile/allmatches', { withCredentials: true })
                 .then((response) => {
                     setGames(response.data);
                     setInitGames(response.data);

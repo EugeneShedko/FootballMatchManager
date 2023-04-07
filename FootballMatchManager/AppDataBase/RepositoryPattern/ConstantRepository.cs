@@ -1,4 +1,5 @@
-﻿using FootballMatchManager.DataBase.DBClasses;
+﻿using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
+using FootballMatchManager.DataBase.DBClasses;
 using FootballMatchManager.DataBase.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,5 +42,16 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             _dbcontext.Entry(item).State= EntityState.Modified;
         }
+
+        // ------------------------------------------------------------------- //
+
+        public Constant GetConstantByName(string name)
+        {
+            return GetItems().FirstOrDefault(c => c.Name == name);
+
+        }
+
+        // ------------------------------------------------------------------- //
+
     }
 }

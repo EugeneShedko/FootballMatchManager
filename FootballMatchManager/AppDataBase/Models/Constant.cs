@@ -5,14 +5,18 @@ namespace FootballMatchManager.DataBase.Models
     [Table("CONSTANT")]
     public class Constant
     {
-        [Column("constantid")]
-        public int  ConstantId { get; set; }
-        [Column("constanttype")]
-        public string ConstantType { get; set; }
-        [Column("constantname")]
-        public string ConstantName { get; set; }
-        [Column("constantvalue")]
-        public int  ConstantValue { get; set; }
+        [Column("pkid")]
+        public int  PkId { get; set; }
+        [Column("group")]
+        public string? Group { get; set; }
+        [Column("type")]
+        public string? Type { get; set; }
+        [Column("name")]
+        public string Name { get; set; }
+        [Column("strvalue")]
+        public string? StrValue { get; set; }
+        [Column("decvalue")]
+        public int? DecValue { get; set; }
 
     }
 }

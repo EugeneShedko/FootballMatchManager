@@ -22,11 +22,15 @@ namespace FootballMatchManager.Controllers
             this._jwtService = jwtService;
         }
 
+        // ------------------------------------------------------------------------------------------------------------------- //
+
         [HttpGet]
-        [Route("allplayers")]
+        [Route("all-players")]
         public ActionResult Get()
         {
-            IEnumerable<ApUser> apUsers =  _unitOfWork.ApUserRepository.GetItems().Where(u => u.UserRole != "system" && u.UserStatus != "block");
+            List<ApUser> apUsers =  _unitOfWork.ApUserRepository.GetItems()
+                                                                .Where(u => u.Role != "system" && u.Status != "block")
+                                                                .ToList();
 
             if(apUsers == null)
             {
@@ -36,27 +40,23 @@ namespace FootballMatchManager.Controllers
             return Ok(apUsers);
         }
 
-        [HttpGet]
-        [Route("allcomments/{userId}")]
-        public ActionResult GetAllComments(int userId)
-        {
-            List<Comment> comments = _unitOfWork.CommentRepository.GetItems().Where(c => c.CommentRecipient == userId).ToList();
-
-            if(comments == null)
-            {
-                return Ok();
-            }
-            else
-            {
-                return Ok(JsonConverter.ConvertComment(comments));
-            }
-        }
+        // ------------------------------------------------------------------------------------------------------------------- //
 
         [HttpPost]
-        [Route("userprofile")]
+        [Route("user-card")]
         public ActionResult PostUserProfile()
         {
-            var userId = int.Parse(Request.Form["userId"]);
+            int userId;
+
+            try
+            {
+
+                userId = int.Parse(Request.Form["userid"]);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
 
             ApUser apuser = _unitOfWork.ApUserRepository.GetItem(userId);
 
@@ -70,6 +70,8 @@ namespace FootballMatchManager.Controllers
             }
         }
 
+        // ----------------------------------------------------------------------------------- //
+
         [HttpPost]
         [Route("editprofile")]
         public ActionResult PostEditProfile([FromBody] ShortApUser shortApUser)
@@ -81,11 +83,11 @@ namespace FootballMatchManager.Controllers
                 return BadRequest(new { message = "Пользователя не существует" });
             }
 
-            apUser.UserFirstName = shortApUser.UserName;
-            apUser.UserLastName = shortApUser.UserLastName;
-            apUser.UserDateOfBirth = shortApUser.UserBirthDay;
-            apUser.UserPosition = shortApUser.UserPosition;
-            apUser.UserEmail= shortApUser.UserEmail;
+            apUser.FirstName = shortApUser.UserName;
+            apUser.LastName = shortApUser.UserLastName;
+            apUser.Birth = shortApUser.UserBirthDay;
+            apUser.Position = shortApUser.UserPosition;
+            apUser.Email= shortApUser.UserEmail;
 
             _unitOfWork.Save();
 
@@ -98,10 +100,10 @@ namespace FootballMatchManager.Controllers
         {
             Comment comment = new Comment()
             {
-                CommentText = Request.Form["CommentText"],
-                CommentDateTime = DateTime.Now,
-                CommentRecipient = int.Parse(Request.Form["CommentRecipient"]),
-                CommentSender = int.Parse(Request.Form["CommentSender"])
+                Text = Request.Form["CommentText"],
+                Date = DateTime.Now,
+                FkRecipientId = int.Parse(Request.Form["CommentRecipient"]),
+                FkSenderId = int.Parse(Request.Form["CommentSender"])
             };
 
             _unitOfWork.CommentRepository.AddElement(comment);
@@ -133,9 +135,9 @@ namespace FootballMatchManager.Controllers
                     return BadRequest(new {message = "Пользователя не существует"});
                 }
 
-                string path = FileManager.LoadProfileImage(file, apUser.UserEmail);
+                string path = FileManager.LoadProfileImage(file, apUser.Email);
 
-                apUser.UserImage = path;
+                apUser.Image = path;
 
                 _unitOfWork.Save();
 

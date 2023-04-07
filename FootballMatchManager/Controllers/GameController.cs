@@ -3,6 +3,7 @@ using FootballMatchManager.IncompleteModels;
 using Microsoft.AspNetCore.Mvc;
 using FootballMatchManager.Utilts;
 using FootballMatchManager.DataBase.Models;
+using FootballMatchManager.Enums;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,21 +21,25 @@ namespace FootballMatchManager.Controllers
             this._jwtService = jwtService;
         }
 
-        [Route("allmatches")]
+        // --------------------------------------------------------------------------------------------- //
+
+        [Route("get-all-games")]
         [HttpGet]
         public IActionResult Get()
         {
-            IEnumerable<Game> games = _unitOfWork.GameRepository.GetItems().Where(g => g.GameStatus != "block").OrderByDescending(g => g.GameDateTime);
+            List<Game> allgames = _unitOfWork.GameRepository.GetAllGamesForUser();
 
-            if(games == null)
-            {
+            if (allgames == null)
+                {
                 return BadRequest(new {message = "Создайте матч!"});
             }
             else
             {
-                return Ok(games);
+                return Ok(allgames);
             }
         }
+
+        // --------------------------------------------------------------------------------------------- //
 
         [Route("game/{gameid}/{userid}")]
         [HttpGet]
@@ -51,10 +56,10 @@ namespace FootballMatchManager.Controllers
             }
 
             ApUserGame apUserGamePt = _unitOfWork.ApUserGameRepository.GetItems()
-                                                                      .FirstOrDefault(apug => apug.GameId == gameId && apug.UserId == userid && apug.UserType == "participant");
+                                                                      .FirstOrDefault(apug => apug.PkFkGameId == gameId && apug.PkFkUserId == userid && apug.PkUserType == "participant");
 
             ApUserGame apUserGameCr = _unitOfWork.ApUserGameRepository.GetItems()
-                                              .FirstOrDefault(apug => apug.GameId == gameId && apug.UserId == userid && apug.UserType == "creator");
+                                              .FirstOrDefault(apug => apug.PkFkGameId == gameId && apug.PkFkUserId == userid && apug.PkUserType == "creator");
 
             if (apUserGamePt != null) 
             {
@@ -70,15 +75,14 @@ namespace FootballMatchManager.Controllers
             return Ok(new { currgame = game, isPart = isParticipant, isCreat = isCreator } );
         }
 
+        // --------------------------------------------------------------------------------------------- //
+
         [HttpGet]
-        [Route("matchUsers/{id}")]
+        [Route("game-users/{id}")]
         public ActionResult GetMatchUser(int id)
         {
 
-            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetItems()
-                                                                       .Where(apug => apug.GameId == id && apug.UserType == "participant")
-                                                                       .Select(apug => apug.ApUser).ToList();
-
+            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetGameUsers(id);
 
             if (apUsers != null)
             {
@@ -91,67 +95,65 @@ namespace FootballMatchManager.Controllers
 
         }
 
-        [HttpGet]
-        [Route("allmessages/{gameId}")]
-        public ActionResult GetAllComments(int gameId)
-        {
+        // --------------------------------------------------------------------------------------------- //
 
-            List<Message> messages = _unitOfWork.MessageRepository.GetItems().Where(m => m.GameId == gameId).ToList();
-
-            if (messages == null)
-            {
-                return Ok();
-            }
-            else
-            {
-                return Ok(JsonConverter.ConvertMessage(messages));
-            }
-        }
-
-
-        [Route("addtomatch")]
+        [Route("add-to-game")]
         [HttpPost]
         public IActionResult AddToMatch()
         {
+            int gameId;
+            int userId;
 
-            int gameId = int.Parse(Request.Form["gameId"]);
-            int userId = int.Parse(Request.Form["userId"]);
+            /* Переделать добавление к матчу, на получение пользоватедя через контекст */
 
+            try
+            {
+                gameId = int.Parse(Request.Form["gameId"]);
+                userId = int.Parse(Request.Form["userId"]);
+
+            }catch(Exception ex) 
+            {
+                return BadRequest("Ошибка преобразования");
+            }
+
+            /* Получаем игру к которой хочет присоединиться пользователь */
             Game game = _unitOfWork.GameRepository.GetItem(gameId);
 
-            if(game.CurrentPlayers < game.GameMaxPlayers)
+            /* нужно как-то различать сообщения, которые можно пользователю показывать и которые нельзя */ 
+            if(game == null)
             {
-                game.CurrentPlayers += 1;
-                _unitOfWork.Save();
-            }
-            else
-            {
-                return BadRequest(new {message = "Пользователей достаточное количество"});
+                return BadRequest(new {message = "Матч не найден!"});
             }
 
-            ApUserGame apUserGameEx = _unitOfWork.ApUserGameRepository.GetItems()
-                                                                    .FirstOrDefault(apug => apug.GameId == gameId && apug.UserId == userId && apug.UserType == "participant");
-
-            if(apUserGameEx != null)
+            if(game.CurrPlayers >= game.MaxPlayers)
             {
-                return BadRequest(new {message = "Пользователь уже зарегистрирован на матч"});
+                return BadRequest(new { message = "Пользователей достаточное количество" });
             }
+
+            /* Получаем участника матча */
+            ApUserGame apUserGameEx = _unitOfWork.ApUserGameRepository.GetUserFromGame(gameId, userId);
+
+            if (apUserGameEx != null)
+            {
+                return BadRequest(new { message = "Пользователь уже присоединился к матчу" });
+            }
+
+            /* Учеличиваем количество пользователей на матче */
+            game.CurrPlayers += 1;
 
             ApUserGame apUserGame = new ApUserGame()
             {
-                GameId = gameId,
-                UserId = userId,
-                UserType = "participant"
+                PkFkGameId = gameId,
+                PkFkUserId = userId,
+                PkUserType = "participant"
             };
 
             _unitOfWork.ApUserGameRepository.AddElement(apUserGame);
             _unitOfWork.Save();
 
-            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetItems()
-                                                                   .Where(apug => apug.GameId == gameId && apug.UserType == "participant")
-                                                                   .Select(apug => apug.ApUser).ToList();
+            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetGameUsers(gameId);
 
-
+            /* Зачем нужно вот это условие */
             if (apUsers == null)
             {
                 return Ok(new { message = "Вы присоеденились к матчу", currgame = game});
@@ -163,12 +165,14 @@ namespace FootballMatchManager.Controllers
 
         }
 
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
-        [Route("creatematch")]
+        [Route("create-game")]
         [HttpPost]
         public IActionResult Post([FromBody] ShortGame shortGame)
         {
             int gameMaxPlayers;
+            int gameType;
 
             //Хорошо бы это на клиенте сделать, а сюда передавать числовое значение
             //Не очень хорошо скорее всего присваить нулевое значение
@@ -180,32 +184,32 @@ namespace FootballMatchManager.Controllers
                 default: gameMaxPlayers = 0; break;
             }
 
-            Game game = new Game()
+            switch(shortGame.GameType)
             {
-                GameName = shortGame.GameName,
-                GameAdress = shortGame.GameAdress,
-                GameDateTime = shortGame.GameDate,
-                GameMaxPlayers = gameMaxPlayers,
-                GameFormat = shortGame.GameFormat,
-                CurrentPlayers = 1,
-                GameType = "match"
-            };
+                case "Публичный": gameType = (int)GameEnum.PUBLIC; break;
+                case "Закрытый": gameType = (int)GameEnum.CLOSED; break;
+                default: gameType = (int)GameEnum.PUBLIC; break;
+            }
+
+
+            Game game = new Game(shortGame.GameName, shortGame.GameAdress, shortGame.GameDate, gameMaxPlayers, shortGame.GameFormat, gameType);
+
 
             _unitOfWork.GameRepository.AddElement(game);
             _unitOfWork.Save();
 
             ApUserGame apUserGameCr = new ApUserGame()
             {
-                GameId = game.GameId,
-                UserId = shortGame.UserId,
-                UserType = "creator",
+                PkFkGameId = game.PkId,
+                PkFkUserId = shortGame.UserId,
+                PkUserType = "creator",
             };
 
             ApUserGame apUserGamePt = new ApUserGame()
             {
-                GameId = game.GameId,
-                UserId = shortGame.UserId,
-                UserType = "participant",
+                PkFkGameId = game.PkId,
+                PkFkUserId = shortGame.UserId,
+                PkUserType = "participant",
             };
 
 
@@ -213,9 +217,12 @@ namespace FootballMatchManager.Controllers
             _unitOfWork.ApUserGameRepository.AddElement(apUserGamePt);
             _unitOfWork.Save();
 
-            return Ok("Матч успешно создан");
+            List<Game> allgames = _unitOfWork.GameRepository.GetAllGamesForUser();
+
+            return Ok(new { reqmess = "Матч успешно создан!", allgames = allgames });
         }
 
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
         [Route("userCreatMatch")]
         [HttpPost]
@@ -223,7 +230,7 @@ namespace FootballMatchManager.Controllers
         {
             var userID = int.Parse(Request.Form["userId"]);
 
-            List<Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.UserId == userID && ap.UserType == "creator").Select(ap => ap.Game).ToList();
+            List<Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.PkFkUserId == userID && ap.PkUserType == "creator").Select(ap => ap.Game).ToList();
 
             if(games == null)
             {
@@ -239,7 +246,7 @@ namespace FootballMatchManager.Controllers
         {
             var userID = int.Parse(Request.Form["userId"]);
 
-            List<Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.UserId == userID && ap.UserType == "participant").Select(ap => ap.Game).ToList();
+            List<Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.PkFkUserId == userID && ap.PkUserType == "participant").Select(ap => ap.Game).ToList();
 
             if (games == null)
             {
@@ -249,8 +256,10 @@ namespace FootballMatchManager.Controllers
             return Ok(games);
         }
 
+        // ------------------------------------------------------------------------------- //
+
         [HttpPost]
-        [Route("editgame")]
+        [Route("edit-game")]
         public ActionResult PostEditGame([FromBody] ShortGame shortGame)
         {
             Game game = _unitOfWork.GameRepository.GetItem(shortGame.GameId);
@@ -260,43 +269,61 @@ namespace FootballMatchManager.Controllers
                 return BadRequest(new { message = "Данной игры не существует" });
             }
 
-            game.GameName = shortGame.GameName;
-            game.GameDateTime = shortGame.GameDate;
-            game.GameFormat = shortGame.GameFormat;
-            game.GameAdress = shortGame.GameAdress;
+            game.Name = shortGame.GameName;
+            game.DateTime = shortGame.GameDate;
+            game.Format = shortGame.GameFormat;
+            game.Adress = shortGame.GameAdress;
 
             _unitOfWork.Save();
 
             return Ok(new { message = "Данные успешно сохранены", askdata = game });
         }
 
+        // ------------------------------------------------------------------------------- //
+
         [HttpPost]
         [Route("addmessage")]
         public ActionResult PostAddMessage()
         {
+            /*
             Message message = new Message()
             {
-                MessageText = Request.Form["MessageText"],
-                MessageDateTime = DateTime.Now,
-                GameId = int.Parse(Request.Form["GameRecipient"]),
-                MessageSender = int.Parse(Request.Form["MessageSender"])
+                Text = Request.Form["MessageText"],
+                DateTime = DateTime.Now,
+                FkGameId = int.Parse(Request.Form["GameRecipient"]),
+                FkSenderId = int.Parse(Request.Form["MessageSender"])
             };
 
             _unitOfWork.MessageRepository.AddElement(message);
 
             _unitOfWork.Save();
 
-            return Ok(message);
+            */
+            //return Ok(message)
+            return Ok();
         }
 
+        // ------------------------------------------------------------------------------- //
 
         [HttpDelete]
-        [Route("leavefromgame/{gameId}/{userId}")]
+        [Route("leave-from-game/{gameId}/{userId}")]
         public ActionResult DeleteLeaveFromGame(int gameId, int userId)
         {
 
-            ApUserGame apUserGame = _unitOfWork.ApUserGameRepository.GetItems()
-                                                                    .FirstOrDefault(apug => apug.GameId == gameId && apug.UserId == userId && apug.UserType == "participant");
+
+            Game game = _unitOfWork.GameRepository.GetItem(gameId);
+
+            if(game == null)
+            {
+                return BadRequest(new { message = "Матч не найден!" });
+            }
+
+            if(game.CurrPlayers <= 0)
+            {
+                return BadRequest(new {message = "Ошибка количества пользователей не матче"});
+            }
+
+            ApUserGame apUserGame = _unitOfWork.ApUserGameRepository.GetUserFromGame(gameId, userId);
 
             if (apUserGame == null)
             {
@@ -304,24 +331,10 @@ namespace FootballMatchManager.Controllers
             }
 
             _unitOfWork.ApUserGameRepository.DeleteElement(apUserGame);
-
+            game.CurrPlayers -= 1;
             _unitOfWork.Save();
 
-            Game game = _unitOfWork.GameRepository.GetItem(gameId);
-
-            if (game.CurrentPlayers > 0)
-            {
-                game.CurrentPlayers -= 1;
-                _unitOfWork.Save();
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetItems().Where(apug => apug.GameId == gameId && apug.UserType == "participant")
-                                                                                   .Select(apug => apug.ApUser)
-                                                                                   .ToList();
+            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetGameUsers(gameId);
 
             if (apUsers == null)
             {
@@ -333,8 +346,10 @@ namespace FootballMatchManager.Controllers
             }
         }
 
+        // ------------------------------------------------------------------------------- //
+
         [HttpDelete]
-        [Route("deletegame/{id}")]
+        [Route("delete-game/{id}")]
         public ActionResult DeleteGame(int id)
         {
             Game game = _unitOfWork.GameRepository.GetItem(id);
@@ -345,10 +360,9 @@ namespace FootballMatchManager.Controllers
             }
 
             _unitOfWork.GameRepository.DeleteElement(id);
-
             _unitOfWork.Save();
 
-            IEnumerable<Game> games = _unitOfWork.GameRepository.GetItems();
+            List<Game> games = _unitOfWork.GameRepository.GetItems().ToList();
 
             if (games == null)
             {
@@ -359,5 +373,7 @@ namespace FootballMatchManager.Controllers
                 return Ok(new { message = "Матч удален", rgames = games });
             }
         }
+
+        // ------------------------------------------------------------------------------- //
     }
 }

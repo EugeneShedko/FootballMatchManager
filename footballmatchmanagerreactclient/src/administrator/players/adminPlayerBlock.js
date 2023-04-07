@@ -1,10 +1,12 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-import "./../../css/player.css"
-import Profile from "../../pagescomponents/userprofile/Profile";
+import "./../../css/Player.css"
+import Profile from "./../../Pages/UserAccaunt/Players/ViewPlayerCard/PlayerCard";
 import AdminPlayerProfile from "./adminPlayerProfile";
 
 export default function AdminPlayerBlock(props) {
+
+    // -------------------------------------------------------------------------- //
 
     function setPlayerInfoPage(e) {
 
@@ -16,9 +18,10 @@ export default function AdminPlayerBlock(props) {
         }
     }
 
+    // -------------------------------------------------------------------------- //
+
     function removeFromMatch() {
-        //Хорошо бы вынести в константы
-        axios.delete('http://localhost:5000/api/admin/profile/rmusfromgame/' + props.gameId + '/' + props.info.apUserId, { withCredentials: true })
+        axios.delete('http://localhost:5004/api/admin/profile/rmusfromgame/' + props.gameId + '/' + props.info.apUserId, { withCredentials: true })
         .then((response) => {
             toast.success(response.data.message,
                 {
@@ -41,6 +44,8 @@ export default function AdminPlayerBlock(props) {
         });
 
     }
+
+    // -------------------------------------------------------------------------- //
 
     return (
         <div id="container" className="player-container" onClick={setPlayerInfoPage}>

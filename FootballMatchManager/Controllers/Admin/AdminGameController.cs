@@ -59,8 +59,8 @@ namespace FootballMatchManager.Controllers.Admin
         public ActionResult GetMatchUser(int id)
         {
 
-            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetItems().Where(apug => apug.GameId == id)
-                                                                       .Where(apug => apug.GameId == id && apug.UserType == "participant")
+            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetItems().Where(apug => apug.PkFkGameId == id)
+                                                                       .Where(apug => apug.PkFkGameId == id && apug.PkUserType == "participant")
                                                                        .Select(apug => apug.ApUser).ToList();
 
 
@@ -88,7 +88,7 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest(new { message = "Игры не существует" });
             }
 
-            game.GameStatus = "block";
+            game.Status = "block";
 
             _unitOfWork.Save();
 
@@ -108,7 +108,7 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest(new { message = "Игры не существует" });
             }
 
-            game.GameStatus = "active";
+            game.Status = "active";
 
             _unitOfWork.Save();
 
@@ -148,7 +148,7 @@ namespace FootballMatchManager.Controllers.Admin
         {
 
             ApUserGame apUserGame = _unitOfWork.ApUserGameRepository.GetItems()
-                                                                    .FirstOrDefault(apug => apug.GameId == gameId && apug.UserId == userId && apug.UserType == "participant");
+                                                                    .FirstOrDefault(apug => apug.PkFkGameId == gameId && apug.PkFkUserId == userId && apug.PkUserType == "participant");
             /*
             if(apUserGame.Game.CurrentPlayers > 0 )
             {
@@ -171,9 +171,9 @@ namespace FootballMatchManager.Controllers.Admin
 
             Game game = _unitOfWork.GameRepository.GetItem(gameId);
 
-            if (game.CurrentPlayers > 0)
+            if (game.CurrPlayers > 0)
             {
-                game.CurrentPlayers -= 1;
+                game.CurrPlayers -= 1;
                 _unitOfWork.Save();
             }
             else
@@ -181,7 +181,7 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest();
             }
 
-            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetItems().Where(apug => apug.GameId == gameId && apug.UserType == "participant")
+            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetItems().Where(apug => apug.PkFkGameId == gameId && apug.PkUserType == "participant")
                                                                                    .Select(apug => apug.ApUser)
                                                                                    .ToList();
 

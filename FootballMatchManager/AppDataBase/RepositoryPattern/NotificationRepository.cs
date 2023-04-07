@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.RepositoryPattern
 {
-    public class NotificationRepository // : IRepository<Notification>
+    public class NotificationRepository  : IRepository<Notification>
     {
-        /*
         private AppDBContext _dbcontext;
 
         public NotificationRepository(AppDBContext dbcontext)
@@ -30,7 +29,9 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public Notification GetItem(int firstid, int secondid = 0)
         {
-            return _dbcontext.Notifications.Find(firstid);
+            return _dbcontext.Notifications.Include(n => n.Sender)
+                                           .Include(n => n.Recipient)
+                                           .FirstOrDefault(n => n.PkId == firstid);
         }
 
         public IEnumerable<Notification> GetItems()
@@ -42,6 +43,18 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             _dbcontext.Entry(item).State= EntityState.Modified;
         }
-        */
+
+        // ------------------------------------------------------------ //
+
+        public List<Notification> GetUserNotification(int userId)
+        {
+            return GetItems().Where(n => n.FkRecipient == userId)
+                             .OrderBy(n => n.Status)
+                             .ThenByDescending(n => n.Date)
+                             .ToList();
+
+        }
+
+        // ------------------------------------------------------------ //
     }
 }

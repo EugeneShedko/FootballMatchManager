@@ -6,12 +6,12 @@ namespace FootballMatchManager.DataBase.Models
     [Table("APUSERGAME")]
     public class ApUserGame
     {
-        [Column("gameid")]
-        public int GameId { get; set; }
-        [Column("userid")]
-        public int UserId { get; set; }
-        [Column("usertype")]
-        public string UserType { get; set; }
+        [Column("pkfkgameid")]
+        public int PkFkGameId { get; set; }
+        [Column("pkfkuserid")]
+        public int PkFkUserId { get; set; }
+        [Column("pkusertype")]
+        public string PkUserType { get; set; }
 
         public Game Game { get; set; }
         public ApUser ApUser { get; set; }

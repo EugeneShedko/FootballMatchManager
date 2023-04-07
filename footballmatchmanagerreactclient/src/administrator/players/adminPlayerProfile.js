@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "./../../css/profile.css";
+import "./../../css/PlayerCard.css";
 import AdminPlayers from "./AdminPlayers";
 //import UserCommentBlock from "./usercommentblock";
 
@@ -20,7 +20,7 @@ export default function AdminPlayerProfile(props) {
     useEffect(
         () => {
 
-            axios.get('http://localhost:5000/api/admin/profile/user/' + props.apUserId, { withCredentials: true })
+            axios.get('http://localhost:5004/api/admin/profile/user/' + props.apUserId, { withCredentials: true })
                 .then((response) => {
                     setProfileInfo(response.data);
                 })
@@ -43,7 +43,7 @@ export default function AdminPlayerProfile(props) {
         const data = new FormData();
         data.append("userId", profileInfo.apUserId);
 
-        axios.post('http://localhost:5000/api/admin/profile/makeadmin/', data, { withCredentials: true })
+        axios.post('http://localhost:5004/api/admin/profile/makeadmin/', data, { withCredentials: true })
             .then((response) => {
                 setProfileInfo(response.data);
                 toast.success('Пользователю назначена роль "Администратор"',
@@ -59,7 +59,7 @@ export default function AdminPlayerProfile(props) {
         const data = new FormData();
         data.append("userId", profileInfo.apUserId);
 
-        axios.post('http://localhost:5000/api/admin/profile/makeuser/', data, { withCredentials: true })
+        axios.post('http://localhost:5004/api/admin/profile/makeuser/', data, { withCredentials: true })
             .then((response) => {
                 setProfileInfo(response.data);
                 toast.success('Пользователю назначена роль "Пользователь"',
@@ -75,7 +75,7 @@ export default function AdminPlayerProfile(props) {
         const data = new FormData();
         data.append("userId", profileInfo.apUserId);
 
-        axios.put('http://localhost:5000/api/admin/profile/blockuser/', data, { withCredentials: true })
+        axios.put('http://localhost:5004/api/admin/profile/blockuser/', data, { withCredentials: true })
             .then((response) => {
                 setProfileInfo(response.data);
                 toast.success("Пользователь заблокирован",
@@ -92,7 +92,7 @@ export default function AdminPlayerProfile(props) {
         const data = new FormData();
         data.append("userId", profileInfo.apUserId);
 
-        axios.put('http://localhost:5000/api/admin/profile/unblockuser/', data, { withCredentials: true })
+        axios.put('http://localhost:5004/api/admin/profile/unblockuser/', data, { withCredentials: true })
             .then((response) => {
                 setProfileInfo(response.data);
                 toast.success("Пользователь разблокирован",
@@ -118,7 +118,7 @@ export default function AdminPlayerProfile(props) {
         data.append("goalsNumber", userStat.goals);
         data.append("goalsAssists", userStat.assists);
 
-        axios.put('http://localhost:5000/api/admin/profile/updateuser/', data, { withCredentials: true })
+        axios.put('http://localhost:5004/api/admin/profile/updateuser/', data, { withCredentials: true })
         .then((response) => {
             setProfileInfo(response.data);
             toast.success("Данные успешно сохранены",
@@ -137,7 +137,7 @@ export default function AdminPlayerProfile(props) {
         const data = new FormData();
         data.append("userId", profileInfo.apUserId);
 
-        axios.delete('http://localhost:5000/api/admin/profile/deleteuser/' + profileInfo.apUserId, { withCredentials: true })
+        axios.delete('http://localhost:5004/api/admin/profile/deleteuser/' + profileInfo.apUserId, { withCredentials: true })
         .then((response) => {
             toast.success(response.data.message,
                 {

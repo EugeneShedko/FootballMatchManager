@@ -94,7 +94,6 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                 return _messageRepository;
             }
         }
-        /*
         public NotificationRepository NotificationRepository
         {
             get 
@@ -104,7 +103,6 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                 return _notificationRepository;
             }
         }
-        */
         /*
         public RequestRepository RequestRepository
         {

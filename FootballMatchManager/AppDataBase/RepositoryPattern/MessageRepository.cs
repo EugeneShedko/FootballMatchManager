@@ -28,12 +28,14 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public Message GetItem(int firstid, int secondid = 0)
         {
-            return _dbcontext.Messages.Find(firstid);
+            return _dbcontext.Messages.Include(m => m.Sender)
+                                       .FirstOrDefault(m => m.PkId == firstid);
         }
 
         public IEnumerable<Message> GetItems()
         {
-            return _dbcontext.Messages.Include(m => m.ApUserSender).AsNoTracking().ToList();
+            return _dbcontext.Messages.Include(m => m.Sender)
+                                      .ToList();
         }
 
         public void UpdateElement(Message item)

@@ -1,8 +1,8 @@
-import "./../../css/playerspage.css"
+import "./../../css/PlayersPage.css"
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import AdminPlayerBlock from "./adminPlayerBlock";
+import AdminPlayerBlock from "./AdminPlayerBlock";
 import { observer } from "mobx-react-lite";
 import { useNavigate } from "react-router-dom";
 import AdminPlayerGenerator from "./AdminPlayerGenerator";
@@ -16,7 +16,7 @@ const AdminPlayers = observer((props) => {
 
     useEffect(
         () => {
-            axios.get('http://localhost:5000/api/admin/profile/allusers', { withCredentials: true })
+            axios.get('http://localhost:5004/api/admin/profile/allusers', { withCredentials: true })
                 .then((response) => {
                     setPlayers(response.data);
                     setInitPlayers(response.data);

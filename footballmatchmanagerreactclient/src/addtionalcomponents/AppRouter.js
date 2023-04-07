@@ -4,7 +4,7 @@ import { Routes, Route} from 'react-router-dom'
 import { ToastContainer } from "react-toastify";
 import { AppRoutes, AuthAppRoutes, AdminAppRoutes } from "./Routes";
 import { Context } from "./../index";
-import ContentContainer from "../pagescomponents/main/content/ContentContainer";
+import ContentContainer from "../Pages/MainPage/Content/ContentContainer";
 import { observer } from "mobx-react-lite";
 
 const AppRouter = observer(() => {

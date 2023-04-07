@@ -11,11 +11,11 @@ namespace FootballMatchManager.Utilts
             foreach (ApUser apUser in apUsers)
             {
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.Add("userFirstName", apUser.UserFirstName);
-                jsonObject.Add("userLastName", apUser.UserLastName);
+                jsonObject.Add("userFirstName", apUser.FirstName);
+                jsonObject.Add("userLastName", apUser.LastName);
 
-                jsonObject.Add("userDateOfBirth", apUser.UserDateOfBirth);
-                jsonObject.Add("userPosition", apUser.UserPosition);
+                jsonObject.Add("userDateOfBirth", apUser.Birth);
+                jsonObject.Add("userPosition", apUser.Position);
                 jsonObject.Add("userEmail", "нет комманды");
 
                 jsonArray.Add(jsonObject);
@@ -32,11 +32,11 @@ namespace FootballMatchManager.Utilts
                 JsonObject jsonObject = new JsonObject();
 
 
-                jsonObject.Add("userFirstName", apUser.UserFirstName);
-                jsonObject.Add("userLastName", apUser.UserLastName);
+                jsonObject.Add("userFirstName", apUser.FirstName);
+                jsonObject.Add("userLastName", apUser.LastName);
 
-                jsonObject.Add("userDateOfBirth", apUser.UserDateOfBirth);
-                jsonObject.Add("userPosition", apUser.UserPosition);
+                jsonObject.Add("userDateOfBirth", apUser.Birth);
+                jsonObject.Add("userPosition", apUser.Position);
                 jsonObject.Add("userEmail", "нет комманды");
 
                 jsonArray.Add(jsonObject);
@@ -53,12 +53,12 @@ namespace FootballMatchManager.Utilts
 
                 JsonObject jsonObject = new JsonObject();
 
-                jsonObject.Add("commentUserName", comment.ApUserSender.UserFirstName + comment.ApUserSender.UserLastName);
-                jsonObject.Add("commentDate", comment.CommentDateTime);
-                jsonObject.Add("commentText", comment.CommentText);
-                jsonObject.Add("userSender", comment.CommentSender);
-                jsonObject.Add("commentId", comment.CommentId);
-                jsonObject.Add("userImage", comment.ApUserSender.UserImage);
+                jsonObject.Add("commentUserName", comment.Sender.FirstName + comment.Sender.LastName);
+                jsonObject.Add("commentDate", comment.Date);
+                jsonObject.Add("commentText", comment.Text);
+                jsonObject.Add("userSender", comment.FkSenderId);
+                jsonObject.Add("commentId", comment.PkId);
+                jsonObject.Add("userImage", comment.Sender.Image);
 
                 jsonArray.Add(jsonObject);
             }
@@ -74,10 +74,10 @@ namespace FootballMatchManager.Utilts
 
                 JsonObject jsonObject = new JsonObject();
 
-                jsonObject.Add("messageUserName", message.ApUserSender.UserFirstName + message.ApUserSender.UserLastName);
-                jsonObject.Add("messageDate", message.MessageDateTime);
-                jsonObject.Add("messageText", message.MessageText);
-                jsonObject.Add("userImage", message.ApUserSender.UserImage);
+                jsonObject.Add("messageUserName", message.Sender.FirstName + message.Sender.LastName);
+                jsonObject.Add("messageDate", message.DateTime);
+                jsonObject.Add("messageText", message.Text);
+                jsonObject.Add("userImage", message.Sender.Image);
 
                 jsonArray.Add(jsonObject);
             }

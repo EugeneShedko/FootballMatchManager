@@ -33,7 +33,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public IEnumerable<Comment> GetItems()
         {
-            return _dbcontext.Comments.Include(c => c.ApUserSender).AsNoTracking().ToList();
+            return _dbcontext.Comments.Include(c => c.Sender).AsNoTracking().ToList();
         }
 
         public void UpdateElement(Comment item)

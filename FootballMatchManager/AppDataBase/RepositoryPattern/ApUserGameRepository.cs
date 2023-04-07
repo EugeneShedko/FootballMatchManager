@@ -42,12 +42,38 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public IEnumerable<ApUserGame> GetItems()
         {
-            return _dbcontext.ApUsersGames.Include(up => up.ApUser).Include(up => up.Game).AsNoTracking().ToList();
+            return _dbcontext.ApUsersGames.Include(up => up.ApUser)
+                                          .Include(up => up.Game)
+                                          .ToList();
         }
 
         public void UpdateElement(ApUserGame item)
         {
             _dbcontext.Entry(item).State= EntityState.Modified;
         }
+
+        // ------------------------------------------------------------ //
+
+        public List<ApUser> GetGameUsers(int gameid)
+        {
+            return GetItems().Where(apug => apug.PkFkGameId == gameid
+                                         && apug.PkUserType == "participant")
+                             .Select(apug => apug.ApUser)
+                             .ToList();
+
+        }
+
+        // ------------------------------------------------------------ //
+
+        /* Переименовать получается участник игры, а не просто пользователь */
+        public ApUserGame GetUserFromGame(int gameId, int userId)
+        {
+            return GetItems().FirstOrDefault(apug => apug.PkFkGameId == gameId
+                                                  && apug.PkFkUserId == userId
+                                                  && apug.PkUserType == "participant");
+        }
+
+        // ------------------------------------------------------------ //
+
     }
 }

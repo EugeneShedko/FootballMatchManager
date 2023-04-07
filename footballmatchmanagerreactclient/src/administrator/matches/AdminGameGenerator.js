@@ -1,4 +1,4 @@
-import AdminMatchBlock from "./adminmatchblock";
+import AdminMatchBlock from "./AdminGameBlock";
 
 
 export default function AdminGameGenerator(props) {

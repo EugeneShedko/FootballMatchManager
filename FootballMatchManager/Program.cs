@@ -2,6 +2,8 @@ using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.DataBase.DBClasses;
 using FootballMatchManager.Hubs;
 using FootballMatchManager.Utilts;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -27,13 +29,21 @@ builder.Services.AddCors(options =>
         builder.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000").AllowCredentials();
     });
 });
-// Add services to the container.
+
+/*Аутентификация на основе куки*/
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie();
+builder.Services.AddAuthorization();
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+// Add services to the container.
+
+
 
 var app = builder.Build();
 
@@ -47,13 +57,16 @@ if (app.Environment.IsDevelopment())
 app.UseCors("CORSPolicy");
 
 app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<CommentHub>("/commentchat");
     endpoints.MapHub<MessageHub>("/gamechat");
+    endpoints.MapHub<NotificationHub>("/notification");
 });
 
-app.UseAuthorization();
 app.MapControllers();
 app.UseStaticFiles();
 app.Run();

@@ -1,12 +1,13 @@
 
-import "./../css/userprofile.css";
 import { Tab, Nav, Row, Col } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import { MAIN_ROUTE } from "../Utilts/Consts";
 import { useContext, useState } from "react";
-import {Context} from "./../index"
-import AdminMatches from "./matches/AdminGames";
-import AdminPlayers from "./players/AdminPlayers";
+import {Context} from "../index"
+import AdminMatches from "./Matches/AdminGames";
+import AdminPlayers from "./Players/AdminPlayers";
+
+import "./../css/PlayerCard.css";
 
 export default function AdminProfile() {
 
@@ -21,13 +22,19 @@ export default function AdminProfile() {
         eventKey: <AdminPlayers setContState={wrapSetPlayersState} />
     });
 
+    // ----------------------------------------------------------------------- //
+
     function wrapSetMatchesState(comp) {
         setMatchesState({ eventKey: comp });
     }
 
+    // ----------------------------------------------------------------------- //
+
     function wrapSetPlayersState(comp) {
         setPlayersState({ eventKey: comp });
     }
+
+    // ----------------------------------------------------------------------- //
 
     function setMatchesKey() {
         if (mathesState.eventKey !== "matches") {
@@ -37,6 +44,8 @@ export default function AdminProfile() {
         }
     }
 
+    // ----------------------------------------------------------------------- //
+
     function setPlayersKey() {
         if (playersState.eventKey !== "users") {
             setPlayersState({
@@ -44,6 +53,8 @@ export default function AdminProfile() {
             })
         }
     }
+
+    // ----------------------------------------------------------------------- //
 
     return (
         <div id="userprofile-container" className='row m-0 h-100'>
