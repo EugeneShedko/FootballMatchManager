@@ -7,7 +7,7 @@ export default function PlayerGenerator(props)
 {
         
     const searchPlayers = props.players.filter(searchingPlayer =>{ 
-    return String(searchingPlayer.userFirstName + ' ' + searchingPlayer.userLastName).toLowerCase().includes(props.searchString.toLowerCase().trim())
+    return String(searchingPlayer.firstName + ' ' + searchingPlayer.lastName).toLowerCase().includes(props.searchString.toLowerCase().trim())
     })
 
     // --------------------------------------------------------------------------------------------- //

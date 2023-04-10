@@ -47,16 +47,21 @@ export default function Players(props) {
             if(checkList[i].checked)
             {
                 tempPlayers = initPlayers.filter(player => {
-                    return String(player.userPosition).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
+                    return String(player.position).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
                 })
                 resultPlayers = resultPlayers.concat(tempPlayers);
             }
         }
 
+        setPlayers(resultPlayers);
+
+        /* Для чего я поставил данное условие? */
+        /*
         if(resultPlayers.length > 0)
         {
             setPlayers(resultPlayers);
         }
+        */
     }
 
     // --------------------------------------------------------------------------------------- //

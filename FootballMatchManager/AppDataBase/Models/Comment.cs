@@ -19,5 +19,17 @@ namespace FootballMatchManager.DataBase.Models
 
         public ApUser Recipient { get; set; }
         public ApUser Sender { get; set; }
+
+        public Comment() { }
+
+        public Comment(string text, int senderId, int recipientId)
+        {
+            this.Text = text;
+            this.FkSenderId= senderId;
+            this.FkRecipientId= recipientId;
+            this.Date = DateTime.Now;
+        }
+
+
     }
 }

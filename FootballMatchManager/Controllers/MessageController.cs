@@ -35,7 +35,7 @@ namespace FootballMatchManager.Controllers
             }
             else
             {
-                return Ok(messages);
+                return Ok(JsonConverter.ConvertMessage(messages));
             }
         }
 

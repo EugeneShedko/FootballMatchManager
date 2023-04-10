@@ -53,12 +53,12 @@ namespace FootballMatchManager.Utilts
 
                 JsonObject jsonObject = new JsonObject();
 
-                jsonObject.Add("commentUserName", comment.Sender.FirstName + comment.Sender.LastName);
-                jsonObject.Add("commentDate", comment.Date);
-                jsonObject.Add("commentText", comment.Text);
-                jsonObject.Add("userSender", comment.FkSenderId);
-                jsonObject.Add("commentId", comment.PkId);
-                jsonObject.Add("userImage", comment.Sender.Image);
+                jsonObject.Add("userName", comment.Sender.FirstName + comment.Sender.LastName);
+                jsonObject.Add("date", comment.Date);
+                jsonObject.Add("text", comment.Text);
+                jsonObject.Add("senderId", comment.FkSenderId);
+                //jsonObject.Add("commentId", comment.PkId);
+                jsonObject.Add("image", comment.Sender.Image);
 
                 jsonArray.Add(jsonObject);
             }
@@ -74,16 +74,16 @@ namespace FootballMatchManager.Utilts
 
                 JsonObject jsonObject = new JsonObject();
 
-                jsonObject.Add("messageUserName", message.Sender.FirstName + message.Sender.LastName);
-                jsonObject.Add("messageDate", message.DateTime);
-                jsonObject.Add("messageText", message.Text);
-                jsonObject.Add("userImage", message.Sender.Image);
+                jsonObject.Add("userName", message.Sender.FirstName + message.Sender.LastName);
+                jsonObject.Add("date", message.DateTime);
+                jsonObject.Add("text", message.Text);
+                jsonObject.Add("image", message.Sender.Image);
+                jsonObject.Add("senderId", message.FkSenderId);
 
                 jsonArray.Add(jsonObject);
             }
 
             return jsonArray.ToJsonString();
         }
-
     }
 }

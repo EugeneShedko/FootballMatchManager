@@ -50,16 +50,21 @@ export default function Matches(props) {
             if(checkList[i].checked)
             {
                 tempGames = initGames.filter(game => {
-                    return String(game.gameFormat).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
+                    return String(game.format).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
                 })
                 resultGames = resultGames.concat(tempGames);
             }
         }
 
+        setGames(resultGames);
+
+        /* Для чего я ставил данное условие? */
+        /*
         if(resultGames.length > 0)
         {
             setGames(resultGames);
         }
+        */
     }
 
     /* ----------------------------------------------------------------------- */

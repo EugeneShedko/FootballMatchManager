@@ -16,13 +16,13 @@ export default function UserMatchesCr(props) {
     const [userMatchPr, setUserMatchPr] = useState([]);
     const [searchString, setSearchString] = useState("");
 
-    useEffect(
-        () => {
+    // ------------------------------------------------------------------------------------------------------ //
 
+    useEffect(() => {
             const data = new FormData();
             data.append("userId", user.getUserId);
 
-            axios.post('http://localhost:5004/api/profile/userpartmatch', data ,{ withCredentials: true })
+            axios.post('http://localhost:5004/api/profile/user-part-game', data ,{ withCredentials: true })
                 .then((response) => {
                     setUserMatchPr(response.data);
                     setInitUserMatchesParticipant(response.data);
@@ -40,6 +40,8 @@ export default function UserMatchesCr(props) {
             ;
         }, [props]
     );
+
+    // ------------------------------------------------------------------------------------------------------ //
 
     function filter()
     {
@@ -64,6 +66,8 @@ export default function UserMatchesCr(props) {
         }
     }
 
+    // ------------------------------------------------------------------------------------------------------ //
+
     function reset()
     {
         setUserMatchPr(initUserMatchesParticipant);
@@ -73,6 +77,8 @@ export default function UserMatchesCr(props) {
             checkList[i].checked = false;
         }
     }
+
+    // ------------------------------------------------------------------------------------------------------ //
 
     return (
         <div className="row mpmatches-main-container">

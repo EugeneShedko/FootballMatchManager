@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite";
 
 const AppRouter = observer(() => {
 
-    const {user} = useContext(Context);
+    const {user, setUser} = useContext(Context);
 
     return (
         <div className="h-100 w-100">

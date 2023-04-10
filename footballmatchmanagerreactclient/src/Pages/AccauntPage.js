@@ -135,10 +135,10 @@ export default function UserProfile() {
                                 <Nav.Link className="upnav-item-link" eventKey="profile">Профиль</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="usermatches" onClick={setNavKey}>Мои матчи</Nav.Link>
+                                <Nav.Link className="upnav-item-link" eventKey="notification" onClick={setNotifKey}>Уведомления</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="notification" onClick={setNotifKey}>Уведомления</Nav.Link>
+                                <Nav.Link className="upnav-item-link" eventKey="usermatches" onClick={setNavKey}>Мои матчи</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="exit" onClick={() => { user.setAuth(false); navigate(MAIN_ROUTE); }}>Выход</Nav.Link>

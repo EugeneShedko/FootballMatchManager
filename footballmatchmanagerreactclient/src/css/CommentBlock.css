@@ -19,9 +19,13 @@
     margin: 0;
     padding: 0% 0% 0% 1%;
     height: 40%;
-    color:yellowgreen;    
+    color:white;    
 }
 
+.comment-name-owner
+{
+    color:yellowgreen;    
+}
 .user-comment-text
 {
     margin: 0;

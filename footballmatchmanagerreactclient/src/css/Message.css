@@ -43,6 +43,12 @@
     height: 50px;
 }
 
+.mess-owner-name
+{
+    margin: 0;
+    color:yellowgreen;
+}
+
 .message-text
 {
     height: 90%;

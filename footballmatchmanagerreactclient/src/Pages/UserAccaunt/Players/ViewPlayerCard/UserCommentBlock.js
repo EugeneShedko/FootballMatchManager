@@ -1,14 +1,18 @@
 import axios from "axios";
 import { useContext } from "react";
 import { toast } from "react-toastify";
-import "./../../css/usercommentblock.css";
-import {Context} from "../../index";
+import {Context} from "../../../../index";
+
+import "./../../../../css/CommentBlock.css";
 
 export default function UserCommentBlock(props) {
 
     const {user} = useContext(Context);
+    const userNameStyle = props.commentInfo.senderId === user.getUserId ? "row user-comment-name comment-name-owner": "row user-comment-name";
 
+    // --------------------------------------------------------------------------------------------------------------------------- //
 
+    /*
     function deleteComment()
     {
         axios.delete('http://localhost:5004/api/profile/deletecomment/' + props.commentInfo.commentId, { withCredentials: true })
@@ -49,23 +53,27 @@ export default function UserCommentBlock(props) {
         //Странно работают комментарии
         props.updateComments();
     }
+    */
+
+    // --------------------------------------------------------------------------------------------------------------------------- //
 
     return (
         <div className="row user-comment-container">
             <div className="col-1 d-flex justify-content-center p-0">
                 <img className="user-comment-img" 
-                     src={"http://localhost:5004/" + props.commentInfo.userImage}  
+                     src={"http://localhost:5004/" + props.commentInfo.image}  
                      alt="" />
             </div>
             <div className="col-11 p-0">
-                <div className="row user-comment-name">
+                <div className={userNameStyle}>
                     <div className="col-10 p-0">
-                        {props.commentInfo.commentUserName}
+                        {props.commentInfo.userName}
                     </div>
                     <div className="col-2 p-0">
                         <div className="row m-0">
-                            {(new Date(props.commentInfo.commentDate)).toLocaleString().substring(0, (new Date(props.commentInfo.commentDate)).toLocaleString().length - 3)}
+                            {(new Date(props.commentInfo.date)).toLocaleString().substring(0, (new Date(props.commentInfo.date)).toLocaleString().length - 3)}
                         </div>
+                        {/*
                         <div className="row m-0">
                             {props.commentInfo.userSender == user.getUserId ?
                             <input type="button" 
@@ -74,10 +82,11 @@ export default function UserCommentBlock(props) {
                                    onClick={deleteComment} />
                                    : null}
                         </div>
+                        */}
                     </div>
                 </div>
                 <div className="row user-comment-text">
-                    {props.commentInfo.commentText}
+                    {props.commentInfo.text}
                 </div>
             </div>
         </div>

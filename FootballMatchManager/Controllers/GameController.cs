@@ -14,11 +14,9 @@ namespace FootballMatchManager.Controllers
     public class GameController : ControllerBase
     {
         private UnitOfWork _unitOfWork;
-        private JwtService _jwtService;
-        public GameController(UnitOfWork unitOfWork, JwtService jwtService)
+        public GameController(UnitOfWork unitOfWork)
         {
             this._unitOfWork = unitOfWork;
-            this._jwtService = jwtService;
         }
 
         // --------------------------------------------------------------------------------------------- //
@@ -224,36 +222,56 @@ namespace FootballMatchManager.Controllers
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
-        [Route("userCreatMatch")]
+        [Route("user-creat-game")]
         [HttpPost]
         public IActionResult PostUserCreatMatch()
         {
-            var userID = int.Parse(Request.Form["userId"]);
-
-            List<Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.PkFkUserId == userID && ap.PkUserType == "creator").Select(ap => ap.Game).ToList();
-
-            if(games == null)
+            try
             {
-                return BadRequest(new { message = "Пользователь не учавствует в матчах" });
-            }
+                var userID = int.Parse(Request.Form["userId"]);
 
-            return Ok(games);
+                List<Game> games = _unitOfWork.ApUserGameRepository.GetItems()
+                                                                   .Where(ap => ap.PkFkUserId == userID && ap.PkUserType == "creator")
+                                                                   .Select(ap => ap.Game)
+                                                                   .ToList();
+
+                if (games == null)
+                {
+                    return BadRequest(new { message = "Пользователь не учавствует в матчах" });
+                }
+
+                return Ok(games);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
-        [Route("userpartmatch")]
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
+
+        [Route("user-part-game")]
         [HttpPost]
         public IActionResult PostUserPartMatch()
         {
-            var userID = int.Parse(Request.Form["userId"]);
-
-            List<Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.PkFkUserId == userID && ap.PkUserType == "participant").Select(ap => ap.Game).ToList();
-
-            if (games == null)
+            try
             {
-                return BadRequest(new { message = "Пользователь не создавал матчей" });
-            }
+                var userID = int.Parse(Request.Form["userId"]);
 
-            return Ok(games);
+                List<Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.PkFkUserId == userID && ap.PkUserType == "participant").Select(ap => ap.Game).ToList();
+
+                if (games == null)
+                {
+                    return BadRequest(new { message = "Пользователь не создавал матчей" });
+                }
+
+                return Ok(games);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            } 
         }
 
         // ------------------------------------------------------------------------------- //

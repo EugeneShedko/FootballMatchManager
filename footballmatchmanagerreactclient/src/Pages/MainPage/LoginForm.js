@@ -13,7 +13,7 @@ export default function Loginform(props) {
 
     const [loginContainerStyle, setLoginContainerStyle] = useState("col-3 logincontainer");
     const navigate = useNavigate();
-    const { user } = useContext(Context);
+    const { user, setUser } = useContext(Context);
     const [isValid, setIsValid] = useState(false);
 
     const [logInState, setLogInState] = useState({
@@ -117,7 +117,6 @@ export default function Loginform(props) {
 
                 if(response.data.user.role === "user")
                 {
-                    console.log('USER');
                     user.setAdmin(false);
                     user.setAuth(true);
                     user.setUserId(response.data.user.pkId);
@@ -126,11 +125,10 @@ export default function Loginform(props) {
                 }
                 else
                 {
-                    console.log('ADMIN');
                     user.setAdmin(true);
                     user.setAuth(false);
                     user.setUserId(response.data.user.apUserId);
-                    user.setUserName('Администратор');                    
+                    user.setUserName('Администратор');
                     navigate(ADMIN_PROFILE_ROUTE);    
                 }
 
@@ -157,8 +155,6 @@ export default function Loginform(props) {
         nothubconn.on("displayNotifi", displayNotifMess);
 
         await nothubconn.start();
-
-        user.setNotifiHubConn(nothubconn);
     }
 
     // ---------------------------------------------------------------------------------------------- //

@@ -24,7 +24,7 @@ export default function UserMatchesCr(props) {
             const data = new FormData();
             data.append("userId", user.getUserId);
 
-            axios.post('http://localhost:5004/api/profile/userCreatMatch', data, { withCredentials: true })
+            axios.post('http://localhost:5004/api/profile/user-creat-game', data, { withCredentials: true })
                 .then((response) => {
                     setUserMatchCr(response.data);
                     setInitUserMatchesCreator(response.data);

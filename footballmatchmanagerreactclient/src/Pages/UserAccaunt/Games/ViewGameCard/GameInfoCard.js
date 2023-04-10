@@ -6,13 +6,12 @@ import PlayerBlock from "./../../Players/ViewPlayers/PlayerBlock";
 import { Context } from "../../../../index";
 import Matches from "../ViewGames/Games";
 import EditGame from "./EditGame";
-import MessageBlock from "./GameCardButton/MessageBlock";
 import { HubConnectionBuilder } from "@microsoft/signalr";
-
-import "./../../../../css/GameInfoCard.css";
 import CreatorButton from "./GameCardButton/CreatorButtons";
 import UserButton from "./GameCardButton/UserButtons";
+import MessagesBlock from "./MessagesBlock";
 
+import "./../../../../css/GameInfoCard.css";
 
 export default function GameInfoCard(props) {
 
@@ -87,26 +86,7 @@ export default function GameInfoCard(props) {
                 }
             });
 
-        connectMessage();
-
     }, []);
-
-    // ---------------------------------------------------------------------------------------- //
-
-    const connectMessage = async () => {
-        const hubConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/gamechat").build();
-
-        hubConnection.on("displayMess", function (message) {
-            alert(message.text);
-            //setGameMessage(gameMessage => [...gameMessage, message]);
-        });
-
-        hubConnection.logging = true;
-        await hubConnection.start();
-        setConnection(hubConnection);
-
-        await hubConnection.invoke("Connect", String(props.gameId));
-    }
 
     // ---------------------------------------------------------------------------------------- //
 
@@ -232,51 +212,6 @@ export default function GameInfoCard(props) {
 
     // ---------------------------------------------------------------------------------------- //
 
-    function sendMessage() {
-
-        if (curMessage === '') {
-            return;
-        }
-
-        console.log("JSON");
-        console.log(JSON.version);
-
-        /* Попробовать отправить сложный объект обратно */
-
-        connection.invoke("Send", curMessage, props.gameId);
-
-        /*
-        const data = new FormData();
-        data.append("MessageText", curMessage);
-        data.append("GameRecipient", props.gameId);
-        data.append("MessageSender", user.getUserId);
-
-        axios.post('http://localhost:5004/api/profile/addmessage', data, { withCredentials: true })
-            .then((response) => {
-                connection.invoke("Send", user.getUserName,
-                    response.data.dateTime,
-                    response.data.text,
-                    String(response.data.pkId),
-                    String(user.getUserId)
-                );
-            })
-            .catch(userError => {
-                if (userError.response) {
-                    toast.error("Ошибка отправки сообщения",
-                        {
-                            position: toast.POSITION.TOP_CENTER,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
-                }
-            });
-            */
-
-        setCurMessage("");
-    }
-
-    // ---------------------------------------------------------------------------------------- //
-
     return (
         <div className="row justify-content-center match-info-main-container">
             <div className="col-10 match-info-container">
@@ -337,30 +272,7 @@ export default function GameInfoCard(props) {
                         </div>
                     }
                     <div className="col-4 h-100 p-0">
-                        <div className="match-info-message-container">
-                            <div className="match-info-message-absolute-container">
-                                <div className="row m-0">
-                                    {
-                                        gameMessage.map((message) => <MessageBlock messageInfo={message} />)
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row message-send-container">
-                            <div className="col-9 message-send-area">
-                                <input className="message-enter-button"
-                                    type="text"
-                                    placeholder="Сообщение..."
-                                    value={curMessage}
-                                    onChange={(e) => setCurMessage(e.target.value)} />
-                            </div>
-                            <div className="col-3 p-0">
-                                <input className="message-send-button"
-                                    value="Отправить"
-                                    type="button"
-                                    onClick={sendMessage} />
-                            </div>
-                        </div>
+                        {isPart ? <MessagesBlock gameId = {props.gameId}/> : null}
                     </div>
                 </div>
             </div>

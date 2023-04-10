@@ -1,13 +1,13 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef, } from "react";
 import { toast } from "react-toastify";
-import UserCommentBlock from "../../UserCommentBlock";
-import "react-datepicker/dist/react-datepicker.css";
-import EditProfile from "../../EditProfile";
+import UserCommentBlock from "./UserCommentBlock";
+import EditProfile from "./EditProfile";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { Context } from "../../../../index";
 
 import "./../../../../css/PlayerCard.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Profile(props) {
 
@@ -25,6 +25,7 @@ export default function Profile(props) {
     const [currMes, setCurrMes] = useState("");
     const [connection, setConnection] = useState({});
     const [userComment, setUserComment] = useState([]);
+    const commentContainer = useRef(null);
 
     // ------------------------------------------------------------------------------------------------ //
 
@@ -35,8 +36,6 @@ export default function Profile(props) {
         axios.post('http://localhost:5004/api/profile/user-card', data, { withCredentials: true })
             .then((response) => {
                 setProfileInfo(response.data);
-                console.log("PROFILE");
-                console.log(response.data);
             })
             .then(() => {
                 axios.get('http://localhost:5004/api/comment/user-card-comment/' + userId, { withCredentials: true })
@@ -66,24 +65,27 @@ export default function Profile(props) {
             });
         connectComment();
 
-    }, [props]
-    );
+    }, [props]);
 
     // ------------------------------------------------------------------------------------------------ //
 
     const connectComment = async () => {
 
-        const hubConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/commentchat").build();
+        const hubConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/commentchat")
+                                                        .build();
+                                                        
+        hubConnection.on("displayComment", (comment) => {
+            setUserComment(userComment => [...userComment, comment]);
+        });                             
 
-        hubConnection.on("Send", (commentUserName, commentDate, commentText, userSender, commentId, userImage) => {
-            setUserComment(userComment => [...userComment, { commentUserName, commentDate, commentText, userSender, commentId, userImage}]);
-        });
 
+        /* Пока что не понятно, что это за метод */
+        /* Скорее всего нужен для удаления комментариев */
+        /*
         hubConnection.on("UpdateComments", () => {
 
             axios.get('http://localhost:5004/api/profile/allcomments/' + userId, { withCredentials: true })
                 .then((response) => {
-                    console.log("Респонс отр " + user.getUserId);
                     setUserComment(response.data);
                 })
                 .catch(userError => {
@@ -98,7 +100,7 @@ export default function Profile(props) {
                     }
                 });
         })
-
+        */
         await hubConnection.start();
         setConnection(hubConnection);
 
@@ -109,9 +111,14 @@ export default function Profile(props) {
 
     async function updateComments() {
 
-        console.log("Функция обновления вызваласб")
         await connection.invoke("UpdateComments", String(userId));
     }
+
+    // ---------------- Скролл  ------------------------------------------- //
+
+    useEffect(() => {
+        commentContainer.current.scrollTop = commentContainer.current.scrollHeight;
+    }, [userComment]);
 
     // ------------------------------------------------------------------------------------------------ //
 
@@ -122,35 +129,9 @@ export default function Profile(props) {
             return;
         }
 
-        const data = new FormData();
-        data.append("CommentText", currMes);
-        data.append("CommentRecipient", userId);
-        data.append("CommentSender", user.getUserId);
 
-        axios.post('http://localhost:5004/api/profile/addcomment', data, { withCredentials: true })
-            .then((response) => {
-                connection.invoke("Send", 
-                    user.getUserName,
-                    response.data.commentDateTime,
-                    response.data.commentText,
-                    String(response.data.commentRecipient),
-                    String(response.data.commentSender),
-                    String(response.data.commentId),
-                    /*Нужно как-то отправлять путь к картинке текущего пользователя*/
-                );
-                setConnection(connection);
-            })
-            .catch(userError => {
-                if (userError.response) {
-                    toast.error("Ошибка отправки комментария",
-                        {
-                            position: toast.POSITION.TOP_CENTER,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
-                }
-            });
-
+        connection.invoke("Send", currMes, userId);
+    
         setCurrMes("");
     }
 
@@ -158,11 +139,11 @@ export default function Profile(props) {
 
     function edit() {
         setChanges({
-            userFirstName: profileInfo.userFirstName,
-            userLastName: profileInfo.userLastName,
-            userDateBirth: new Date(profileInfo.userDateOfBirth),
-            userPosition: profileInfo.userPosition,
-            userEmail: profileInfo.userEmail
+            userFirstName: profileInfo.firstName,
+            userLastName: profileInfo.lastName,
+            userDateBirth: new Date(profileInfo.birth),
+            userPosition: profileInfo.position,
+            userEmail: profileInfo.email
         });
         setEditProfileVisible(true)
     }
@@ -191,7 +172,6 @@ export default function Profile(props) {
                 pauseOnFocusLoss: false
             }) 
         })
-        .catch();
     }
 
     // ------------------------------------------------------------------------------------------------ //
@@ -283,9 +263,9 @@ export default function Profile(props) {
                         {
                             user.getUserId === userId ?
                             <input type="button"
-                            value="Изменить"
-                            className="just-button"
-                            onClick={edit} />
+                                   value="Изменить"
+                                   className="just-button"
+                                   onClick={edit} />
                             : null
                         }
                     </div>
@@ -293,7 +273,7 @@ export default function Profile(props) {
             </div>
             <div className="row profile-comment-container">
                 <div className="col p-0">
-                    <div className="row comment-view-container">
+                    <div className="row comment-view-container" ref = {commentContainer}>
                         <div className="col p-0 some-col">
                             {
                                 userComment.map((comment) => <UserCommentBlock commentInfo={comment}

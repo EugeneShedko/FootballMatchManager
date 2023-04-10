@@ -7,7 +7,7 @@ import MatchBlock from "./GameBlock";
 export default function GameGenerator(props) {
 
     const searchGamse = props.games.filter(searchingGames =>{ 
-    return String(searchingGames.gameName).toLowerCase().includes(props.searchString.toLowerCase().trim())
+    return String(searchingGames.name).toLowerCase().includes(props.searchString.toLowerCase().trim())
     })
     
     return (

@@ -28,7 +28,9 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public Comment GetItem(int firstid, int secondid = 0)
         {
-            return _dbcontext.Comments.Find(firstid);
+            return _dbcontext.Comments.Include(c => c.Sender)
+                                      .Include(c => c.Recipient)
+                                      .FirstOrDefault(c => c.PkId == firstid);
         }
 
         public IEnumerable<Comment> GetItems()

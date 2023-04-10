@@ -1,7 +1,7 @@
 
 .profile-container
 {
-    height: 98%;
+    height: 100%;
     margin: 0% 3% 0% 3%;
     background-color: rgba(0,0,0,0.6);
     border:4px white solid;
@@ -10,6 +10,7 @@
 
 .profile-info-container
 {
+    height: 50%;
     padding: 2% 2% 2% 2%;
     border-bottom: 4px white solid;
     border-radius: 20px;
@@ -83,9 +84,9 @@
 
 .profile-comment-container
 {
-    height: 49%;
+    height: 50%;
     padding: 0;
-    margin: 1% 0% 0% 0%;
+    margin: 0% 0% 0% 0%;
     border-top: 4px white solid;
     border-radius: 20px;
     color:white;

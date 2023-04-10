@@ -1,15 +1,15 @@
-import "./../../css/CreateGame.css"
+import "./../../../../css/CreateGame.css"
 import { Modal, Row } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Context } from "./../../index"
+import { Context } from "../../../../index"
 
 export default function EditProfile(props) {
 
-    const {user} = useContext(Context);
+    const {user, setUser} = useContext(Context);
 
     /*Поробоавть использовать короткий класс для изменений*/
     function saveChanges()
@@ -29,6 +29,7 @@ export default function EditProfile(props) {
         axios.post('http://localhost:5004/api/profile/editprofile', data,{ withCredentials: true })
         .then((response) => {
             props.setProfileInfo(response.data.askdata);
+            user.setUserName(response.data.askdata.firstName + ' ' + response.data.askdata.lastName);
             toast.success(response.data.message,
                 {
                     position: toast.POSITION.TOP_CENTER,
@@ -100,14 +101,6 @@ export default function EditProfile(props) {
                         <option>Центральный защитник</option>
                         <option>Вратарь</option>
                     </select>
-                </Row>
-                <Row className="input-container w-100">
-                    <input className="input-style"
-                        type="text"
-                        placeholder="email"
-                        value={props.info.userEmail}
-                        onChange={(e) => {props.setInfo({  ...props.info, userEmail: e.target.value }) }}
-                    />
                 </Row>
                 <Row className="w-100">
                     <input className="input-button-style" type="button" value="Сохранить" onClick={saveChanges} />

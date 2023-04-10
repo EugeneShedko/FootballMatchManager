@@ -113,6 +113,8 @@ namespace FootballMatchManager.Controllers
             return Ok(comment);
         }
 
+        // ------------------------------------------------------------------------------- //
+
         [HttpPost]
         [Route("add-prof-image")]
         public ActionResult PostAddProfImage()
@@ -149,6 +151,7 @@ namespace FootballMatchManager.Controllers
             }
         }
 
+        // ------------------------------------------------------------------------------- //
 
         [HttpDelete]
         [Route("deletecomment/{commentId}")]

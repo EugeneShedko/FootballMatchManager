@@ -134,7 +134,6 @@ export default function CreateMatch(props) {
  
     function createMatch() {
 
-
         {/* Здесь нужно добавить еще параметр */}
         const match = {
             UserId  : user.getUserId,
