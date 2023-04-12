@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.RepositoryPattern
 {
-    public class TeamRepository // : IRepository<Team>
+    public class TeamRepository : IRepository<Team>
     {
-        /*
         private AppDBContext _dbcontext;
         
         public TeamRepository(AppDBContext dBContext)
@@ -42,6 +41,19 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             _dbcontext.Entry(item).State = EntityState.Modified;
         }
-        */
+
+        // --------------------------------------------------------------- //
+
+        public List<Team> GetAllTeams()
+        {
+            return GetItems().OrderByDescending(t => t.CrtDate).ToList();
+        }
+
+        // -------------------------------------------------------------- //
+
+        public Team GetTeamByName(string name)
+        {
+            return GetItems().FirstOrDefault(t => t.Name == name);
+        }
     }
 }

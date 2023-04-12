@@ -12,10 +12,22 @@ namespace FootballMatchManager.DataBase.Models
         [Column("crtDate")]
         public DateTime CrtDate {get;set;}
         [Column("description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
+        [Column("Image")]
+        public string? Image { get; set; }
    
         public List<ApUserTeam> ApUserTeam { get; set; }
         public List<TournamentTable> TeamTournamentTable { get; set; }
+
+        public Team() { }
+
+        public Team(string name, string desc)
+        {
+            this.Name = name;
+            this.CrtDate = DateTime.Now;
+            this.Description = desc;
+            this.Image = "teams/default-team-logo.png";
+        }
 
     }
 }

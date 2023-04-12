@@ -13,8 +13,7 @@ export default function NotificationBlock(props) {
 
     /* Выношу в данное место все функции */
 
-    function dismissRequest()
-    {
+    function dismissRequestGame() {
         /* Плохо сделано, потому что выходит как бы некое разделение */
         /* Может хреново отработать */
         /* Пока что оставлю так*/
@@ -25,8 +24,7 @@ export default function NotificationBlock(props) {
         readNotifi();
     }
 
-    function acceptRequest()
-    {
+    function acceptRequestGame() {
         /* Плохо сделано, потому что выходит как бы некое разделение */
         /* Может хреново отработать */
         /* Пока что оставлю так*/
@@ -39,7 +37,7 @@ export default function NotificationBlock(props) {
             .then((response) => {
                 var conn = user.getNotifiHubConn;
                 conn.invoke("AcceptReqGame", props.notify.pkId);
-                readNotifi();        
+                readNotifi();
             })
             .catch(userError => {
                 if (userError.response) {
@@ -50,7 +48,7 @@ export default function NotificationBlock(props) {
                             pauseOnFocusLoss: false
                         });
                 }
-           });
+            });
     }
 
     // ---------------------------------------------------------------------------------------- //
@@ -75,14 +73,53 @@ export default function NotificationBlock(props) {
                 }
             });
     }
-    
+
+    // ---------------------------------------------------------------------------------------- //
+
+    function acceptRequestTeam()
+    {
+        const data = new FormData();
+        data.append("teamId", props.notify.entityId);
+        data.append("userId", props.notify.fkSenderId);
+
+        /* Запрос на стороне сервере посмотреть */
+        axios.post('http://localhost:5004/api/team/add-to-team', data, { withCredentials: true })
+        .then((response) => {
+            var conn = user.getNotifiHubConn;
+            conn.invoke("AcceptReqTeam", props.notify.pkId);
+            readNotifi();
+        })
+        .catch(userError => {
+            if (userError.response) {
+                toast.error(userError.response.data.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            }
+        });
+
+    }
+
+    // ---------------------------------------------------------------------------------------- //
+
+    function dismissRequestTeam()
+    {
+        var conn = user.getNotifiHubConn;
+        conn.invoke("DismissReqTeam", props.notify.pkId);
+        readNotifi();
+    }
+
     // ---------------------------------------------------------------------------------------- //
 
     function getButtonBlock(notifi) {
         switch (notifi.type) {
-            case "text": return <ReadBlock readNotifi={readNotifi}/>; break;
-            case "request": return <RequestBlock dismissRequest={dismissRequest}
-                                                 acceptRequest ={acceptRequest} />; break;
+            case "text": return <ReadBlock readNotifi={readNotifi} />; break;
+            case "requestforgame": return <RequestBlock dismissRequest={dismissRequestGame}
+                                                        acceptRequest={acceptRequestGame} />; break;
+            case "requestforteam": return <RequestBlock dismissRequest={dismissRequestTeam}
+                                                        acceptRequest={acceptRequestTeam} />; break;
             default: return;
         }
     }

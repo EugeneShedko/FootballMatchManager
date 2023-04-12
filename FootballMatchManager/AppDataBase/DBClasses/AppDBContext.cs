@@ -26,12 +26,15 @@ namespace FootballMatchManager.DataBase.DBClasses
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Constant>().HasKey(c => c.PkId);
-            /* Группа констант Natification */
             modelBuilder.Entity<Constant>().HasData(new Constant() { PkId = 1, Group = "notification", Type = "text" ,Name = "addtogame", StrValue = "Пользователь {user} присоединлся к матчу {game}"}, 
                                                     new Constant() { PkId = 2, Group = "notification", Type = "text", Name = "leavefromgame", StrValue = "Пользователь {user} покинул матч {game}"},
-                                                    new Constant() { PkId = 3, Group = "notification", Type = "request", Name = "requestforpart", StrValue = "Пользователь {user} отправил запрос на участие в матче {game}. Разршеить?" },
+                                                    new Constant() { PkId = 3, Group = "notification", Type = "requestforgame", Name = "requestforgame", StrValue = "Пользователь {user} отправил запрос на участие в матче {game}. Разршеить?" },
                                                     new Constant() { PkId = 4, Group = "notification", Type = "text", Name = "dismissreqgame", StrValue = "Пользователь {user} отклонил ваш запрос на участие в матче {game}" },
-                                                    new Constant() { PkId = 5, Group = "notification", Type = "text", Name = "acceptreqgame", StrValue = "Пользователь {user} принял ваш запрос на участие в матче {game}" });
+                                                    new Constant() { PkId = 5, Group = "notification", Type = "text", Name = "acceptreqgame", StrValue = "Пользователь {user} принял ваш запрос на участие в матче {game}" },
+                                                    new Constant() { PkId = 6, Group = "notification", Type = "requestforteam", Name = "requestforteam", StrValue = "Пользователь {user} отправил запрос на присоединение к команде {team}. Разршеить?" },
+                                                    new Constant() { PkId = 7, Group = "notification", Type = "text", Name = "acceptregteam", StrValue = "Пользователь {user} принял ваш запрос на присоединение к команде {team}" },
+                                                    new Constant() { PkId = 8, Group = "notification", Type = "text", Name = "dismissregteam", StrValue = "Пользователь {user} отклонил ваш запрос на присоединение к команде {team}" }
+                                                    );
 
             modelBuilder.Entity<Comment>().HasKey(c => c.PkId);
             modelBuilder.Entity<ApUser>().HasKey(apu => apu.PkId);

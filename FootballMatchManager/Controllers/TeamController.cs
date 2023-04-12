@@ -1,205 +1,246 @@
 ﻿using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.DataBase.Models;
+using FootballMatchManager.Enums;
 using FootballMatchManager.IncompleteModels;
 using FootballMatchManager.Utilts;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
+using System.Text;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FootballMatchManager.Controllers
 {
-    [Route("api/profile/")]
+    [Route("api/team/")]
     [ApiController]
     public class TeamController : ControllerBase
     {
-        /*
         private UnitOfWork _unitOfWork;
-        private JwtService _jwtService;
-        public TeamController(UnitOfWork unitOfWork, JwtService jwtService)
+        public TeamController(UnitOfWork unitOfWork)
         {
             this._unitOfWork = unitOfWork;
-            this._jwtService = jwtService;
         }
 
-        [Route("allteams")]
+        // ------------------------------------------------------------------------------------------------------ //
+
+        [Route("get-all-tems")]
         [HttpGet]
         public IActionResult Get()
         {
-            IEnumerable<Team> teams = _unitOfWork.TeamRepository.GetItems().OrderByDescending(t => t.CreateDate);
+            IEnumerable<Team> teams = _unitOfWork.TeamRepository.GetAllTeams();
 
             if (teams == null)
             {
-                return BadRequest(new { message = "Создайте команду!" });
+                return Ok();
             }
             else
             {
                 return Ok(teams);
             }
         }
-        [Route("team/{teamid}/{userid}")]
-        [HttpGet]
-        public IActionResult TeamProfile(int teamId, int userid)
+
+        // ------------------------------------------------------------------------------------------------------ //
+
+        [Route("create-team")]
+        [HttpPost]
+        public IActionResult Post()
         {
-            bool isParticipant = false;
-
-            Team team = _unitOfWork.TeamRepository.GetItem(teamId);
-
-            if (team == null)
+            try
             {
-                return BadRequest(new { message = "Матч не найден" });
+                string teamName = Request.Form["teamName"];
+
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                if(_unitOfWork.TeamRepository.GetTeamByName(teamName) != null) 
+                {
+                    return BadRequest("Команда с таким наименованием уже существует"); 
+                }
+
+                int userCreatorId = int.Parse(HttpContext.User.Identity.Name);
+                var imageFile = Request.Form.Files["teamImage"];
+
+                /* Создаем команду */
+                Team team = new Team(teamName, Request.Form["teamDesk"]);
+
+                /* Создаем папку для команды на сервере */
+                MD5 md5 = MD5.Create();
+                Directory.CreateDirectory("wwwroot/teams/" + Convert.ToBase64String(
+                                                       md5.ComputeHash(
+                                                       Encoding.UTF8.GetBytes(team.Name))));
+
+                /* Устанавливаем картинку команде */
+                if (imageFile != null)
+                {
+                    team.Image = FileManager.LoadTeamImage(imageFile, team.Name);
+                }
+
+                _unitOfWork.TeamRepository.AddElement(team);
+                _unitOfWork.Save();
+
+                ApUserTeam apUserTeamCr = new ApUserTeam(team.PkId, userCreatorId, (int)ApUserTeamEnum.CREATOR);
+                ApUserTeam apUserTeamPt = new ApUserTeam(team.PkId, userCreatorId, (int)ApUserTeamEnum.PARTICIPANT);
+
+                _unitOfWork.ApUserTeamRepository.AddElement(apUserTeamCr);
+                _unitOfWork.ApUserTeamRepository.AddElement(apUserTeamPt);
+                _unitOfWork.Save();
+
+                List<Team> allTeams = _unitOfWork.TeamRepository.GetAllTeams();
+
+                /* Изменить на стороне клиента еще отображение */
+                return Ok(allTeams);
+
             }
-
-            ApUserTeam apUserTeamPt = _unitOfWork.ApUserTeamRepository.GetItems()
-                                                          .FirstOrDefault(aput => aput.TeamId == teamId && aput.UserId == userid && aput.UserType == "participant");
-
-            if (apUserTeamPt != null)
+            catch (Exception ex)
             {
-                isParticipant = true;
+                return BadRequest();
             }
-
-            return Ok(new { currteam = team, isPart = isParticipant});
         }
 
+        // ------------------------------------------------------------------------------------------------------ //
+
+        [Route("team/{teamid}")]
         [HttpGet]
-        [Route("teamusers/{teamId}")]
+
+        public IActionResult TeamProfile(int teamId)
+        {
+            
+            try
+            {
+
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                int userId = int.Parse(HttpContext.User.Identity.Name);
+
+                bool isParticipant = false;
+
+                Team team = _unitOfWork.TeamRepository.GetItem(teamId);
+
+                if (team == null)
+                {
+                    return BadRequest();
+                }
+
+                ApUserTeam apUserTeamPt = _unitOfWork.ApUserTeamRepository.GetTeamParticipant(team.PkId, userId);
+
+                if (apUserTeamPt != null)
+                {
+                    isParticipant = true;
+                }
+
+                return Ok(new { currteam = team, isPart = isParticipant });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------ //
+
+
+        [HttpGet]
+        [Route("team-users/{teamId}")]
         public ActionResult GetTeamUser(int teamId)
         {
+            List<ApUser> teamUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamId);
 
-            List<ApUser> apUsers = _unitOfWork.ApUserTeamRepository.GetItems()
-                                                           .Where(aput => aput.TeamId == teamId && aput.UserType == "participant")
-                                                           .Select(aput => aput.ApUser).ToList();
-
-            if (apUsers.Count == 0)
+            if (teamUsers.Count == 0)
             {
-                return BadRequest(new { message = "На данный матч нет пользователей" });
+               return Ok();
             }
             else
             {
-                return Ok(apUsers);
+                return Ok(teamUsers);
             }
         }
 
-        [Route("addtoteam")]
+        // ------------------------------------------------------------------------------------------------------ //
+
+        [Route("add-to-team")]
         [HttpPost]
         public IActionResult AddToTeam()
         {
 
-            int teamId = int.Parse(Request.Form["teamId"]);
-            int userId = int.Parse(Request.Form["userId"]);
+           try
+           {
 
-            //ожно было бы добавить количество участников
-            Team team = _unitOfWork.TeamRepository.GetItem(teamId);
+                int teamId = int.Parse(Request.Form["teamId"]);
+                int userId = int.Parse(Request.Form["userId"]);
 
+                //Можно было бы добавить количество участников
+                Team team = _unitOfWork.TeamRepository.GetItem(teamId);
 
-            ApUserTeam apUserTeamEx = _unitOfWork.ApUserTeamRepository.GetItems()
-                                                                    .FirstOrDefault(aput => aput.TeamId == teamId && aput.UserId == userId && aput.UserType == "participant");
+                if(team == null) { return BadRequest(); }
 
-            if (apUserTeamEx != null)
-            {
-                return BadRequest(new { message = "Пользователь уже является участником команды" });
+                ApUserTeam apUserTeamEx = _unitOfWork.ApUserTeamRepository.GetTeamParticipant(teamId, userId);
+
+                if (apUserTeamEx != null)
+                {
+                    return BadRequest();
+                }
+
+                _unitOfWork.ApUserTeamRepository.AddElement(apUserTeamEx);
+                _unitOfWork.Save();
+
+                ApUserTeam apUserTeam = new ApUserTeam(teamId, userId, (int)ApUserTeamEnum.PARTICIPANT);
+
+                List<ApUser> apUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamId);
+
+                if (apUsers.Count == 0)
+                {
+                    return Ok(new { message = "Вы присоеденились к команде", currteam = team });
+                }
+                else
+                {
+                    return Ok(new { message = "Вы присоеденились к команде", users = apUsers, currteam = team });
+                }
+
             }
+            catch (Exception ex) 
+           { 
+                return BadRequest();
+           }
 
-            ApUserTeam apUserTeam = new ApUserTeam()
-            {
-                TeamId = teamId,
-                UserId = userId,
-                UserType = "participant"
-            };
+}
 
-            _unitOfWork.ApUserTeamRepository.AddElement(apUserTeam);
-            _unitOfWork.Save();
+/*
+[HttpPut("{id}")]
+public void Put(int id, [FromBody] string value)
+{
+}
 
-            List<ApUser> apUsers = _unitOfWork.ApUserTeamRepository.GetItems()
-                                                                   .Where(aput => aput.TeamId == teamId && aput.UserType == "participant")
-                                                                   .Select(aput => aput.ApUser).ToList();
+[HttpDelete]
+[Route("leavefromteam/{teamId}/{userId}")]
+public ActionResult DeleteLeaveFromGame(int teamId, int userId)
+{
 
+ApUserTeam apUserTeam = _unitOfWork.ApUserTeamRepository.GetItems()
+                                                    .FirstOrDefault(aput => aput.TeamId == teamId && aput.UserId == userId && aput.UserType == "participant");
 
-            if (apUsers.Count == 0)
-            {
-                return Ok(new { message = "Вы присоеденились к команде", currteam = team});
-            }
-            else
-            {
-                return Ok(new { message = "Вы присоеденились к команде", users = apUsers, currteam = team });
-            }
+if (apUserTeam == null)
+{
+return BadRequest(new { message = "Вы являетесь участником команды" });
+}
 
-        }
-        [Route("createteam")]
-        [HttpPost]
-        public IActionResult Post()
-        {
+_unitOfWork.ApUserTeamRepository.DeleteElement(apUserTeam);
 
-            int userId = int.Parse(Request.Form["userId"]);
+_unitOfWork.Save();
 
-            Team team = new Team()
-            {
-                TeamName = Request.Form["teamName"],
-                CreateDate = DateTime.Now
-            };
+Team team = _unitOfWork.TeamRepository.GetItem(teamId);
 
-            _unitOfWork.TeamRepository.AddElement(team);
-            _unitOfWork.Save();
+List<ApUser> apUsers = _unitOfWork.ApUserTeamRepository.GetItems().Where(aput => aput.TeamId == teamId && aput.UserType == "participant")
+                                                                   .Select(aput => aput.ApUser)
+                                                                   .ToList();
 
-            ApUserTeam apUserTeamCr = new ApUserTeam()
-            {
-                TeamId = team.TeamId,
-                UserId = userId,
-                UserType = "creator",
-            };
-
-            ApUserTeam apUserTeamPt = new ApUserTeam()
-            {
-                TeamId = team.TeamId,
-                UserId = userId,
-                UserType = "participant",
-            };
-
-
-            _unitOfWork.ApUserTeamRepository.AddElement(apUserTeamCr);
-            _unitOfWork.ApUserTeamRepository.AddElement(apUserTeamPt);
-            _unitOfWork.Save();
-
-            return Ok("Матч успешно создан");
-        }
-
-
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        [HttpDelete]
-        [Route("leavefromteam/{teamId}/{userId}")]
-        public ActionResult DeleteLeaveFromGame(int teamId, int userId)
-        {
-
-            ApUserTeam apUserTeam = _unitOfWork.ApUserTeamRepository.GetItems()
-                                                                    .FirstOrDefault(aput => aput.TeamId == teamId && aput.UserId == userId && aput.UserType == "participant");
-
-            if (apUserTeam == null)
-            {
-                return BadRequest(new { message = "Вы являетесь участником команды" });
-            }
-
-            _unitOfWork.ApUserTeamRepository.DeleteElement(apUserTeam);
-
-            _unitOfWork.Save();
-
-            Team team = _unitOfWork.TeamRepository.GetItem(teamId);
-
-            List<ApUser> apUsers = _unitOfWork.ApUserTeamRepository.GetItems().Where(aput => aput.TeamId == teamId && aput.UserType == "participant")
-                                                                                   .Select(aput => aput.ApUser)
-                                                                                   .ToList();
-
-            if (apUsers == null)
-            {
-                return Ok(new { message = "Вы покинули команду", currteam = team });
-            }
-            else
-            {
-                return Ok(new { message = "Вы покинули команду", users = apUsers, currteam = team });
-            }
-        }
-        */
+if (apUsers == null)
+{
+return Ok(new { message = "Вы покинули команду", currteam = team });
+}
+else
+{
+return Ok(new { message = "Вы покинули команду", users = apUsers, currteam = team });
+}
+}
+*/
     }
 }

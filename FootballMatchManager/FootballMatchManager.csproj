@@ -39,8 +39,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
     <Folder Include="wwwroot\dpT0pmMW5TyM3Z2ZVL1hHQ==\" />
+    <Folder Include="wwwroot\teams\" />
   </ItemGroup>
 
 </Project>

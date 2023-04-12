@@ -1,9 +1,11 @@
-import "./../../../../css/Games.css"
 import { useEffect, useState } from "react";
-import CreateMatch from "../CreateGame";
-import GameGenerator from "./GameGenerator";
 import axios from "axios";
 import { toast } from "react-toastify";
+
+import CreateMatch from "../CreateGame";
+import GameGenerator from "./GameGenerator";
+
+import "./../../../../css/Games.css";
 
 export default function Matches(props) {
 
@@ -81,7 +83,6 @@ export default function Matches(props) {
 
    /* ----------------------------------------------------------------------- */
 
-    //Плохо работае наведение на послдений блок матчей(не знаю, почему)
     return (
         <div className="row mpmatches-main-container">
             <div className="col-9 mpmatches-container">

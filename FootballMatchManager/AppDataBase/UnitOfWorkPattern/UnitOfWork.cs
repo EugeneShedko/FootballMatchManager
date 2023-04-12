@@ -15,7 +15,6 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
         private GameRepository _gameRepository;
         private MessageRepository _messageRepository;
         private NotificationRepository _notificationRepository;
-        private RequestRepository _requestRepository;
         private TeamRepository _teamRepository;
         private TournamentRepository _tournamentRepository;
         private TournamentTableRepository _tournamentTableRepository;
@@ -45,7 +44,6 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
             }
         }
 
-        /*
         public ApUserTeamRepository ApUserTeamRepository
         {
             get
@@ -56,7 +54,6 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
 
             }
         }
-        */
 
         public CommentRepository CommentRepository
         {
@@ -103,18 +100,7 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                 return _notificationRepository;
             }
         }
-        /*
-        public RequestRepository RequestRepository
-        {
-            get 
-            {
-                if(_requestRepository == null)
-                    _requestRepository = new RequestRepository(_dbcontext);
-                return _requestRepository;
-            }
-        }
-        */
-        /*
+
         public TeamRepository TeamRepository
         {
             get 
@@ -123,7 +109,7 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                     _teamRepository= new TeamRepository(_dbcontext);
                 return _teamRepository;            }
         }
-        */
+
         /*
         public TournamentRepository TournamentRepository
         {

@@ -17,11 +17,9 @@ namespace FootballMatchManager.Controllers
     public class AuthController : ControllerBase
     {
         UnitOfWork _unitOfWork;
-        JwtService _jwtService;
-        public AuthController(UnitOfWork unitOfWork, JwtService jwtService)
+        public AuthController(UnitOfWork unitOfWork)
         {
             this._unitOfWork = unitOfWork;
-            this._jwtService = jwtService;
         }
 
         [HttpPost]

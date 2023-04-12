@@ -29,7 +29,6 @@ namespace FootballMatchManager.Hubs
                 userIdSender = int.Parse(Context.User.Identity.Name);
 
                 /* Получаем отправленный запрос на участие */
-                //notifiId = int.Parse(inNotifiId);
                 notifiId = inNotifiId;
                 Notification reqNotifi = _unitOfWork.NotificationRepository.GetItem(notifiId);
 
@@ -110,7 +109,7 @@ namespace FootballMatchManager.Hubs
                 /* Отправляем уведомление пользователю */
                 await Clients.User(Convert.ToString(reqNotifi.FkSenderId))?.SendAsync("displayNotifi", notiffiMess);
             }
-            catch (Exception e) 
+            catch (Exception ex) 
             {
                 return;
             }
@@ -147,10 +146,6 @@ namespace FootballMatchManager.Hubs
 
                 Constant constant = _unitOfWork.ConstantRepository.GetConstantByName(constname);
 
-                /*
-                Constant constant = _unitOfWork.ConstantRepository.GetItems()
-                                                                  .FirstOrDefault(c => c.Name == constname);
-                */
 
                 if (constant == null) { return; }
 
@@ -166,6 +161,131 @@ namespace FootballMatchManager.Hubs
 
    
                 await Clients.User(Convert.ToString(apUserGame.PkFkUserId))?.SendAsync("displayNotifi", notiffiMess);
+
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
+
+        public async Task RequestToAddTeam(int teamId)
+        {
+            try
+            {
+                int userIdSender;
+                string notiffiMess;
+
+                if (Context.User == null) { return; }
+
+                userIdSender = int.Parse(Context.User.Identity.Name);
+
+                /* Получаем создателя матча */
+                ApUserTeam apUserTeam = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId);
+
+                if (apUserTeam == null) { return; }
+
+                /* Получаем отправителя уведомления */
+                ApUser apUserSender = _unitOfWork.ApUserRepository.GetItem(userIdSender);
+
+                if (apUserSender == null) { return; }
+
+                /* Получаем сообщение уведомления */
+                Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("requestforteam");
+
+                if (constant == null) { return; }
+
+                /* Формируем текст уведомления */
+                notiffiMess = constant.StrValue.Replace("{user}", apUserSender.FirstName + ' ' + apUserSender.LastName)
+                                               .Replace("{team}", apUserTeam.Team.Name);
+
+                /* тип в константы добавлен специально для уведомлений */
+                Notification notifi = new Notification(apUserTeam.PkFkUserId, constant.Type, notiffiMess, teamId, apUserSender.PkId);
+
+                _unitOfWork.NotificationRepository.AddElement(notifi);
+                _unitOfWork.Save();
+
+                await Clients.User(Convert.ToString(apUserTeam.PkFkUserId))?.SendAsync("displayNotifi", notiffiMess);
+
+            }
+            catch(Exception ex)
+            {
+                return;
+            }
+        }
+
+        public async Task AcceptReqTeam(int inNotifiId)
+        {
+            int notifiId;
+            int userIdSender;
+
+            if (Context.User == null) { return; }
+
+            /* Айди пользователя, отправляющего ответ */
+            userIdSender = int.Parse(Context.User.Identity.Name);
+
+            /* Получаем отправленный запрос на участие */
+            Notification reqNotifi = _unitOfWork.NotificationRepository.GetItem(inNotifiId);
+            if (reqNotifi == null) { return; }
+
+            Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("acceptregteam");
+
+            if (constant == null) { return; }
+
+            if (reqNotifi.EntityId == null) { return; }
+
+            /* Получаем комнду с которой связан запрос */
+            Team team = _unitOfWork.TeamRepository.GetItem((int)reqNotifi.EntityId);
+
+            /* Формирую текст уведомления */
+            string notiffiMess = constant.StrValue.Replace("{user}", reqNotifi.Recipient.FirstName + ' ' + reqNotifi.Recipient.LastName)
+                                                  .Replace("{team}", team.Name);
+
+            /* Создаю новый объект уведомления */
+            Notification notification = new Notification(reqNotifi.FkSenderId, constant.Type, notiffiMess, (int)reqNotifi.EntityId, userIdSender);
+            _unitOfWork.NotificationRepository.AddElement(notification);
+            _unitOfWork.Save();
+
+            await Clients.User(Convert.ToString(reqNotifi.FkSenderId))?.SendAsync("displayNotifi", notiffiMess);
+
+        }
+
+        public async Task DismissReqTeam(int inNotifiId)
+        {
+            try
+            {
+                int userIdSender;
+                if (Context.User == null) { return; }
+
+                /* Айди пользователя, отправляющего ответ */
+                userIdSender = int.Parse(Context.User.Identity.Name);
+
+                /* Получаем отправленный запрос на участие */
+                Notification reqNotifi = _unitOfWork.NotificationRepository.GetItem(inNotifiId);
+
+                if (reqNotifi == null) { return; }
+
+                Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("dismissregteam");
+
+                if (constant == null) { return; }
+
+                if (reqNotifi.EntityId == null) { return; }
+
+                /* Получаем комнду с которой связан запрос */
+                Team team = _unitOfWork.TeamRepository.GetItem((int)reqNotifi.EntityId);
+
+                /* Формирую текст уведомления */
+                string notiffiMess = constant.StrValue.Replace("{user}", reqNotifi.Recipient.FirstName + ' ' + reqNotifi.Recipient.LastName)
+                                                      .Replace("{team}", team.Name);
+
+                /* Создаю новый объект уведомления */
+                Notification notification = new Notification(reqNotifi.FkSenderId, constant.Type, notiffiMess, (int)reqNotifi.EntityId, userIdSender);
+
+                _unitOfWork.NotificationRepository.AddElement(notification);
+                _unitOfWork.Save();
+
+                /* Отправляем уведомление пользователю */
+                await Clients.User(Convert.ToString(reqNotifi.FkSenderId))?.SendAsync("displayNotifi", notiffiMess);
 
             }
             catch (Exception ex)

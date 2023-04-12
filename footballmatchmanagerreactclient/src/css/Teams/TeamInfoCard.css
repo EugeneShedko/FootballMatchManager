@@ -1,0 +1,179 @@
+.team-info-main-container
+{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.team-info-container
+{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0,0,0,0.6);
+    border:4px white solid;
+    border-radius: 20px;
+}
+
+.team-info-user-container
+{
+    padding: 0;
+    margin: 0;
+    position: relative;
+    overflow: scroll;
+}
+
+.team-info-user-absolute-container
+{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+}
+
+.team-info-message-container
+{
+    height: 90%;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    overflow: scroll;
+}
+
+.team-info-message-absolute-container
+{
+    width: 100%;
+    position: absolute;
+}
+
+.team-info-text-container
+{
+    padding: 1% 1% 1% 1%;
+}
+
+.message-send-container
+{
+    margin: 0;
+    padding: 0;
+    height: 10%;
+    border-top: 4px white solid;
+}
+
+.message-send-area
+{
+    padding: 0;
+    margin: 0;
+    border-right: 4px white solid;    
+}
+
+.message-enter-button
+{
+    padding: 0% 0% 0% 2%;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid black;
+}
+
+.message-send-button
+{
+    width: 100%;
+    height: 100%;
+    border-radius: 0px 0px 20px 0px;
+    background-color: white;
+}
+
+.team-info-title
+{
+    margin: 0% 0% 2% 0%;
+    padding: 0;
+    color:yellowgreen;
+    font-size: 50px;       
+}
+
+.team-image
+{
+    width: 300px;
+    height: 300px;
+}
+
+.team-desc
+{
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.team-info-header
+{
+    margin: 0;
+    padding: 0;
+    color:white;
+    font-size: 20px;   
+}
+
+.team-info-text
+{
+    margin: 0% 0% 2% 0%;
+    padding: 0;
+    color:yellowgreen;
+    font-size: 18px;       
+}
+
+.team-join-button-container
+{
+    margin: 20% 0% 0% 0%;
+}
+
+.team-join-button
+{
+    margin:0;
+    margin: 2% 0% 0% 0%;
+    border: 4px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+}
+
+.team-join-button:hover
+{
+    background-color: white;
+    color:black;
+    font-weight: bold;
+}
+
+/* Здесь начинается админ, я его пока что еще не трогал */
+
+.match-admin-button
+{
+    margin: 2% 0% 0% 0%;
+    height: 7%;
+}
+
+.match-just-button
+{
+    background-color: white;
+}
+
+.match-just-button:hover
+{
+    background-color: yellowgreen;
+}
+
+.match-danger-button
+{
+    color: white;
+    background-color: red;
+}
+
+.match-danger-button:hover
+{
+    cursor: pointer;
+    background-color: #8B0000;    
+}
+
+.match-full-text
+{
+    color: red;
+    font-size: 23px;
+    text-align: center;
+}

@@ -11,9 +11,18 @@ namespace FootballMatchManager.DataBase.Models
         [Column("pkfkuserid")]
         public int PkFkUserId { get; set; }
         [Column("pkusertype")]
-        public string PkUserType { get; set; }
+        public int PkUserType { get; set; }
 
         public Team Team { get; set; }
         public ApUser ApUser { get; set; }
+
+        public ApUserTeam() { }
+
+        public ApUserTeam(int teamId, int userId, int userType)
+        {
+            this.PkFkTeamId= teamId;
+            this.PkFkUserId= userId;
+            this.PkUserType= userType;
+        }
     }
 }

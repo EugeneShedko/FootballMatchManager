@@ -1,14 +1,17 @@
-import "./../css/userprofile.css"
 import { Tab, Nav, Row, Col } from 'react-bootstrap';
-import Players from "./UserAccaunt/Players/ViewPlayers/Players";
 import { useNavigate } from "react-router-dom";
-import Profile from "./UserAccaunt/Players/ViewPlayerCard/PlayerCard";
-import UserMatchesNavigator from "./UserAccaunt/Games/GamesNavigator";
-import Matches from "./UserAccaunt/Games/ViewGames/Games";
-import Notifications from "./UserAccaunt/Notification/ViewNotification/Notifications";
 import { useContext, useEffect, useState } from "react";
 import { MAIN_ROUTE } from "../Utilts/Consts";
 import { Context } from "../index";
+
+import Matches from "./UserAccaunt/Games/ViewGames/Games";
+import Players from "./UserAccaunt/Players/ViewPlayers/Players";
+import Profile from "./UserAccaunt/Players/ViewPlayerCard/PlayerCard";
+import UserMatchesNavigator from "./UserAccaunt/Games/GamesNavigator";
+import Notifications from "./UserAccaunt/Notification/ViewNotification/Notifications";
+import Teams from "./UserAccaunt/Teams/ViewTeams/Teams"
+
+import "./../css/userprofile.css"
 
 export default function UserProfile() {
 
@@ -32,6 +35,10 @@ export default function UserProfile() {
         eventKey: <Notifications />
     });
 
+    const [teamsState, setTeamsState] = useState({
+        eventKey: <Teams setContState={wrapSetTeamsState} />
+    });
+
     // ------------------------------------------------------------- //
 
     useEffect(() => {
@@ -40,15 +47,9 @@ export default function UserProfile() {
 
     // ------------------------------------------------------------- //
 
-    /*
-    const [teamsState, setTeamsState] = useState({
-        eventKey: <Teams setContState={wrapSetTeamsState} />
-    });
-
     function wrapSetTeamsState(comp) {
         setTeamsState({ eventKey: comp });
     }
-    */
 
     // ------------------------------------------------------------- //
 
@@ -74,7 +75,6 @@ export default function UserProfile() {
 
     // ------------------------------------------------------------- //
 
-    /*
     function setTeamsKey() {
         if (teamsState.eventKey !== "teams") {
             setTeamsState({
@@ -82,7 +82,6 @@ export default function UserProfile() {
             })
         }
     }
-    */
 
     // ------------------------------------------------------------- //
 
@@ -126,11 +125,9 @@ export default function UserProfile() {
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="players" onClick={setPlayerKey}>Игроки</Nav.Link>
                             </Nav.Item>
-                            {/*
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="teams" onClick={setTeamsKey}>Команды</Nav.Link>
                             </Nav.Item>
-                            */}
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="profile">Профиль</Nav.Link>
                             </Nav.Item>
@@ -153,11 +150,9 @@ export default function UserProfile() {
                             <Tab.Pane className="h-100" eventKey="players">
                                 {playersState.eventKey}
                             </Tab.Pane>
-                            {/*
                             <Tab.Pane className="h-100" eventKey="teams">
                                 {teamsState.eventKey}
                             </Tab.Pane>
-                            */}
                             <Tab.Pane className="h-100" eventKey="profile">
                                 <Profile apUserId={user.getUserId} />
                             </Tab.Pane>

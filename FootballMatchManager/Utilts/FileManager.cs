@@ -23,6 +23,22 @@ namespace FootballMatchManager.Utilts
             return path;
         }
 
+        public static string LoadTeamImage(IFormFile file, string email)
+        {
+            string path = "teams/" + GetImagePath(email, file.FileName);
+            var filePath = "wwwroot/" + path;
+
+            using (MemoryStream stream = new MemoryStream())
+            {
+                file.CopyTo(stream);
+                stream.Position = 0;
+
+                var image = Image.Load<Rgba32>(stream);
+                image.SaveAsPng(filePath);
+            }
+            return path;
+        }
+
         public static string GetImagePath(string email, string fileName) 
         {
             MD5 md5 = MD5.Create();
