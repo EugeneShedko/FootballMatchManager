@@ -12,6 +12,7 @@ import Notifications from "./UserAccaunt/Notification/ViewNotification/Notificat
 import Teams from "./UserAccaunt/Teams/ViewTeams/Teams"
 
 import "./../css/userprofile.css"
+import UserTeamsInfoCard from './UserAccaunt/UserTeams/UserTeamsInfoCard';
 
 export default function UserProfile() {
 
@@ -38,12 +39,6 @@ export default function UserProfile() {
     const [teamsState, setTeamsState] = useState({
         eventKey: <Teams setContState={wrapSetTeamsState} />
     });
-
-    // ------------------------------------------------------------- //
-
-    useEffect(() => {
-        console.log("render");
-    }, [mathesState])
 
     // ------------------------------------------------------------- //
 
@@ -138,6 +133,9 @@ export default function UserProfile() {
                                 <Nav.Link className="upnav-item-link" eventKey="usermatches" onClick={setNavKey}>Мои матчи</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
+                                <Nav.Link className="upnav-item-link" eventKey="userteam" onClick={setNavKey}>Моя команда</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" eventKey="exit" onClick={() => { user.setAuth(false); navigate(MAIN_ROUTE); }}>Выход</Nav.Link>
                             </Nav.Item>
                         </Nav>
@@ -158,6 +156,9 @@ export default function UserProfile() {
                             </Tab.Pane>
                             <Tab.Pane className="h-100" eventKey="usermatches">
                                 {userMatchesNav.eventKey}
+                            </Tab.Pane>
+                            <Tab.Pane className="h-100" eventKey="userteam">
+                                <UserTeamsInfoCard />
                             </Tab.Pane>
                             <Tab.Pane className="h-100" eventKey="notification">
                                 {nnotif.eventKey}

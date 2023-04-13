@@ -39,7 +39,7 @@ export default function CreateTeam(props) {
             })
             .catch(userError => {
                 if (userError.response) {
-                    toast.error("Ошибка создания команды",
+                    toast.error(userError.response.data,
                         {
                             position: toast.POSITION.TOP_CENTER,
                             autoClose: 2000,

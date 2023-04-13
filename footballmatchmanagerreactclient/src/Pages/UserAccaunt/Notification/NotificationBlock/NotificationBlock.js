@@ -82,7 +82,6 @@ export default function NotificationBlock(props) {
         data.append("teamId", props.notify.entityId);
         data.append("userId", props.notify.fkSenderId);
 
-        /* Запрос на стороне сервере посмотреть */
         axios.post('http://localhost:5004/api/team/add-to-team', data, { withCredentials: true })
         .then((response) => {
             var conn = user.getNotifiHubConn;
@@ -131,7 +130,7 @@ export default function NotificationBlock(props) {
             <div className="notif-back-block" />
             <div className="row notif-block-content">
                 <div className="col-7 notif-block-column">
-                    <div className="row m-0">
+                    <div className="row notif-text">
                         {props.notify.text}
                     </div>
                 </div>

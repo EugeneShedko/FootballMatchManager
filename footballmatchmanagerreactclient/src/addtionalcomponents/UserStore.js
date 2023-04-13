@@ -4,6 +4,9 @@ import { makeAutoObservable } from "mobx";
 
 class UserStore
 {
+    
+    _notifihubconn;
+
     constructor()
     {
         this._isAuth  = false;
@@ -33,6 +36,11 @@ class UserStore
         this._isAdmin = bool;
     }
 
+    setNotifiHubConn(connection)
+    {
+        this._notifihubconn = connection;
+    }
+
     get getUserName()
     {
         return this._userName;
@@ -51,6 +59,11 @@ class UserStore
     get isAuth()
     {
         return this._isAuth;
+    }
+
+    get getNotifiHubConn()
+    {
+        return this._notifihubconn;
     }
 }
 

@@ -155,6 +155,8 @@ export default function Loginform(props) {
         nothubconn.on("displayNotifi", displayNotifMess);
 
         await nothubconn.start();
+
+        user.setNotifiHubConn(nothubconn);
     }
 
     // ---------------------------------------------------------------------------------------------- //

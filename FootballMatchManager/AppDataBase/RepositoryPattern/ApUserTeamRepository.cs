@@ -55,6 +55,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------- //
 
+        /* Возвращает участника конкретной команды(скорее всего так) */
         public ApUserTeam GetTeamParticipant(int teamId, int userId)
         {
             return GetItems().FirstOrDefault(aput => aput.PkFkTeamId == teamId
@@ -64,6 +65,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------- //
 
+        /* Возвращает всех участников команды */
         public List<ApUser> GetTeamParticipants(int teamId)
         {
             return GetItems().Where(aput => aput.PkFkTeamId == teamId
@@ -74,10 +76,57 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------- //
 
+        /* Скорее всего возвращат организатор команды, но не понятно почему не объект ApUser */
+        /* Возможно просто проверка на организатора сам объект не нужен(но это не точно) */
         public ApUserTeam GetTeamCreator(int teamId)
         {
             return GetItems().FirstOrDefault(t => t.PkFkTeamId == teamId
                                                && t.PkUserType == (int)ApUserTeamEnum.CREATOR);
+        }
+
+        // ------------------------------------------------------------- //
+
+        /* Возврашает запись ApUserTeam организтора команды по идентификтору пользователя */
+        public ApUserTeam GetTeamCreatorByUserId(int userId)
+        {
+            return GetItems().FirstOrDefault(aput => aput.PkFkUserId == userId
+                                                  && aput.PkUserType == (int)ApUserTeamEnum.CREATOR);
+        }
+
+        // ------------------------------------------------------------- //
+
+        /* Возвращает первую команду в которой пользователь является организатором */
+        public Team GetTeamByCreator(int userId)
+        {
+            return GetItems().Where(aput => aput.PkFkUserId == userId
+                                                  && aput.PkUserType == (int)ApUserTeamEnum.CREATOR)
+                             .Select(aput => aput.Team)
+                             .FirstOrDefault();
+
+                                       
+        }
+
+        // ------------------------------------------------------------- //
+
+        /* Возвращает первую команду, в которой пользователь является участником */
+        public Team GetTeamByParticipant(int userId)
+        {
+            return GetItems().Where(aput => aput.PkFkUserId == userId
+                                         && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT)
+                             .Select(aput => aput.Team)
+                             .FirstOrDefault();
+                              
+        }
+
+        // ------------------------------------------------------------- //
+
+        /* Возвращает команды в которых пользователь является участником */
+        public List<Team> GetTeamsByParticipant(int userId)
+        {
+            return GetItems().Where(aput => aput.PkFkUserId == userId
+                                         && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT)
+                              .Select(aput => aput.Team)
+                              .ToList();
         }
     }
 }

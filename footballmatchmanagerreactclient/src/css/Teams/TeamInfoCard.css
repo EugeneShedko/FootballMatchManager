@@ -141,6 +141,38 @@
     font-weight: bold;
 }
 
+/* ----------------------------------------------------------- */
+/*       Стили для карточки профиля команд пользователя        */
+
+.team-switch-cont
+{
+    width: 100%;
+    height: 10%;
+    padding: 0;
+    margin: 0;
+}
+
+.team-switch
+{
+    width: 100%;
+    border-bottom: 3px white solid;
+    background-color: rgba(0,0,0,0.6);
+    color:yellowgreen;
+    font-style: italic;
+    font-weight: bold;  
+    font-size: 20px;
+}
+
+.team-mess-cont
+{
+    width: 100%;
+    height: 90%;
+    padding: 0;
+    margin: 0;
+}
+
+/* ----------------------------------------------------------- */
+/* ----------------------------------------------------------- */
 /* Здесь начинается админ, я его пока что еще не трогал */
 
 .match-admin-button

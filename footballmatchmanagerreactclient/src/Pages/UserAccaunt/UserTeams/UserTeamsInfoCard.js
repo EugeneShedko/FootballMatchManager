@@ -2,31 +2,60 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Context } from "../../../../index"
+import { Context } from "../../../index"
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
-import PlayerBlock from "../../Players/ViewPlayers/PlayerBlock";
-import MessagesBlock from "./../../Games/ViewGameCard/MessagesBlock";
-import "./../../../../css/Teams/TeamInfoCard.css";
+import PlayerBlock from "../Players/ViewPlayers/PlayerBlock";
+import MessagesBlock from "./../Games/ViewGameCard/MessagesBlock";
+import "./../../../css/Teams/TeamInfoCard.css";
 
-export default function TeamInfoCard(props) {
+/* Можно было бы функции вынести просто в отдельный файл, вид карточки один */
+/* А у меня получилось два компонента для этого */
+
+export default function UserTeamsInfoCard(props) {
 
     const { user } = useContext(Context);
     const [team, setTeam] = useState({});
     const [teamUsers, setTeamUsers] = useState([]);
-    const [isPart, setIsPart] = useState(false);
+    const [userTeams, setUserTeams] = useState([]);
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 
+    /* Новый запрос на сервер для получения команды */
+
     useEffect(() => {
 
-        axios.get('http://localhost:5004/api/team/team/' + props.teamId, { withCredentials: true })
+        axios.get('http://localhost:5004/api/team/user-team', { withCredentials: true })
+            .then((response) => {
+
+                /* Пока что не понятно, что будет если приедт null */
+                /* Состояние для хранения листа айдишников */
+                getTeamInfo(response.data.firstTeamId);
+                setUserTeams(response.data.teamsPart)
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+    }, []);
+
+    // -------------------------------------------------------------------------------------------------------------------------- //
+
+    function getTeamInfo(teamId) {
+        /* Здесь же сразу можно было добавить вычет сообщений */
+
+        axios.get('http://localhost:5004/api/team/team/' + teamId, { withCredentials: true })
             .then((response) => {
                 setTeam(response.data.currteam);
-                setIsPart(response.data.isPart);
             })
             .then(() => {
-                axios.get('http://localhost:5004/api/team/team-users/' + props.teamId, { withCredentials: true })
+                axios.get('http://localhost:5004/api/team/team-users/' + teamId, { withCredentials: true })
                     .then((response) => {
                         setTeamUsers(response.data);
                     })
@@ -51,22 +80,6 @@ export default function TeamInfoCard(props) {
                         });
                 }
             });
-
-    }, []);
-
-    // -------------------------------------------------------------------------------------------------------------------------- //
-
-    function requestToAddTeam() {
-
-        var conn = user.getNotifiHubConn;
-        conn.invoke("RequestToAddTeam", props.teamId);
-
-        toast.success("Ваш запрос на присоединение к команде отправлен",
-        {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: 2000,
-            pauseOnFocusLoss: false
-        });
     }
 
     // -------------------------------------------------------------------------------------------------------------------------- //
@@ -83,7 +96,6 @@ export default function TeamInfoCard(props) {
                     });
                 setTeam(response.data.currteam);
                 setTeamUsers(response.data.users);
-                setIsPart(false);
             })
             .catch((error) => {
                 if (error.response) {
@@ -116,16 +128,11 @@ export default function TeamInfoCard(props) {
                                         alt=""
                                     />
                                 </div>
-                                {/* Может кнопки поместить в какой-нибудь контейнер */}
                                 <div className="row team-join-button-container">
-                                    {isPart ? null : <input className="team-join-button"
-                                        type="button"
-                                        value="Запрос на вступление"
-                                        onClick={requestToAddTeam} />}
-                                    {isPart ? <input className="match-join-button"
+                                    <input className="match-join-button"
                                         type="button"
                                         value="Покинуть"
-                                        onClick={leaveTeam} /> : null}
+                                        onClick={leaveTeam} />
                                 </div>
                             </div>
                             <div className="col-6 m-0 p-0">
@@ -157,9 +164,23 @@ export default function TeamInfoCard(props) {
                             </div>
                         </div>
                     }
-                    <div className="col-3 h-100 p-0">
-                        <MessagesBlock gameId={props.gameId} />
-                        {/* isPart ? <MessagesBlock gameId={props.gameId} /> : null */}
+                    <div className="col-3 p-0 h-100">
+                        <div className="row team-switch-cont">
+                            <select name="userSex"
+                                    /* value={props.regState.userSex} */
+                                    className="form-select form-select-sm team-switch"
+                                     onChange={e => getTeamInfo(e.target.value)}>
+                                    {
+                                        userTeams.map((team) => (
+                                            <option value={team.pkId} >{team.name}</option>
+                                        ))
+                                    }    
+                            </select>
+                        </div>
+                        <div className="row team-mess-cont">
+                            {/* Проблема блока, что везде ему передается айди игры */}
+                            <MessagesBlock gameId={props.gameId} />
+                        </div>
                     </div>
                 </div>
             </div>

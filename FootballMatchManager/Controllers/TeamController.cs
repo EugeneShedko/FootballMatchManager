@@ -51,12 +51,18 @@ namespace FootballMatchManager.Controllers
 
                 if (HttpContext.User == null) { return BadRequest(); }
 
-                if(_unitOfWork.TeamRepository.GetTeamByName(teamName) != null) 
+                int userCreatorId = int.Parse(HttpContext.User.Identity.Name);
+
+                if (_unitOfWork.ApUserTeamRepository.GetTeamCreatorByUserId(userCreatorId) != null)
+                {
+                    return BadRequest("Невозможно создать команду, так как вы уже являетесь организатором команды.");
+                }
+
+                if (_unitOfWork.TeamRepository.GetTeamByName(teamName) != null) 
                 {
                     return BadRequest("Команда с таким наименованием уже существует"); 
                 }
 
-                int userCreatorId = int.Parse(HttpContext.User.Identity.Name);
                 var imageFile = Request.Form.Files["teamImage"];
 
                 /* Создаем команду */
@@ -137,6 +143,54 @@ namespace FootballMatchManager.Controllers
 
         // ------------------------------------------------------------------------------------------------------ //
 
+        /* Пока что с одной командой, там дальше будем расширяться */
+        [Route("user-team")]
+        [HttpGet]
+        public IActionResult UserTeamProfile()
+        {
+
+            try
+            {
+
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                int userId = int.Parse(HttpContext.User.Identity.Name);
+                Team team;
+                /* Идинтификаторы команд, в которых пользователь является участником */
+                List<Team> userParticipantTeamsId;
+
+                /* Организатор всегда должен являться участником команды */
+                /* Пытаюсь найти команду, в которой пользователь является организатором */
+                team = _unitOfWork.ApUserTeamRepository.GetTeamByCreator(userId);
+
+                /* Если есть такая команда сразу возвращаю ее идентификатор */
+                if(team != null) 
+                {
+                    userParticipantTeamsId = _unitOfWork.ApUserTeamRepository.GetTeamsByParticipant(userId);
+                    return Ok(new { firstTeamId = team.PkId, teamsPart = userParticipantTeamsId});
+                }
+
+                /* Пытаюсь найти команду, в которой пользователь является участником */
+                team = _unitOfWork.ApUserTeamRepository.GetTeamByParticipant(userId);
+
+                /* Если есть такая команда сразу возвращаю ее идентификатор */
+                if (team != null) 
+                {
+                    userParticipantTeamsId = _unitOfWork.ApUserTeamRepository.GetTeamsByParticipant(userId);
+                    return Ok(new { firstTeamId = team.PkId, teamsPart = userParticipantTeamsId});
+                }
+
+                /* Пока что не понятно, что передавать в количестве участников, если пользователь не является */
+                /* участником ни одной команды*/
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------ //
 
         [HttpGet]
         [Route("team-users/{teamId}")]
@@ -179,10 +233,10 @@ namespace FootballMatchManager.Controllers
                     return BadRequest();
                 }
 
-                _unitOfWork.ApUserTeamRepository.AddElement(apUserTeamEx);
-                _unitOfWork.Save();
-
                 ApUserTeam apUserTeam = new ApUserTeam(teamId, userId, (int)ApUserTeamEnum.PARTICIPANT);
+
+                _unitOfWork.ApUserTeamRepository.AddElement(apUserTeam);
+                _unitOfWork.Save();
 
                 List<ApUser> apUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamId);
 
