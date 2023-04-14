@@ -1,32 +1,35 @@
-
-import axios from "axios";
 import { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { toast } from "react-toastify";
-import { Context } from "../../../../index"
-import { HubConnectionBuilder } from "@microsoft/signalr";
 
-import PlayerBlock from "../../Players/ViewPlayers/PlayerBlock";
-import MessagesBlock from "./../../Games/ViewGameCard/MessagesBlock";
-import "./../../../../css/Teams/TeamInfoCard.css";
+import "./../../../css/Teams/TeamInfoCard.css";
+import PlayerBlock from "../Players/ViewPlayers/PlayerBlock";
+import MessagesBlock from "./../Games/ViewGameCard/MessagesBlock";
 
-export default function TeamInfoCard(props) {
-
-    const { user } = useContext(Context);
-    const [team, setTeam] = useState({});
-    const [teamUsers, setTeamUsers] = useState([]);
-    const [isPart, setIsPart] = useState(false);
-
-    // -------------------------------------------------------------------------------------------------------------------------- //
+export default function ExistsTeamCard(props)
+{
+    const [team, setTeam] = useState({}); 
+    const [teamUsers, setTeamUsers] = useState([]);   
+    // ----------------------------------------------------------------------------------- //
 
     useEffect(() => {
+        getTeamInfo(props.teamId)
+    }, [props]);
 
-        axios.get('http://localhost:5004/api/team/team/' + props.teamId, { withCredentials: true })
+    // ----------------------------------------------------------------------------------- //
+
+    function getTeamInfo(teamId) {
+        /* Здесь же сразу можно было добавить вычет сообщений */
+
+        console.log('FUNC');
+        console.log(teamId);
+
+        axios.get('http://localhost:5004/api/team/team/' + teamId, { withCredentials: true })
             .then((response) => {
                 setTeam(response.data.currteam);
-                setIsPart(response.data.isPart);
             })
             .then(() => {
-                axios.get('http://localhost:5004/api/team/team-users/' + props.teamId, { withCredentials: true })
+                axios.get('http://localhost:5004/api/team/team-users/' + teamId, { withCredentials: true })
                     .then((response) => {
                         setTeamUsers(response.data);
                     })
@@ -51,59 +54,12 @@ export default function TeamInfoCard(props) {
                         });
                 }
             });
-
-    }, []);
-
-    // -------------------------------------------------------------------------------------------------------------------------- //
-
-    function requestToAddTeam() {
-
-        var conn = user.getNotifiHubConn;
-        conn.invoke("RequestToAddTeam", props.teamId);
-
-        /*
-        toast.success("Ваш запрос на присоединение к команде отправлен",
-        {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: 2000,
-            pauseOnFocusLoss: false
-        });
-        */
     }
 
-    // -------------------------------------------------------------------------------------------------------------------------- //
+    // ----------------------------------------------------------------------------------- //
 
-    function leaveTeam() {
-
-        axios.delete('http://localhost:5004/api/profile/leavefromteam/' + props.teamId + '/' + user.getUserId, { withCredentials: true })
-            .then((response) => {
-                toast.success(response.data.message,
-                    {
-                        position: toast.POSITION.TOP_CENTER,
-                        autoClose: 2000,
-                        pauseOnFocusLoss: false
-                    });
-                setTeam(response.data.currteam);
-                setTeamUsers(response.data.users);
-                setIsPart(false);
-            })
-            .catch((error) => {
-                if (error.response) {
-                    toast.error(error.response.data.message,
-                        {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
-                }
-            });
-
-    }
-
-    // -------------------------------------------------------------------------------------------------------------------------- //
-
-    return (
-        <div className="row justify-content-center team-info-main-container">
+    return(
+            <div className="row justify-content-center team-info-main-container">
             <div className="col-12 team-info-container">
                 <div className="row m-0 h-100">
                     <div className="col-5 team-info-text-container">
@@ -118,16 +74,12 @@ export default function TeamInfoCard(props) {
                                         alt=""
                                     />
                                 </div>
-                                {/* Может кнопки поместить в какой-нибудь контейнер */}
                                 <div className="row team-join-button-container">
-                                    {isPart ? null : <input className="team-join-button"
-                                        type="button"
-                                        value="Запрос на вступление"
-                                        onClick={requestToAddTeam} />}
-                                    {isPart ? <input className="match-join-button"
+                                    <input className="match-join-button"
                                         type="button"
                                         value="Покинуть"
-                                        onClick={leaveTeam} /> : null}
+                                        //onClick={leaveTeam} 
+                                        />
                                 </div>
                             </div>
                             <div className="col-6 m-0 p-0">
@@ -150,7 +102,7 @@ export default function TeamInfoCard(props) {
                         <div className="col-4 team-info-user-container">
                             <div className="team-info-user-absolute-container">
                                 {
-                                    teamUsers?.map((player) => (
+                                    teamUsers.map((player) => (
                                         <div className="row m-0">
                                             <PlayerBlock info={player} />
                                         </div>
@@ -159,12 +111,27 @@ export default function TeamInfoCard(props) {
                             </div>
                         </div>
                     }
-                    <div className="col-3 h-100 p-0">
-                        <MessagesBlock gameId={props.gameId} />
-                        {/* isPart ? <MessagesBlock gameId={props.gameId} /> : null */}
+                    <div className="col-3 p-0 h-100">
+                        <div className="row team-switch-cont">
+                            <select className="form-select form-select-sm team-switch"
+                                     onChange={e => getTeamInfo(e.target.value)}>
+                                    {
+                                        props.userTeams?.map((team) => (
+                                            team.pkId === props.teamId ?                                     
+                                            <option selected value={team.pkId} >{team.name}</option>
+                                            :
+                                            <option value={team.pkId} >{team.name}</option>
+                                        ))
+                                    }    
+                            </select>
+                        </div>
+                        <div className="row team-mess-cont">
+                            {/* Проблема блока, что везде ему передается айди игры */}
+                            <MessagesBlock gameId={props.gameId} />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     );
-}    
+}

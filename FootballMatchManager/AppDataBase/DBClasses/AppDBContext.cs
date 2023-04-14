@@ -33,7 +33,11 @@ namespace FootballMatchManager.DataBase.DBClasses
                                                     new Constant() { PkId = 5, Group = "notification", Type = "text", Name = "acceptreqgame", StrValue = "Пользователь {user} принял ваш запрос на участие в матче {game}" },
                                                     new Constant() { PkId = 6, Group = "notification", Type = "requestforteam", Name = "requestforteam", StrValue = "Пользователь {user} отправил запрос на присоединение к команде {team}. Разршеить?" },
                                                     new Constant() { PkId = 7, Group = "notification", Type = "text", Name = "acceptregteam", StrValue = "Пользователь {user} принял ваш запрос на присоединение к команде {team}" },
-                                                    new Constant() { PkId = 8, Group = "notification", Type = "text", Name = "dismissregteam", StrValue = "Пользователь {user} отклонил ваш запрос на присоединение к команде {team}" }
+                                                    new Constant() { PkId = 8, Group = "notification", Type = "text", Name = "dismissregteam", StrValue = "Пользователь {user} отклонил ваш запрос на присоединение к команде {team}" },
+                                                    /* Так себе наименование у данной константы, потом возможно поменять */
+                                                    new Constant() { PkId = 9, Group = "notification", Type = "text", Name = "errorreqteam", StrValue = "Невозможно отпарвить запрос на присоединение к команде, так как вы уже являетесь участником 3 команд" },
+                                                    new Constant() { PkId = 10, Group = "notification", Type = "text", Name = "teamreqsend", StrValue = "Ваш запрос на присоединение к команде {team} отправлен" }
+
                                                     );
 
             modelBuilder.Entity<Comment>().HasKey(c => c.PkId);
@@ -56,7 +60,7 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<ApUserGame>().HasOne(apug => apug.ApUser).WithMany(apu => apu.ApUserGame).HasForeignKey(apug => apug.PkFkUserId).OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<ApUserGame>().HasOne(apug => apug.Game).WithMany(g => g.ApUsersGames).HasForeignKey(apug => apug.PkFkGameId).OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<Message>().HasOne(m => m.Sender).WithMany(apu => apu.Messages).HasForeignKey(m => m.FkSenderId).OnDelete(DeleteBehavior.Cascade); 
-            modelBuilder.Entity<Message>().HasOne(m => m.Game).WithMany(g => g.Messages).HasForeignKey(m => m.FkGameId).OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<Message>().HasOne(m => m.Game).WithMany(g => g.Messages).HasForeignKey(m => m.FkGameId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Game>().HasOne(g => g.Tournament).WithMany(t => t.TournamentGames).HasForeignKey(g => g.fkTournamentId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<TournamentTable>().HasOne(tt => tt.TournamentTeam).WithMany(t => t.TeamTournamentTable).HasForeignKey(tt => tt.PkTeamId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<TournamentTable>().HasOne(tt => tt.Tournament).WithMany(t => t.TournamentTable).HasForeignKey(t => t.PkTournamentId).OnDelete(DeleteBehavior.NoAction);

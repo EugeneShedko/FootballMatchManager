@@ -151,7 +151,6 @@ namespace FootballMatchManager.Controllers
 
             try
             {
-
                 if (HttpContext.User == null) { return BadRequest(); }
 
                 int userId = int.Parse(HttpContext.User.Identity.Name);
@@ -182,7 +181,7 @@ namespace FootballMatchManager.Controllers
 
                 /* Пока что не понятно, что передавать в количестве участников, если пользователь не является */
                 /* участником ни одной команды*/
-                return Ok();
+                return Ok(new { firstTeamId  = -1});
             }
             catch(Exception ex)
             {

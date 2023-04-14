@@ -171,6 +171,8 @@ namespace FootballMatchManager.Hubs
 
         public async Task RequestToAddTeam(int teamId)
         {
+            /* Может в хабе посылать обратно */
+
             try
             {
                 int userIdSender;
@@ -179,6 +181,17 @@ namespace FootballMatchManager.Hubs
                 if (Context.User == null) { return; }
 
                 userIdSender = int.Parse(Context.User.Identity.Name);
+
+                if(_unitOfWork.ApUserTeamRepository.GetTeamsByParticipant(userIdSender).Count >= 3 )
+                {
+                    Constant errorReq = _unitOfWork.ConstantRepository.GetConstantByName("errorreqteam");
+
+                    if (errorReq != null)
+                    {
+                        await Clients.User(Context.User.Identity.Name)?.SendAsync("displayNotifi", errorReq.StrValue);
+                        return;
+                    }
+                }
 
                 /* Получаем создателя матча */
                 ApUserTeam apUserTeam = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId);
@@ -205,7 +218,17 @@ namespace FootballMatchManager.Hubs
                 _unitOfWork.NotificationRepository.AddElement(notifi);
                 _unitOfWork.Save();
 
+                /* Отправляем уведомление пользователю организатору комануды */
                 await Clients.User(Convert.ToString(apUserTeam.PkFkUserId))?.SendAsync("displayNotifi", notiffiMess);
+
+                /* Получаем констанут для отправки сообщения пользователю, который отправил запрос */
+                Constant sendReq = _unitOfWork.ConstantRepository.GetConstantByName("teamreqsend");
+
+                if (sendReq == null) { return;}
+
+                string sendMsg = sendReq.StrValue.Replace("{team}", apUserTeam.Team.Name);
+
+                await Clients.User(Context.User.Identity.Name)?.SendAsync("displayNotifi", sendMsg);
 
             }
             catch(Exception ex)

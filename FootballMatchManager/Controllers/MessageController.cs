@@ -26,7 +26,7 @@ namespace FootballMatchManager.Controllers
         {
 
             List<Message> messages = _unitOfWork.MessageRepository.GetItems()
-                                                                  .Where(m => m.FkGameId == gameId)
+                                                                  .Where(m => m.EntityId == gameId)
                                                                   .ToList();
 
             if (messages == null)

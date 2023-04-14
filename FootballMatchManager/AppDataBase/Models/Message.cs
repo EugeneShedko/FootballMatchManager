@@ -11,10 +11,10 @@ namespace FootballMatchManager.DataBase.Models
         public string Text     { get; set; }
         [Column("datetime")]
         public DateTime DateTime { get; set; }
-        [Column("fkgameId")]
-        public int      FkGameId          { get; set; }
         [Column("fksenderid")]
         public int     FkSenderId   { get; set; }
+        [Column("entityId")]
+        public int EntityId { get; set; }
 
         public ApUser Sender { get; set; }
         public Game   Game { get; set; }
@@ -22,7 +22,7 @@ namespace FootballMatchManager.DataBase.Models
         public Message(string text, int fkGameId, int fkSenderId)
         {
             this.Text = text;
-            this.FkGameId = fkGameId;
+            this.EntityId = fkGameId;
             this.FkSenderId = fkSenderId;
             this.DateTime= DateTime.Now;   
         }
