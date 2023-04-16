@@ -86,8 +86,8 @@ export default function NotificationBlock(props) {
 
         axios.post('http://localhost:5004/api/team/add-to-team', data, { withCredentials: true })
         .then((response) => {
-            //var conn = user.getNotifiHubConn;
-            //conn.invoke("AcceptReqTeam", props.notify.pkId);
+            var conn = userContext.notificonn;
+            conn.invoke("AcceptReqTeam", props.notify.pkId);
             readNotifi();
         })
         .catch(userError => {
@@ -107,8 +107,8 @@ export default function NotificationBlock(props) {
 
     function dismissRequestTeam()
     {
-        //var conn = user.getNotifiHubConn;
-        //conn.invoke("DismissReqTeam", props.notify.pkId);
+        var conn = userContext.notificonn;
+        conn.invoke("DismissReqTeam", props.notify.pkId);
         readNotifi();
     }
 

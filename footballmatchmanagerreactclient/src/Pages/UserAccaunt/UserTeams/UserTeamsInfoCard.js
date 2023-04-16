@@ -14,9 +14,10 @@ import NoExistTeamCard from "./NoExistTeamCard";
 
 export default function UserTeamsInfoCard() {
 
-    const { user } = useContext(Context);
-    const [teamId, setTeamId] = useState();
+    const { userContext } = useContext(Context);
+    const [teamId, setTeamId] = useState(null);
     const [userTeams, setUserTeams] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 
@@ -30,10 +31,12 @@ export default function UserTeamsInfoCard() {
                 if(response.data.firstTeamId !== -1)
                 {
                     setTeamId(response.data.firstTeamId);
-                    setUserTeams(response.data.teamsPart)                    
+                    setUserTeams(response.data.teamsPart)     
+                    setIsLoading(true);               
 
                 }
                 setTeamId(response.data.firstTeamId);
+                setIsLoading(true); 
             })
             .catch(userError => {
                 if (userError.response) {
@@ -122,10 +125,14 @@ export default function UserTeamsInfoCard() {
         {/* Почему то рендерится сначала со значением undefined, посмотреть в консоли */}
         {console.log('teamId')}
         {console.log(teamId)}
+        {console.log(isLoading)}
+        {/* Почему-то это только в этом месте происходит */}
         {
-            teamId === -1 ? <NoExistTeamCard /> :<ExistsTeamCard  teamId={teamId}
-                                                                  userTeams={userTeams}
-                                                                  />
+            isLoading ?
+             teamId === -1 ? <NoExistTeamCard /> :<ExistsTeamCard  teamId={teamId}
+                                                                   userTeams={userTeams}
+                                                                   />
+            : null                                                       
         }        
         </>
     );

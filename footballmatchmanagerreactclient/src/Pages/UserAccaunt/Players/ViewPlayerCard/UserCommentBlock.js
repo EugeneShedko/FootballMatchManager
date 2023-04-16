@@ -7,8 +7,8 @@ import "./../../../../css/CommentBlock.css";
 
 export default function UserCommentBlock(props) {
 
-    const {user} = useContext(Context);
-    const userNameStyle = props.commentInfo.senderId === user.getUserId ? "row user-comment-name comment-name-owner": "row user-comment-name";
+    const {userContext} = useContext(Context);
+    const userNameStyle = props.commentInfo.senderId === userContext.userId ? "row user-comment-name comment-name-owner": "row user-comment-name";
 
     // --------------------------------------------------------------------------------------------------------------------------- //
 

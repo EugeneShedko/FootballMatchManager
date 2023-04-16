@@ -4,55 +4,12 @@ import Matches from "./ViewGames/Games";
 import "./../../../css/usermatchesnavigator.css"
 import UserMatchesCr from "./GamesCreator";
 import UserMatchesPr from "./GamesParticipant";
+import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
+import { TO_USER_GAMES_CREATOR, TO_USER_GAMES_PARTICIPANT } from "../../../Utilts/Consts";
 
-export default function UserMatchesNavigator(props) {
+export default function UserMatchesNavigator() {
 
-    const [partMatchesState, setPartMatchesState] = useState({
-        eventKey: <UserMatchesPr setContState={wrapSetPartMatchesState} />
-    });
-
-    const [createMatchesState, setCreateMatchesState] = useState({
-        eventKey: <UserMatchesCr setContState={wrapSetCreateMatchesState} />
-    });
-
-    // --------------------------------------------------------------------------- //
-
-    useEffect(() => {
-        setPartMatchesKey();
-        setCreateMatchesKey();
-    }, [props])
-
-    // --------------------------------------------------------------------------- //
-
-    function wrapSetPartMatchesState(comp) {
-        setPartMatchesState({ eventKey: comp });
-    }
-
-    // --------------------------------------------------------------------------- //
-
-    function wrapSetCreateMatchesState(comp) {
-        setCreateMatchesState({ eventKey: comp });
-    }
-
-    // --------------------------------------------------------------------------- //
-
-    function setPartMatchesKey() {
-        if (partMatchesState.eventKey !== "participant") {
-            setPartMatchesState({
-                eventKey: <UserMatchesPr setContState={wrapSetPartMatchesState} />
-            })
-        }
-    }
-
-    // --------------------------------------------------------------------------- //
-
-    function setCreateMatchesKey() {
-        if (createMatchesState.eventKey !== "creator") {
-            setCreateMatchesState({
-                eventKey: <UserMatchesCr setContState={wrapSetCreateMatchesState} />
-            })
-        }
-    }
+    const navigate = useNavigate();
 
     // --------------------------------------------------------------------------- //
 
@@ -61,26 +18,19 @@ export default function UserMatchesNavigator(props) {
             <Row className="umnav-main-container">
                 <Nav className="umnav-container">
                     <Nav.Item className="umnav-item">
-                        <Nav.Link className="umnav-item-link" eventKey="participant" onClick={setPartMatchesKey}>
+                        <Nav.Link className="umnav-item-link" onClick={() => navigate(TO_USER_GAMES_PARTICIPANT)}>
                             Участник
                         </Nav.Link>
                     </Nav.Item>
                     <Nav.Item className="umnav-item">
-                        <Nav.Link className="umnav-item-link" eventKey="creator" onClick={setCreateMatchesKey}>
+                        <Nav.Link className="umnav-item-link" onClick={() => navigate(TO_USER_GAMES_CREATOR)}>
                             Организатор
                         </Nav.Link>
                     </Nav.Item>
                 </Nav>
             </Row>
             <Row className="um-content-container">
-                <Tab.Content className="h-100 p-0">
-                    <Tab.Pane className="h-100" eventKey="participant">
-                        {partMatchesState.eventKey}
-                    </Tab.Pane>
-                    <Tab.Pane className="h-100" eventKey="creator">
-                        {createMatchesState.eventKey}
-                    </Tab.Pane>
-                </Tab.Content>
+                <Outlet />
             </Row>
         </Tab.Container>
     );

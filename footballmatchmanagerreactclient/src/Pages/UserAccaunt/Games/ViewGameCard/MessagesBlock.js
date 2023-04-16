@@ -30,6 +30,7 @@ export default function MessagesBlock(props) {
 
     // ---------------------------------------------------------------------------------------------------------- //
 
+    /* Попробовать сделать отдельный метод в сообщениях для получения сообщений */
     useEffect(() => {
         axios.get('http://localhost:5004/api/message/game-messages/' + props.gameId, { withCredentials: true })
         .then((response) => {
@@ -91,6 +92,7 @@ export default function MessagesBlock(props) {
         console.log('GAMEID');
         console.log(props.gameId, curMessage);
 
+        /* Посмотреть этот метод на сервере */
         connection.current.invoke("SendMess", curMessage, parseInt(props.gameId, 10));
         
         setCurMessage("");

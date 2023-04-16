@@ -8,10 +8,12 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import PlayerBlock from "../../Players/ViewPlayers/PlayerBlock";
 import MessagesBlock from "./../../Games/ViewGameCard/MessagesBlock";
 import "./../../../../css/Teams/TeamInfoCard.css";
+import { useParams } from "react-router-dom";
 
-export default function TeamInfoCard(props) {
+export default function TeamInfoCard() {
 
-    const { user } = useContext(Context);
+    const { userContext } = useContext(Context);
+    const [teamId, setTeamId] = useState(parseInt(useParams().id));
     const [team, setTeam] = useState({});
     const [teamUsers, setTeamUsers] = useState([]);
     const [isPart, setIsPart] = useState(false);
@@ -20,13 +22,13 @@ export default function TeamInfoCard(props) {
 
     useEffect(() => {
 
-        axios.get('http://localhost:5004/api/team/team/' + props.teamId, { withCredentials: true })
+        axios.get('http://localhost:5004/api/team/team/' + teamId, { withCredentials: true })
             .then((response) => {
                 setTeam(response.data.currteam);
                 setIsPart(response.data.isPart);
             })
             .then(() => {
-                axios.get('http://localhost:5004/api/team/team-users/' + props.teamId, { withCredentials: true })
+                axios.get('http://localhost:5004/api/team/team-users/' + teamId, { withCredentials: true })
                     .then((response) => {
                         setTeamUsers(response.data);
                     })
@@ -58,24 +60,16 @@ export default function TeamInfoCard(props) {
 
     function requestToAddTeam() {
 
-        var conn = user.getNotifiHubConn;
-        conn.invoke("RequestToAddTeam", props.teamId);
-
-        /*
-        toast.success("Ваш запрос на присоединение к команде отправлен",
-        {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: 2000,
-            pauseOnFocusLoss: false
-        });
-        */
+        var conn = userContext.notificonn;
+        conn.invoke("RequestToAddTeam", teamId);
     }
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 
     function leaveTeam() {
 
-        axios.delete('http://localhost:5004/api/profile/leavefromteam/' + props.teamId + '/' + user.getUserId, { withCredentials: true })
+        /* Вычитывать пользователя нужно на сервере!!!!!! */
+        axios.delete('http://localhost:5004/api/profile/leavefromteam/' + teamId + '/' + userContext.userId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {
@@ -160,8 +154,9 @@ export default function TeamInfoCard(props) {
                         </div>
                     }
                     <div className="col-3 h-100 p-0">
-                        <MessagesBlock gameId={props.gameId} />
-                        {/* isPart ? <MessagesBlock gameId={props.gameId} /> : null */}
+                        {/* Пока что с сообщениями проблема */}
+                        {/*<MessagesBlock gameId={teamId} /> */}
+                        {isPart ? <MessagesBlock gameId={teamId} /> : null }
                     </div>
                 </div>
             </div>

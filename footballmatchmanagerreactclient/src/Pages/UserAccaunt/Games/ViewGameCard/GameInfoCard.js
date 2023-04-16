@@ -186,6 +186,7 @@ export default function GameInfoCard(props) {
                 }
             });
 
+        /* Почему оно стоит здесь?, перенести под успешный ответ */    
         var conn = userContext.notificonn;
         conn.invoke("Game", gameId, "leavefromgame");
     }

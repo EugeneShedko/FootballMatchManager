@@ -5,10 +5,12 @@ import { toast } from "react-toastify";
 import { Context } from "../../../../index"
 
 import "./../../../../css/Teams/CreateTeam.css"
+import { useNavigate } from "react-router-dom";
+import { TO_TEAMS } from "../../../../Utilts/Consts";
 
 export default function CreateTeam(props) {
 
-    const { user } = useContext(Context);
+    const navigate = useNavigate();
     /* Можно было бы не создавать, а хранить в переменной, тогда по другому обработку на сервере нужно картинки */
     const [image, setImage] = useState("http://localhost:5004/teams/default-team-logo.png");
 
@@ -28,14 +30,17 @@ export default function CreateTeam(props) {
         data.append("teamImage", teamState.teamImage);
 
         axios.post('http://localhost:5004/api/team/create-team', data, { withCredentials: true })
-            .then((response) => {
-                props.setAllTeams(response.data);                
+            .then((response) => {              
                 toast.success(response.data, {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
                     pauseOnFocusLoss: false
                 })
-                props.onHide(false);
+                /* Передать рефреш, как с играми */
+                navigate(TO_TEAMS, {state:{refresh:true}});
+                /* Убрать вычет всех команд на сервере */
+                //props.setAllTeams(response.data);  
+                //props.onHide(false);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -75,7 +80,7 @@ export default function CreateTeam(props) {
 
     return (
         <Modal show={props.show}
-            onHide={props.onHide}
+            onHide={() => navigate(TO_TEAMS)}
             centered>
 
             <Modal.Header closeButton>

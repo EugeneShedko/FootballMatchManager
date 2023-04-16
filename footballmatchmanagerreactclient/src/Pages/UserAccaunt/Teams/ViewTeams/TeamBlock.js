@@ -1,15 +1,18 @@
+import { useNavigate } from "react-router-dom";
 import TeamInfoPage from "../ViewTeamCard/TeamInfoCard";
 
 import "./../../../../css/Teams/TeamBlock.css";
+import { TO_TEAM_CARD } from "../../../../Utilts/Consts";
 
 export default function TeamBlock(props) {
+
+    const navigate = useNavigate();
 
     // ------------------------------------------------------------------- //
 
     function setTeamInfoPage() {
-        props.setContState(<TeamInfoPage teamId={props.info.pkId}
-            setGames={props.setTeams}
-            setContState={props.setContState} />);
+
+        navigate(TO_TEAM_CARD + '/' + props.info.pkId);
     }
 
     // ------------------------------------------------------------------- //

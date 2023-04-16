@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-import CreateMatch from "../CreateGame";
 import GameGenerator from "./GameGenerator";
 
 import "./../../../../css/Games.css";

@@ -5,13 +5,14 @@ import MatchBlock from "./ViewGames/GameBlock";
 import { Context } from "../../../index"
 import GameGenerator from "./ViewGames/GameGenerator";
 import CreateMatch from "./CreateGame";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 
-export default function UserMatchesCr(props) {
+export default function UserMatchesCr() {
 
-    const { user } = useContext(Context);
-
-    const [createMatchVisible, setcreateMatchVisible] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const {userContext} = useContext(Context);
     const [initUserMatchesCreator, setInitUserMatchesCreator] = useState([]);
     const [userMatchCr, setUserMatchCr] = useState([]);
     const [searchString, setSearchString] = useState("");
@@ -21,8 +22,9 @@ export default function UserMatchesCr(props) {
     useEffect(
         () => {
 
+            /* Похоже на этой странице тоже можн матчи создавать */
             const data = new FormData();
-            data.append("userId", user.getUserId);
+            data.append("userId", userContext.userId);
 
             axios.post('http://localhost:5004/api/profile/user-creat-game', data, { withCredentials: true })
                 .then((response) => {
@@ -40,7 +42,7 @@ export default function UserMatchesCr(props) {
                     }
                 });
             ;
-        }, [props]
+        }, [location.state && location.state.refresh]
     );
 
     // ---------------------------------------------------------------------------------- //
@@ -56,16 +58,21 @@ export default function UserMatchesCr(props) {
             if(checkList[i].checked)
             {
                 tempGames = initUserMatchesCreator.filter(game => {
-                    return String(game.gameFormat).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
+                    return String(game.format).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
                 })
                 resultGames = resultGames.concat(tempGames);
             }
         }
 
+        setUserMatchCr(resultGames);
+
+        /* Для чего я добавлял вот это условие? */
+        /*
         if(resultGames.length > 0)
         {
             setUserMatchCr(resultGames);
         }
+        */
     }
 
     // ---------------------------------------------------------------------------------- //
@@ -86,8 +93,8 @@ export default function UserMatchesCr(props) {
         <div className="row mpmatches-main-container">
             <div className="col-9 mpmatches-container">
                 <GameGenerator games={userMatchCr}
-                    searchString={searchString}
-                    setContState={props.setContState} />
+                               searchString={searchString}
+                    />
             </div>
             <div className="col-3 mplefcol">
                 <div className="mp-fixed-container">
@@ -95,7 +102,7 @@ export default function UserMatchesCr(props) {
                         <input className="mpbutton-style" 
                                type="button" 
                                value="Создать матч" 
-                               onClick={() => setcreateMatchVisible(true)} />
+                               onClick={() => navigate(location.pathname + '/' + "creategame")} />
                     </div>
                     <div className="row mplcrow">
                         <input id="search-match-element"
@@ -103,7 +110,7 @@ export default function UserMatchesCr(props) {
                             placeholder="Введите название матча"
                             value={searchString}
                             onChange={(e) => setSearchString(e.target.value)}
-                        />
+                        />1
                     </div>
                     <div className="row filter-match-container">
                         <label>
@@ -129,9 +136,12 @@ export default function UserMatchesCr(props) {
                     </div>
                 </div>
             </div>
+            <Outlet />
+            {/*
             <CreateMatch show   = {createMatchVisible} 
                          onHide = {setcreateMatchVisible} 
             />
+            */}
         </div>
     );
 }

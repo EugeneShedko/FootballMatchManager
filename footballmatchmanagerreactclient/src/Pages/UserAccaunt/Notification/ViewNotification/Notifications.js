@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 import "./../../../../css/Notification/NotificationView.css"
 
-export default function Notifications(props)
+export default function Notifications()
 {
 
     const [notifiList, setNotifiList] = useState([]);
@@ -28,7 +28,7 @@ export default function Notifications(props)
                             });
                     }
                 });
-        }, [props]
+        }, []
     );
 
     // ------------------------------------------------------- //

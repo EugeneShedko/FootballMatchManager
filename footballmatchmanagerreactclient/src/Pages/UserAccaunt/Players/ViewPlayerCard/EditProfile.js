@@ -6,37 +6,53 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Context } from "../../../../index"
+import { useLocation, useNavigate } from "react-router-dom";
+import { TO_PLAYER_CARD, TO_PROFILE } from "../../../../Utilts/Consts";
 
 export default function EditProfile(props) {
 
-    const {user, setUser} = useContext(Context);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const {userContext, setUserContext} = useContext(Context);
+    const [userInfo, setUserInfo] = useState({
+        userId: userContext.userId,
+        userEmail: location.state.userEmail,
+        userPassword: "",
+        userLastName: location.state.userLastName,
+        userFirstName: location.state.userFirstName,
+        userSex: "",
+        userBirthDay: location.state.userDateBirth,
+        userPosition: location.state.userPosition
+    });
 
     /*Поробоавть использовать короткий класс для изменений*/
     function saveChanges()
     {
         const data = {
-            "UserId": user.getUserId,
-            "UserEmail": props.info.userEmail,
-            "UserPassword": "",
-            "UserLastName": props.info.userLastName,
-            "UserName": props.info.userFirstName,
-            "UserSex": "",
-            "UserBirthDay": props.info.userDateBirth,
-            "UserPosition": props.info.userPosition    
+            UserId: userInfo.userId,
+            UserEmail: userInfo.userEmail,
+            UserPassword: "",
+            UserLastName: userInfo.userLastName,
+            UserName: userInfo.userFirstName,
+            UserSex: "",
+            UserBirthDay: userInfo.userBirthDay,
+            UserPosition: userInfo.userPosition    
         };
         
-
         axios.post('http://localhost:5004/api/profile/editprofile', data,{ withCredentials: true })
         .then((response) => {
-            props.setProfileInfo(response.data.askdata);
-            user.setUserName(response.data.askdata.firstName + ' ' + response.data.askdata.lastName);
+            setUserContext({...userContext, userName: response.data.askdata.firstName + ' ' + response.data.askdata.lastName});
             toast.success(response.data.message,
                 {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
                     pauseOnFocusLoss: false
                 });
-            props.onHide(false);    
+            navigate(TO_PLAYER_CARD + '/' + userContext.userId);
+            //Пока что, так убрать вычитывание информации о пользователе на сервере 
+            //props.setProfileInfo(response.data.askdata);
+            //userContext.userNamesetUserName(response.data.askdata.firstName + ' ' + response.data.askdata.lastName);                         
+            //props.onHide(false);    
         })
         .catch(userError => {
             if (userError.response) {
@@ -53,7 +69,7 @@ export default function EditProfile(props) {
 
     return (
         <Modal show={props.show}
-            onHide={props.onHide}
+            onHide={() => navigate(TO_PLAYER_CARD + '/' + userContext.userId)}
             centered>
 
             <Modal.Header closeButton>
@@ -66,29 +82,29 @@ export default function EditProfile(props) {
                     <input className="input-style"
                         type="text"
                         placeholder="Имя"
-                        value={props.info.userFirstName}
-                        onChange={(e) => {props.setInfo({ ...props.info, userFirstName: e.target.value }) }}
+                        value={userInfo.userFirstName}
+                        onChange={(e) => {setUserInfo({ ...userInfo, userFirstName: e.target.value }) }}
                     />
                 </Row>
                 <Row className="input-container">
                     <input className="input-style"
                         type="text"
                         placeholder="Фамилия"
-                        value={props.info.userLastName}
-                        onChange={(e) => {props.setInfo({ ...props.info, userLastName: e.target.value }) }}
+                        value={userInfo.userLastName}
+                        onChange={(e) => {setUserInfo({...userInfo, userLastName: e.target.value }) }}
                     />
                 </Row>
                 <Row className="input-container">
                     <ReactDatePicker className="input-style"
-                        selected={props.info.userDateBirth}
-                        onChange={(date: Date) => {props.setInfo({ ...props.info, userDateBirth: date }) }}
+                        selected={userInfo.userBirthDay}
+                        onChange={(date: Date) => {setUserInfo({ ...userInfo, userBirthDay: date }) }}
                     />
                 </Row>
                 {/*Здесь должен быть выбор, задать пока что статически*/}
                 <Row className="input-container">
                     <select className="input-style"
-                        value={props.info.userPosition}
-                        onChange={(e) => {props.setInfo({ ...props.info, userPosition: e.target.value }) }}
+                        value={userInfo.userPosition}
+                        onChange={(e) => {setUserInfo({ ...userInfo, userPosition: e.target.value }) }}
                     >
                         <option>Нападающий</option>
                         <option>Левый полузащитник</option>

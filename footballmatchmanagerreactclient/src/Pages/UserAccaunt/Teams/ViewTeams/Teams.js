@@ -6,10 +6,13 @@ import TeamGenerator from "./TeamsGenerator";
 import CreateTeam from "./CreateTeam";
 
 import "./../../../../css/Teams/TeamsView.css"
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { TO_CREATE_TEAM } from "../../../../Utilts/Consts";
 
-export default function Teams(props) {
+export default function Teams() {
 
-    const [createTeamVisible, setCreateTeamVisible] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
     const [teams, setTeams] = useState([]);
     const [searchString, setSearchString] = useState("");
 
@@ -32,7 +35,8 @@ export default function Teams(props) {
                     }
                 });
             ;
-        }, [props]
+        /* Хреново сделано обновление, скорее всего два раза рендерится компонент */    
+        }, [location.state && location.state.refresh]
     );
 
     // ---------------------------------------------------------------------------------------------- //
@@ -45,7 +49,7 @@ export default function Teams(props) {
                     <TeamGenerator teams={teams}
                         setGames={setTeams}
                         searchString={searchString}
-                        setContState={props.setContState} />
+                    />
 
                 }
             </div>
@@ -54,7 +58,7 @@ export default function Teams(props) {
                     <input className="team-button-style"
                         type="button"
                         value="Создать команду"
-                        onClick={() => setCreateTeamVisible(true)} />
+                        onClick={() => navigate(TO_CREATE_TEAM)} />
                 </div>
                 <div className="row team-create-block-row">
                     <input id="search-team-element"
@@ -66,14 +70,7 @@ export default function Teams(props) {
                 </div>
 
             </div>
-            { createTeamVisible ?
-                <CreateTeam show={createTeamVisible}
-                    onHide={setCreateTeamVisible}
-                    setAllTeams={setTeams}
-                />
-                :
-                null
-            }
+            <Outlet />
         </div>
     );
 }

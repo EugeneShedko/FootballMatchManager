@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import {Context} from "../../../index";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./../../../css/CreateGame.css"
@@ -13,6 +13,7 @@ import { TO_GAMES } from "../../../Utilts/Consts";
 export default function CreateMatch(props) {
 
     const navigate = useNavigate();
+    const location = useLocation();
     const {userContext} = useContext(Context);
     const [isValid, setIsValid] = useState(false);
 
@@ -138,7 +139,6 @@ export default function CreateMatch(props) {
  
     function createMatch() {
 
-
         const match = {
             UserId: userContext.userId,
             GameName: matchState.gameName,
@@ -156,7 +156,8 @@ export default function CreateMatch(props) {
                     pauseOnFocusLoss: false
                 });
 
-                navigate(TO_GAMES, {state:{refresh:true}});
+                /*Можно делать replace в текущей строке*/
+                navigate(location.pathname.replace("/creategame", ""), {state:{refresh:true}});
 
                 //props.setAllMatches(response.data.allgames);
                 //props.onHide(false);
@@ -177,7 +178,7 @@ export default function CreateMatch(props) {
 
     return (
         <Modal show={props.show}
-            onHide={() => navigate(TO_GAMES)}
+            onHide={() => navigate(location.pathname.replace("/creategame", ""))}
             centered>
 
             <Modal.Header closeButton>

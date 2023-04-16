@@ -14,7 +14,7 @@ const MyProvider = (props) => {
         notificonn: null,
         isAuth: false,
         isAdmin: false,
-        useId: 0,
+        userId: 0,
         userName: ''        
     };
 

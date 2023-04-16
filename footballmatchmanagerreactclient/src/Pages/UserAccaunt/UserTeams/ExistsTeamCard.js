@@ -126,7 +126,7 @@ export default function ExistsTeamCard(props)
                         </div>
                         <div className="row team-mess-cont">
                             {/* Проблема блока, что везде ему передается айди игры */}
-                            <MessagesBlock gameId={props.gameId} />
+                            <MessagesBlock gameId={props.teamId} />
                         </div>
                     </div>
                 </div>

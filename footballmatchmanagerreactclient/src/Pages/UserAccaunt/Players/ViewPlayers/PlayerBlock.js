@@ -1,12 +1,19 @@
 import "./../../../../css/Player.css"
 import Profile from "../ViewPlayerCard/PlayerCard";
+import { useNavigate } from "react-router-dom";
+import { TO_PLAYER_CARD } from "../../../../Utilts/Consts";
 
 export default function PlayerBlock(props) {
 
+    const navigate = useNavigate();
+
     function setPlayerInfoPage()
     {
+        navigate(TO_PLAYER_CARD + '/' + props.info.pkId);
+        /*
         props.setContState(<Profile apUserId={props.info.pkId}
                                     setContState={props.setContState}/>);
+        */                            
     }
 
     // ----------------------------------------------------------------------------- //

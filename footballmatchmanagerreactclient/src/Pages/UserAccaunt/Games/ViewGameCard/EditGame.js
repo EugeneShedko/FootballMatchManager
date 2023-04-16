@@ -1,7 +1,7 @@
 import { Modal, Row } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Context } from "../../../../index";
@@ -45,8 +45,8 @@ export default function EditGame(props) {
                     pauseOnFocusLoss: false
                 });
 
-            navigate(TO_GAME_CARD + '/' + gameInfo.gameId);    
             /* Убрать запрос на сервере для получения инфы матча!!!! */ 
+            navigate(TO_GAME_CARD + '/' + gameInfo.gameId);    
         })
         .catch(userError => {
             if (userError.response) {

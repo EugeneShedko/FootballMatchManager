@@ -19,6 +19,11 @@ import UserTeamsInfoCard from "../Pages/UserAccaunt/UserTeams/UserTeamsInfoCard"
 import CreateMatch from "../Pages/UserAccaunt/Games/CreateGame";
 import GameInfoCard from "../Pages/UserAccaunt/Games/ViewGameCard/GameInfoCard";
 import EditGame from "../Pages/UserAccaunt/Games/ViewGameCard/EditGame";
+import EditProfile from "../Pages/UserAccaunt/Players/ViewPlayerCard/EditProfile";
+import CreateTeam from "../Pages/UserAccaunt/Teams/ViewTeams/CreateTeam";
+import TeamInfoCard from "../Pages/UserAccaunt/Teams/ViewTeamCard/TeamInfoCard";
+import UserMatchesCr from "../Pages/UserAccaunt/Games/GamesCreator";
+import UserMatchesPr from "../Pages/UserAccaunt/Games/GamesParticipant";
 
 const AppRouter = observer(() => {
 
@@ -34,18 +39,34 @@ const AppRouter = observer(() => {
                 <Route path="/registration" element={<FRegistrationform />} />
                 <Route path="/accaunt" element={<UserProfile />}>
                     <Route index element={<Matches />} />
+                    {/* Может делать так, чтобы всплывающие окна убирали, то, что позади тогда не будет проблемы с обновлением */}
                     <Route path="games" element={<Matches />}>
                         <Route path="creategame" element={<CreateMatch show={true} />} />
                     </Route>
-                    <Route path="teams" element={<Teams />} />
-                    <Route path="players" element={<Players />} />
-                    {/* Нужно как-то передавать параметры */}
                     <Route path="gamecard/:id" element={<GameInfoCard />}>
                         <Route path="editgame" element={<EditGame show={true} />} />
                     </Route>
-                    <Route path="profile" element={<Profile />} />
+
+                    <Route path="players" element={<Players />} />
+                    <Route path="playercard/:id" element={<Profile />}>
+                        <Route path="editprofile" element={<EditProfile show={true} />} />
+                    </Route>
+
+                    <Route path="teams" element={<Teams />}>
+                        <Route path="createteam" element={<CreateTeam show={true} />} />
+                    </Route>
+                    <Route path="teamcard/:id" element={<TeamInfoCard />} />
                     <Route path="notifications" element={<Notifications />} />
-                    <Route path="usergames" element={<UserMatchesNavigator />} />
+                    <Route path="usergames/" element={<UserMatchesNavigator />}>
+                        <Route index element={<UserMatchesCr />} />
+                        <Route path="creategame" element={<CreateMatch show={true} />} />
+                        <Route path="creatgames" element={<UserMatchesCr />}>
+                            <Route path="creategame" element={<CreateMatch show={true} />} />
+                        </Route>
+                        <Route path="partgames" element={<UserMatchesPr />}>
+                            <Route path="creategame" element={<CreateMatch show={true} />} />
+                        </Route>
+                    </Route>
                     <Route path="userteams" element={<UserTeamsInfoCard />} />
                 </Route>
                 <Route path="*" element={<ContentContainer />} />

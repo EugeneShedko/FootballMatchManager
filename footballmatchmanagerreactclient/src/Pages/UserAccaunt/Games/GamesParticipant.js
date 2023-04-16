@@ -5,13 +5,15 @@ import MatchBlock from "./ViewGames/GameBlock";
 import {Context} from "../../../index"
 import GameGenerator from "./ViewGames/GameGenerator";
 import CreateMatch from "./CreateGame";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 
-export default function UserMatchesCr(props) {
+export default function UserMatchesPr() {
 
-    const {user} = useContext(Context);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const {userContext} = useContext(Context);
 
-    const [createMatchVisible, setcreateMatchVisible] = useState(false);
     const [initUserMatchesParticipant, setInitUserMatchesParticipant] = useState([]);
     const [userMatchPr, setUserMatchPr] = useState([]);
     const [searchString, setSearchString] = useState("");
@@ -20,7 +22,7 @@ export default function UserMatchesCr(props) {
 
     useEffect(() => {
             const data = new FormData();
-            data.append("userId", user.getUserId);
+            data.append("userId", userContext.userId);
 
             axios.post('http://localhost:5004/api/profile/user-part-game', data ,{ withCredentials: true })
                 .then((response) => {
@@ -38,7 +40,8 @@ export default function UserMatchesCr(props) {
                     }
                 });
             ;
-        }, [props]
+        /* Плохо сделано обновление */    
+        }, [location.state && location.state.refresh]
     );
 
     // ------------------------------------------------------------------------------------------------------ //
@@ -54,7 +57,7 @@ export default function UserMatchesCr(props) {
             if(checkList[i].checked)
             {
                 tempGames = initUserMatchesParticipant.filter(game => {
-                    return String(game.gameFormat).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
+                    return String(game.format).toLowerCase().includes(checkList[i].value.toLowerCase().trim());
                 })
                 resultGames = resultGames.concat(tempGames);
             }
@@ -85,7 +88,7 @@ export default function UserMatchesCr(props) {
         <div className="col-9 mpmatches-container">
             <GameGenerator games={userMatchPr}
                 searchString={searchString}
-                setContState={props.setContState} />
+                />
         </div>
         <div className="col-3 mplefcol">
             <div className="mp-fixed-container">
@@ -93,7 +96,8 @@ export default function UserMatchesCr(props) {
                     <input className="mpbutton-style" 
                            type="button" 
                            value="Создать матч" 
-                           onClick={() => setcreateMatchVisible(true)} />
+                           onClick={() => navigate(location.pathname + '/' + "creategame")} 
+                           />
                 </div>
                 <div className="row mplcrow">
                     <input id="search-match-element"
@@ -127,9 +131,7 @@ export default function UserMatchesCr(props) {
                 </div>
             </div>
         </div>
-        <CreateMatch show   = {createMatchVisible} 
-                     onHide = {setcreateMatchVisible} 
-        />
+        <Outlet />
     </div>
     );
 }

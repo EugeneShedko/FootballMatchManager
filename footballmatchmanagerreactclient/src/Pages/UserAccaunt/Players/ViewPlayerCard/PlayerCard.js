@@ -8,11 +8,18 @@ import { Context } from "../../../../index";
 
 import "./../../../../css/PlayerCard.css";
 import "react-datepicker/dist/react-datepicker.css";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { TO_EDIT_PROFILE } from "../../../../Utilts/Consts";
 
-export default function Profile(props) {
+export default function Profile() {
 
-    const { user } = useContext(Context);
-    const [userId, setUserId] = useState(props.apUserId);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const { userContext } = useContext(Context);
+
+    const [userId, setUserId] = useState(parseInt(useParams().id));
+    
     const [profileInfo, setProfileInfo] = useState({});
     const [changes, setChanges] = useState({
         userFirstName: "",
@@ -21,9 +28,8 @@ export default function Profile(props) {
         userPosition: "",
         userEmail: "",
     });
-    const [editProfileVisible, setEditProfileVisible] = useState(false);
     const [currMes, setCurrMes] = useState("");
-    const [connection, setConnection] = useState({});
+    const connection = useRef(null);
     const [userComment, setUserComment] = useState([]);
     const commentContainer = useRef(null);
 
@@ -64,8 +70,16 @@ export default function Profile(props) {
                 }
             });
         connectComment();
+    
+        return () => {
+            if (connection.current) {
+              connection.current.stop();
+            }
+          };
 
-    }, [props]);
+    /* Плохо сделано, почему-то два раза обновляется компонент */
+    /* Пока что так оставлю, но это хреновое обновление компонента*/
+    }, [location.state && location.state.refresh]);
 
     // ------------------------------------------------------------------------------------------------ //
 
@@ -78,7 +92,10 @@ export default function Profile(props) {
             setUserComment(userComment => [...userComment, comment]);
         });                             
 
+        await hubConnection.start();
+        connection.current = hubConnection;
 
+        await hubConnection.invoke("Connect", String(userId));
         /* Пока что не понятно, что это за метод */
         /* Скорее всего нужен для удаления комментариев */
         /*
@@ -101,10 +118,6 @@ export default function Profile(props) {
                 });
         })
         */
-        await hubConnection.start();
-        setConnection(hubConnection);
-
-        await hubConnection.invoke("Connect", String(userId));
     }
 
     // ------------------------------------------------------------------------------------------------ //
@@ -130,7 +143,7 @@ export default function Profile(props) {
         }
 
 
-        connection.invoke("Send", currMes, userId);
+        connection.current.invoke("Send", currMes, userId);
     
         setCurrMes("");
     }
@@ -138,14 +151,14 @@ export default function Profile(props) {
     // ------------------------------------------------------------------------------------------------ //
 
     function edit() {
-        setChanges({
+
+        navigate(location.pathname + TO_EDIT_PROFILE, {state: {
             userFirstName: profileInfo.firstName,
             userLastName: profileInfo.lastName,
             userDateBirth: new Date(profileInfo.birth),
             userPosition: profileInfo.position,
             userEmail: profileInfo.email
-        });
-        setEditProfileVisible(true)
+        }});
     }
 
     // ------------------------------------------------------------------------------------------------ //
@@ -161,7 +174,7 @@ export default function Profile(props) {
     {
         var data = new FormData();
         data.append("image", file);
-        data.append("userId", user.getUserId);       
+        data.append("userId", userContext.userId);       
 
         axios.post('http://localhost:5004/api/profile/add-prof-image/', data, {withCredentials:true})
         .then((response) => {
@@ -186,7 +199,7 @@ export default function Profile(props) {
                              alt="" />
                     </div>
                     {
-                        user.getUserId === userId ?
+                    userContext.userId === userId ?
                     <div className="row justify-content-center m-0">
                         <input type="file"
                                className="form-control select-file-input"
@@ -261,7 +274,7 @@ export default function Profile(props) {
                 <div className="col-2 p-0 h-100">
                     <div className="row m-0 admin-button">
                         {
-                            user.getUserId === userId ?
+                            userContext.userId === userId ?
                             <input type="button"
                                    value="Изменить"
                                    className="just-button"
@@ -301,11 +314,15 @@ export default function Profile(props) {
                     </div>
                 </div>
             </div>
+            <Outlet />
+            {/*
             <EditProfile setProfileInfo={setProfileInfo}
                 info={changes}
                 setInfo={setChanges}
                 show={editProfileVisible}
-                onHide={setEditProfileVisible} />
+                onHide={setEditProfileVisible} 
+            />
+            */}
         </div>
     );
 }
