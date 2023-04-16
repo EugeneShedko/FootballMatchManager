@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom";
-import { ADMIN_PROFILE_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE } from "../../Utilts/Consts";
-import axios from "axios";
+import { TO_ACCAUNT, TO_MAIN, TO_REGISTRATION } from "../../Utilts/Consts";
 import { Context } from "../../index";
-import { toast } from "react-toastify";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import {displayNotifMess} from "./../../addtionalcomponents/AuxiliaryFunctions";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 import "./../../css/loginform.css";
 
@@ -13,7 +13,7 @@ export default function Loginform(props) {
 
     const [loginContainerStyle, setLoginContainerStyle] = useState("col-3 logincontainer");
     const navigate = useNavigate();
-    const { user, setUser } = useContext(Context);
+    const { userContext, setUserContext } = useContext(Context);
     const [isValid, setIsValid] = useState(false);
 
     const [logInState, setLogInState] = useState({
@@ -92,7 +92,7 @@ export default function Loginform(props) {
   
     function closeLoginForm() {
         setLoginContainerStyle("col-3 logincontainerout");
-        setTimeout(() => navigate(MAIN_ROUTE), 500);
+        setTimeout(() => navigate(TO_MAIN), 500);
     }
 
     // -------------------------------------------------------------------------- //
@@ -113,23 +113,48 @@ export default function Loginform(props) {
                     pauseOnFocusLoss: false
                 });
 
-                connectGame();
-
                 if(response.data.user.role === "user")
                 {
+                    /* Что то нужно придумать с соединением */ 
+                    /* Как вариант пересоздавать этот объект! */
+                    /* Пока что буду заниматься другим*/
+
+                    /* Хреново как-то выглядит */
+                    /*
+                    let conn = {};
+                    connectGame().then(data => {
+                        console.log('!!!!!');
+                        console.log(data);
+                        conn = data;
+                    });
+                    */
+
+                    const conn = connectGame();
+
+                    setUserContext({...useContext, 
+                        notificonn: conn,
+                        isAuth: true,
+                        isAdmin: false,
+                        userId: response.data.user.pkId,
+                        userName: response.data.user.firstName + ' ' + response.data.user.lastName});
+
+                    /*    
                     user.setAdmin(false);
                     user.setAuth(true);
                     user.setUserId(response.data.user.pkId);
                     user.setUserName(response.data.user.firstName + ' ' + response.data.user.lastName);
-                    navigate(USER_PROFILE_ROUTE);
+                    */
+                    navigate(TO_ACCAUNT);
                 }
                 else
                 {
+                    /*
                     user.setAdmin(true);
                     user.setAuth(false);
                     user.setUserId(response.data.user.apUserId);
                     user.setUserName('Администратор');
-                    navigate(ADMIN_PROFILE_ROUTE);    
+                    navigate(ADMIN_PROFILE_ROUTE);
+                    */
                 }
 
             })
@@ -147,16 +172,20 @@ export default function Loginform(props) {
 
     // ---------------------------------------------------------------------------------------------- //
 
-    const connectGame = async () => {
+    /* Не асинхронно, наверное это хреново, подругому не получалось */
+    const connectGame = () => {
         const nothubconn = new HubConnectionBuilder().withUrl("http://localhost:5004/notification")
                                                      .build();
         
 
         nothubconn.on("displayNotifi", displayNotifMess);
 
-        await nothubconn.start();
+        nothubconn.start();
 
-        user.setNotifiHubConn(nothubconn);
+        console.log('NOTIFI');
+        console.log(nothubconn);
+
+        return nothubconn;
     }
 
     // ---------------------------------------------------------------------------------------------- //
@@ -195,14 +224,15 @@ export default function Loginform(props) {
                             </div>
                             <div className="row form-text">
                                 <div className="col">
-                                    Нет аккаунта? <Link to={REGISTRATION_ROUTE}>Зарегистрируйтесь!</Link>
+                                    Нет аккаунта? <Link to={TO_REGISTRATION}>Зарегистрируйтесь!</Link>
                                 </div>
                             </div>
                             <div className="row justify-content-center button-container">
                                 <input className="button-element" 
                                        type="submit" 
                                        value="Войти"
-                                       disabled={!isValid} />
+                                       disabled={!isValid} 
+                                       />
                             </div>
                             <div className="row justify-content-center logo-container">
                                 <img className="logo" src="/image/logohuman.png" alt="" />

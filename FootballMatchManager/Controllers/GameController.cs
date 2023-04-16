@@ -169,6 +169,12 @@ namespace FootballMatchManager.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] ShortGame shortGame)
         {
+            try
+            {
+            if (HttpContext.User == null) { return BadRequest(); }
+
+            int userId = int.Parse(HttpContext.User.Identity.Name);
+
             int gameMaxPlayers;
             int gameType;
 
@@ -199,14 +205,14 @@ namespace FootballMatchManager.Controllers
             ApUserGame apUserGameCr = new ApUserGame()
             {
                 PkFkGameId = game.PkId,
-                PkFkUserId = shortGame.UserId,
+                PkFkUserId = userId,
                 PkUserType = "creator",
             };
 
             ApUserGame apUserGamePt = new ApUserGame()
             {
                 PkFkGameId = game.PkId,
-                PkFkUserId = shortGame.UserId,
+                PkFkUserId = userId,
                 PkUserType = "participant",
             };
 
@@ -218,6 +224,11 @@ namespace FootballMatchManager.Controllers
             List<Game> allgames = _unitOfWork.GameRepository.GetAllGamesForUser();
 
             return Ok(new { reqmess = "Матч успешно создан!", allgames = allgames });
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //

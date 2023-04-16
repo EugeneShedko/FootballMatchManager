@@ -1,15 +1,19 @@
-import "./../../../css/CreateGame.css"
 import { Modal, Row } from "react-bootstrap";
-import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import {Context} from "../../../index"
+import {Context} from "../../../index";
+import { useNavigate } from "react-router-dom";
+
+import "react-datepicker/dist/react-datepicker.css";
+import "./../../../css/CreateGame.css"
+import { TO_GAMES } from "../../../Utilts/Consts";
 
 export default function CreateMatch(props) {
 
-    const {user} = useContext(Context);
+    const navigate = useNavigate();
+    const {userContext} = useContext(Context);
     const [isValid, setIsValid] = useState(false);
 
     const [matchState, setMatchState] = useState({
@@ -134,9 +138,9 @@ export default function CreateMatch(props) {
  
     function createMatch() {
 
-        {/* Здесь нужно добавить еще параметр */}
+
         const match = {
-            UserId  : user.getUserId,
+            UserId: userContext.userId,
             GameName: matchState.gameName,
             GameAdress: matchState.gameAdress,
             GameDate: matchState.gameDate,
@@ -151,8 +155,11 @@ export default function CreateMatch(props) {
                     autoClose: 2000,
                     pauseOnFocusLoss: false
                 });
-                props.setAllMatches(response.data.allgames);
-                props.onHide(false);
+
+                navigate(TO_GAMES, {state:{refresh:true}});
+
+                //props.setAllMatches(response.data.allgames);
+                //props.onHide(false);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -163,14 +170,14 @@ export default function CreateMatch(props) {
                       pauseOnFocusLoss: false
                    });
                 }
-             });    
+             });
     }
 
     // ------------------------------------------------------------------------------------------ //
 
     return (
         <Modal show={props.show}
-            onHide={props.onHide}
+            onHide={() => navigate(TO_GAMES)}
             centered>
 
             <Modal.Header closeButton>

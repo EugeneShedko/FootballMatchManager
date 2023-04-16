@@ -17,7 +17,8 @@ namespace FootballMatchManager.DataBase.Models
         public int EntityId { get; set; }
 
         public ApUser Sender { get; set; }
-        public Game   Game { get; set; }
+
+        public Message() { }
 
         public Message(string text, int fkGameId, int fkSenderId)
         {

@@ -12,39 +12,34 @@ import UserButton from "./GameCardButton/UserButtons";
 import MessagesBlock from "./MessagesBlock";
 
 import "./../../../../css/GameInfoCard.css";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { TO_EDIT_GAME, TO_GAMES } from "../../../../Utilts/Consts";
 
 export default function GameInfoCard(props) {
 
-    const { user } = useContext(Context);
+    const navigate = useNavigate();
+    const { userContext } = useContext(Context);
+    const location = useLocation()
+    const [gameId, setGameId] = useState(useParams().id);
     const [game, setGame] = useState({});
     const [gameUsers, setGameUsers] = useState([]);
     const [isPart, setIsPart] = useState(false);
     const [isCreat, setIsCreat] = useState(false);
-    const [editProfileVisible, setEditProfileVisible] = useState(false);
-    const [changes, setChanges] = useState({
-        gameId: 0,
-        gameName: "",
-        gameDate: new Date(),
-        gameFormat: "",
-        gameAdress: "",
-    });
-    const [curMessage, setCurMessage] = useState("");
     const [gameMessage, setGameMessage] = useState([]);
-    const [connection, setConnection] = useState({});
-    const [notconn, setNotConn] = useState({});
 
     // ---------------------------------------------------------------------------------------- //
 
     useEffect(() => {
 
-        axios.get('http://localhost:5004/api/profile/game/' + props.gameId + "/" + user.getUserId, { withCredentials: true })
+        /* Вычитывать передачу пользователя на сервере!!!!!!! */
+        axios.get('http://localhost:5004/api/profile/game/' + gameId + "/" + userContext.userId, { withCredentials: true })
             .then((response) => {
                 setGame(response.data.currgame);
                 setIsPart(response.data.isPart);
                 setIsCreat(response.data.isCreat);
             })
             .then(() => {
-                axios.get('http://localhost:5004/api/profile/game-users/' + props.gameId, { withCredentials: true })
+                axios.get('http://localhost:5004/api/profile/game-users/' + gameId, { withCredentials: true })
                     .then((response) => {
                         setGameUsers(response.data);
                     })
@@ -59,8 +54,9 @@ export default function GameInfoCard(props) {
                         }
                     });
             })
+            /*
             .then(() => {
-                axios.get('http://localhost:5004/api/message/game-messages/' + props.gameId, { withCredentials: true })
+                axios.get('http://localhost:5004/api/message/game-messages/' + gameId, { withCredentials: true })
                     .then((response) => {
                         setGameMessage(response.data);
                     })
@@ -75,6 +71,7 @@ export default function GameInfoCard(props) {
                         }
                     });
             })
+            */
             .catch(userError => {
                 if (userError.response) {
                     toast.error(userError.response.message,
@@ -88,13 +85,35 @@ export default function GameInfoCard(props) {
 
     }, []);
 
+    // ------------------------------ Перечитывает данные при обновлении матча ----------------------------------- //
+    /* Тупой метод, все равно компонент обновляется */
+    /* Пока что пускай будет*/ 
+
+    useEffect(() => {
+        axios.get('http://localhost:5004/api/profile/game/' + gameId + "/" + userContext.userId, { withCredentials: true })
+        .then((response) => {
+            setGame(response.data.currgame);
+            setIsPart(response.data.isPart);
+            setIsCreat(response.data.isCreat);
+        }).catch(userError => {
+            if (userError.response) {
+                toast.error(userError.response.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            }
+        });
+    }, [location.state && location.state.refresh]);
+
     // ---------------------------------------------------------------------------------------- //
 
     function addToMatch() {
 
         const data = new FormData();
-        data.append("gameId", props.gameId);
-        data.append("userId", user.getUserId);
+        data.append("gameId", gameId);
+        data.append("userId", userContext.userId);
 
         axios.post('http://localhost:5004/api/profile/add-to-game', data, { withCredentials: true })
             .then((response) => {
@@ -118,33 +137,33 @@ export default function GameInfoCard(props) {
                 }
             });
 
-        var conn = user.getNotifiHubConn;
+        var conn = userContext.notificonn;
         conn.invoke("Game", String(props.gameId), "addtogame");
     }
 
     function sendRequestForPart() {
-        var conn = user.getNotifiHubConn;
-        conn.invoke("Game", String(props.gameId), "requestforpart");
+        var conn = userContext.notificonn;
 
-        /* Плохо, что так сделано скорее всего нужно выносить в отдельный метод */
-        /* На сервере и возвращать от туда сообщение */
-        /* Пока что оставлю так */  
+        /* Почему то не отправился ничерта */
 
-        /* Возможно строку можно было бы возвращать из хаба */
+        conn.invoke("Game", gameId, "requestforgame");
+
+        // Отправлять сообщение с хаба!!!!! 
+
         toast.success("Ваш запрос на участие в матче отправлен",
             {
                 position: toast.POSITION.TOP_CENTER,
                 autoClose: 2000,
                 pauseOnFocusLoss: false
             });
-
     }
 
     // ---------------------------------------------------------------------------------------- //
 
     function leaveMatch() {
 
-        axios.delete('http://localhost:5004/api/profile/leave-from-game/' + props.gameId + '/' + user.getUserId, { withCredentials: true })
+        /* Вычитывать пользователя на сервере */
+        axios.delete('http://localhost:5004/api/profile/leave-from-game/' + gameId + '/' + userContext.userId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {
@@ -167,14 +186,14 @@ export default function GameInfoCard(props) {
                 }
             });
 
-        var conn = user.getNotifiHubConn;
-        conn.invoke("Game", String(props.gameId), "leavefromgame");
+        var conn = userContext.notificonn;
+        conn.invoke("Game", gameId, "leavefromgame");
     }
 
     // ---------------------------------------------------------------------------------------- //
 
     function deleteMatch() {
-        axios.delete('http://localhost:5004/api/profile/delete-game/' + game.pkId, { withCredentials: true })
+        axios.delete('http://localhost:5004/api/profile/delete-game/' + gameId, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.message,
                     {
@@ -182,8 +201,7 @@ export default function GameInfoCard(props) {
                         autoClose: 2000,
                         pauseOnFocusLoss: false
                     });
-                props.setGames(response.data.rgames);
-                props.setContState(<Matches setContState={props.setContState} />);
+                navigate(TO_GAMES);        
             })
             .catch((error) => {
                 if (error.response) {
@@ -201,14 +219,14 @@ export default function GameInfoCard(props) {
     // ---------------------------------------------------------------------------------------- //
 
     function editGame() {
-        setChanges({
+
+        navigate(location.pathname + TO_EDIT_GAME, {state: {
             gameId: game.pkId,
             gameName: game.name,
             gameDate: new Date(game.dateTime),
             gameFormat: game.format,
             gameAdress: game.adress,
-        });
-        setEditProfileVisible(true);
+        }});
     }
 
     // ---------------------------------------------------------------------------------------- //
@@ -273,17 +291,11 @@ export default function GameInfoCard(props) {
                         </div>
                     }
                     <div className="col-4 h-100 p-0">
-                        {isPart ? <MessagesBlock gameId = {props.gameId}/> : null}
+                        {isPart ? <MessagesBlock gameId = {gameId}/> : null}
                     </div>
                 </div>
             </div>
-            <EditGame setGame={setGame}
-                info={changes}
-                setInfo={setChanges}
-                show={editProfileVisible}
-                onHide={setEditProfileVisible}
-            />
-
+            <Outlet />
         </div>
     );
 }    

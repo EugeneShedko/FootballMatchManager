@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import PlayerGenerator from "./PlayerGenerator";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 import "./../../../../css/PlayersPage.css";
 
 export default function Players(props) {
 
+    const location = useLocation();
+    const isRefreshed = location.state && location.state.refresh;
     const [initPlayers, setInitPlayers] = useState([]);
     const [players, setPlayers] = useState([]);
     const [searchString, setSearchString] = useState("");
@@ -31,7 +34,7 @@ export default function Players(props) {
                     }
                 });
             ;
-        }, [props]
+        }, []
     );
 
     // --------------------------------------------------------------------------------------- //

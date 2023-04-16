@@ -12,10 +12,25 @@ export default function MessagesBlock(props) {
     const connection = useRef(null);
     const messagesContainer = useRef(null);
 
+    /* Проблема в том, что этот блок используется в играх и командах */
+
+    /* Как его использовать и там и там? */
+
+    /* Можно вынести в отдельные функции в вставляющем блоке */
+
+    /* Но его преимущество в том что он срабатывает когда он вставляется */
+
+    /* Когда он вставляется будет вызывать те же функции скорее всего */
+
+    /* Попробовать */
+
+    /* Попробовать сюда добавить props и проверить, как будет работать */
+
+    /* Очень хреново работает */
 
     // ---------------------------------------------------------------------------------------------------------- //
 
-    useEffect( () => {
+    useEffect(() => {
         axios.get('http://localhost:5004/api/message/game-messages/' + props.gameId, { withCredentials: true })
         .then((response) => {
             setMessages(response.data);
@@ -32,11 +47,11 @@ export default function MessagesBlock(props) {
         });
 
         connectMessage();
-        console.log('START');
+        console.log('MESSAGE START');
 
         return () => {
             if (connection.current) {
-              console.log('STOP');
+              console.log('MESSAGE STOP');
               connection.current.stop();
             }
           };
@@ -49,7 +64,7 @@ export default function MessagesBlock(props) {
         const hubConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/gamechat").build();
 
         hubConnection.on("displayMess", function (message) {
-            setMessages(gameMessage => [...gameMessage, message]);
+           setMessages(gameMessage => [...gameMessage, message]);
         });
 
         await hubConnection.start();
@@ -73,7 +88,11 @@ export default function MessagesBlock(props) {
             return;
         }
 
-        connection.current.invoke("Send", curMessage, props.gameId);
+        console.log('GAMEID');
+        console.log(props.gameId, curMessage);
+
+        connection.current.invoke("SendMess", curMessage, parseInt(props.gameId, 10));
+        
         setCurMessage("");
     }
 

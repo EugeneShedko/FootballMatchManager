@@ -3,14 +3,16 @@
 import { useState } from "react";
 import "./../../../../css/Game.css";
 import GameInfoCard from "../ViewGameCard/GameInfoCard";
+import { useNavigate } from "react-router-dom";
+import { TO_GAME_CARD } from "../../../../Utilts/Consts";
 
 export default function MatchBlock(props) {
 
+    const navigate = useNavigate();
+
     function setGameInfoCard()
     {
-        props.setContState(<GameInfoCard  gameId={props.info.pkId}
-                                          setGames={props.setGames}
-                                          setContState={props.setContState} />);
+        navigate(TO_GAME_CARD + '/' + props.info.pkId);                              
     }
 
     // -------------------------------------------------------------------------------- //

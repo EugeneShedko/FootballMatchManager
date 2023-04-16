@@ -116,6 +116,7 @@ namespace FootballMatchManager.Hubs
         }
 
         /* Добавление/Покидание матча/Запрос на участие в матче  */
+        /* Хреново, что на столько запросов один метод используется */
         public async Task Game(string igameid, string constname)
         {
             int gameid;

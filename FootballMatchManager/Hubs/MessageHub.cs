@@ -20,8 +20,14 @@ namespace FootballMatchManager.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, gameRecipient);
         }
 
-    
-        public async Task Send(string text, int gameId)
+        /*
+        public async Task SendMess(string text)
+        {
+            string suka = "suka";
+        }
+        */
+
+        public async Task SendMess(string text, int gameId)
         {
             try
             {

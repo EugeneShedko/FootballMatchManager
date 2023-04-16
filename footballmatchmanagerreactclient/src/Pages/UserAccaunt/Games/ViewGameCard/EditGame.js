@@ -7,29 +7,46 @@ import { toast } from "react-toastify";
 import { Context } from "../../../../index";
 
 import "./../../../../css/CreateGame.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import { TO_GAME_CARD } from "../../../../Utilts/Consts";
 
 export default function EditGame(props) {
 
+    const {userContext} = useContext(Context);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [gameInfo, setGameInfo] = useState({
+        gameId: location.state.gameId,
+        gameName: location.state.gameName,
+        gameDate: location.state.gameDate,
+        gameFormat: location.state.gameFormat,
+        gameAdress: location.state.gameAdress
+    });
+
     function saveChanges()
     {
-        const data = {
-            "GameId": props.info.gameId,
-            "GameName": props.info.gameName,
-            "GameAdress": props.info.gameAdress,
-            "GameDate": props.info.gameDate,
-            "GameFormat": props.info.gameFormat,
-        };
-        
-        axios.post('http://localhost:5004/api/profile/edit-game', data,{ withCredentials: true })
+
+        const match = {
+            UserId: userContext.userId,
+            GameId: gameInfo.gameId,
+            GameName: gameInfo.gameName,
+            GameAdress: gameInfo.gameAdress,
+            GameDate: gameInfo.gameDate,
+            GameFormat: gameInfo.gameFormat,
+            GameType: ""
+        }
+
+        axios.post('http://localhost:5004/api/profile/edit-game', match, { withCredentials: true })
         .then((response) => {
             toast.success(response.data.message,
                 {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
                     pauseOnFocusLoss: false
-                });    
-            props.setGame(response.data.askdata);
-            props.onHide(false);    
+                });
+
+            navigate(TO_GAME_CARD + '/' + gameInfo.gameId);    
+            /* Убрать запрос на сервере для получения инфы матча!!!! */ 
         })
         .catch(userError => {
             if (userError.response) {
@@ -38,8 +55,7 @@ export default function EditGame(props) {
                         position: toast.POSITION.TOP_CENTER,
                         autoClose: 2000,
                         pauseOnFocusLoss: false
-                    });
-                props.onHide(false);    
+                    });  
             }
         });
     }
@@ -48,7 +64,7 @@ export default function EditGame(props) {
 
     return (
         <Modal show={props.show}
-            onHide={props.onHide}
+            onHide={() => navigate(TO_GAME_CARD + '/' + gameInfo.gameId)}
             centered>
 
             <Modal.Header closeButton>
@@ -61,21 +77,21 @@ export default function EditGame(props) {
                     <input className="input-style"
                         type="text"
                         placeholder="Нименование матча"
-                        value={props.info.gameName}
-                        onChange={(e) => {props.setInfo({ ...props.info, gameName: e.target.value }) }}
+                        value={gameInfo.gameName}
+                        onChange={(e) => {setGameInfo({ ...gameInfo, gameName: e.target.value }) }}
                     />
                 </Row>
                 <Row className="input-container">
                     <ReactDatePicker className="input-style"
-                        selected={props.info.gameDate}
-                        onChange={(date: Date) => {props.setInfo({ ...props.info, gameDate: date }) }}
+                        selected={gameInfo.gameDate}
+                        onChange={(date: Date) => {setGameInfo({ ...gameInfo, gameDate: date }) }}
                     />
                 </Row>
                 {/*Здесь должен быть выбор, задать пока что статически*/}
                 <Row className="input-container">
                     <select className="input-style"
-                        value={props.info.gameFormat}
-                        onChange={(e) => {props.setInfo({ ...props.info, gameFormat: e.target.value }) }}
+                        value={gameInfo.gameFormat}
+                        onChange={(e) => {setGameInfo({ ...gameInfo, gameFormat: e.target.value }) }}
                     >
                         <option>5x5</option>
                         <option>9x9</option>
@@ -86,8 +102,8 @@ export default function EditGame(props) {
                     <input className="input-style"
                         type="text"
                         placeholder="email"
-                        value={props.info.gameAdress}
-                        onChange={(e) => {props.setInfo({  ...props.info, gameAdress: e.target.value }) }}
+                        value={gameInfo.gameAdress}
+                        onChange={(e) => {setGameInfo({...gameInfo, gameAdress: e.target.value }) }}
                     />
                 </Row>
                 <Row className="w-100">

@@ -1,6 +1,22 @@
-export const MAIN_ROUTE = "/";
-export const LOGIN_ROUTE = "/login";
-export const REGISTRATION_ROUTE = "/registration";
-export const USER_PROFILE_ROUTE = "/profile";
+/* Пока что эти маршруты мне не нужны я их прописываю руками в AppRouter */
+
+//export const MAIN_ROUTE = "/";
+//export const LOGIN_ROUTE = "/login";
+//export const REGISTRATION_ROUTE = "/registration";
+export const USER_PROFILE_ROUTE = "/profile/*";
 export const ADMIN_PROFILE_ROUTE = "/admin";
-export const MATCHES = "/matches";
+
+export const TO_LOGIN = "/login";
+export const TO_REGISTRATION = "/registration";
+export const TO_MAIN = "/";
+export const TO_ACCAUNT = "/accaunt"
+export const TO_GAMES = "/accaunt/games";
+export const TO_CREATE_GAME = "/accaunt/games/creategame";
+export const TO_EDIT_GAME = "/editgame";
+export const TO_GAME_CARD = "/accaunt/gamecard";
+export const TO_PLAYERS = "/accaunt/players";
+export const TO_TEAMS = "/accaunt/teams";
+export const TO_PROFILE = "/accaunt/profile";
+export const TO_NOTIFICATION = "/accaunt/notifications";
+export const TO_USER_GAMES = "/accaunt/usergames";
+export const TO_USER_TEAMS = "/accaunt/userteams";

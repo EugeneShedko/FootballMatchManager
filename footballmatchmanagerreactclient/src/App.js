@@ -10,6 +10,7 @@ export default function App()
     <div id="main-containter" className="container-fluid p-0 m-0 vh-100">
     <div id="back-container" />
     <BrowserRouter>
+        {/* Возможно убрать от сюда заголовок и перенести его в какое-то другое место */}
         <Header/>
         <AppRouter/>
     </BrowserRouter>

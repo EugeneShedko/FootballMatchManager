@@ -12,7 +12,7 @@ import NoExistTeamCard from "./NoExistTeamCard";
 /* Можно было бы функции вынести просто в отдельный файл, вид карточки один */
 /* А у меня получилось два компонента для этого */
 
-export default function UserTeamsInfoCard(props) {
+export default function UserTeamsInfoCard() {
 
     const { user } = useContext(Context);
     const [teamId, setTeamId] = useState();
@@ -45,7 +45,7 @@ export default function UserTeamsInfoCard(props) {
                         });
                 }
             });
-    }, [props]);
+    }, []);
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 

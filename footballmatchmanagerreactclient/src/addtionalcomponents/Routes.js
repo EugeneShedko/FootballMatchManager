@@ -1,7 +1,9 @@
+
+/*
 import ContentContainer from "../Pages/MainPage/Content/ContentContainer"
 import FRegistrationform from "../Pages/MainPage/RegistrationForm";
 import Loginform from "../Pages/MainPage/LoginForm";
-import { LOGIN_ROUTE, MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE, ADMIN_PROFILE_ROUTE  } from "../Utilts/Consts";
+import { MAIN_ROUTE, REGISTRATION_ROUTE, USER_PROFILE_ROUTE, ADMIN_PROFILE_ROUTE  } from "../Utilts/Consts";
 import UserProfile from "../Pages/AccauntPage";
 import AdminProfile from "../Administrator/AdminProfilePage";
 
@@ -36,3 +38,4 @@ export const AdminAppRoutes = [
         Component: <AdminProfile />        
     }
 ]
+*/

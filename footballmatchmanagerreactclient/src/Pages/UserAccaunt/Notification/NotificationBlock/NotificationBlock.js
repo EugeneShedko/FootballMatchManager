@@ -9,7 +9,7 @@ import "./../../../../css/Notification/NotificationBlock.css";
 
 export default function NotificationBlock(props) {
 
-    const { user } = useContext(Context);
+    const { userContext } = useContext(Context);
 
     /* Выношу в данное место все функции */
 
@@ -18,7 +18,7 @@ export default function NotificationBlock(props) {
         /* Может хреново отработать */
         /* Пока что оставлю так*/
 
-        var conn = user.getNotifiHubConn;
+        var conn = userContext.notificonn;
         conn.invoke("DismissReqGame", props.notify.pkId);
 
         readNotifi();
@@ -35,7 +35,7 @@ export default function NotificationBlock(props) {
 
         axios.post('http://localhost:5004/api/profile/add-to-game', data, { withCredentials: true })
             .then((response) => {
-                var conn = user.getNotifiHubConn;
+                var conn = userContext.notificonn;
                 conn.invoke("AcceptReqGame", props.notify.pkId);
                 readNotifi();
             })
@@ -47,6 +47,7 @@ export default function NotificationBlock(props) {
                             autoClose: 2000,
                             pauseOnFocusLoss: false
                         });
+                    readNotifi();    
                 }
             });
     }
@@ -54,6 +55,7 @@ export default function NotificationBlock(props) {
     // ---------------------------------------------------------------------------------------- //
 
     function readNotifi() {
+
         var data = new FormData();
         data.append("notifId", props.notify.pkId);
 
@@ -84,8 +86,8 @@ export default function NotificationBlock(props) {
 
         axios.post('http://localhost:5004/api/team/add-to-team', data, { withCredentials: true })
         .then((response) => {
-            var conn = user.getNotifiHubConn;
-            conn.invoke("AcceptReqTeam", props.notify.pkId);
+            //var conn = user.getNotifiHubConn;
+            //conn.invoke("AcceptReqTeam", props.notify.pkId);
             readNotifi();
         })
         .catch(userError => {
@@ -105,8 +107,8 @@ export default function NotificationBlock(props) {
 
     function dismissRequestTeam()
     {
-        var conn = user.getNotifiHubConn;
-        conn.invoke("DismissReqTeam", props.notify.pkId);
+        //var conn = user.getNotifiHubConn;
+        //conn.invoke("DismissReqTeam", props.notify.pkId);
         readNotifi();
     }
 

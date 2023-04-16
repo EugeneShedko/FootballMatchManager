@@ -19,7 +19,6 @@ export default function ExistsTeamCard(props)
     // ----------------------------------------------------------------------------------- //
 
     function getTeamInfo(teamId) {
-        /* Здесь же сразу можно было добавить вычет сообщений */
 
         console.log('FUNC');
         console.log(teamId);

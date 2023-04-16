@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { MAIN_ROUTE, LOGIN_ROUTE } from "../../Utilts/Consts";
+import { TO_LOGIN, TO_MAIN } from "../../Utilts/Consts";
 import "./../../css/loginform.css";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
@@ -29,7 +29,7 @@ export default function FRegistrationform(props) {
 
    function closeLoginForm() {
       setLoginContainerStyle("col-3 logincontainerout");
-      setTimeout(() => navigate(MAIN_ROUTE), 500);
+      setTimeout(() => navigate(TO_MAIN), 500);
    }
 
    function execRegistration(e) {
@@ -57,7 +57,7 @@ export default function FRegistrationform(props) {
                autoClose: 2000,
                pauseOnFocusLoss: false
             });
-            navigate(LOGIN_ROUTE);
+            navigate(TO_LOGIN);
          })
          .catch(userError => {
             if (userError.response) {

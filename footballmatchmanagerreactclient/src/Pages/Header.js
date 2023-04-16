@@ -1,17 +1,17 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { LOGIN_ROUTE } from "../Utilts/Consts";
+import { LOGIN_ROUTE, TO_LOGIN } from "../Utilts/Consts";
 import { Context } from "../index";
 import { observer } from "mobx-react-lite";
 
 const Header = observer(() => {
 
-  const {user} = useContext(Context);
+  const {userContext} = useContext(Context);
 
   const navigate = useNavigate();
 
   function login() {
-    navigate(LOGIN_ROUTE);
+    navigate(TO_LOGIN);
   }
 
   return (
@@ -30,7 +30,7 @@ const Header = observer(() => {
       <div className="col-1 p-0 m-0"></div>
       <div className="col-2 h-100 p-0 m-0">
       <div className="row h-100 align-items-center justify-content-center p-0 m-0">
-        { user.isAuth ? <div className="col d-flex" style={{fontSize:'25px'}}>{user.getUserName}</div> : user.isAdmin ? <div className="col d-flex" style={{fontSize:'25px'}}>{user.userName}</div> : <input id="blogin" type="button" value="Войти" onClick={login} />}
+        {userContext.isAuth ? <div className="col d-flex" style={{fontSize:'25px'}}>{userContext.userName}</div> : userContext.isAdmin ? <div className="col d-flex" style={{fontSize:'25px'}}>{userContext.userName}</div> : <input id="blogin" type="button" value="Войти" onClick={login} />}
       </div>
 
       </div>

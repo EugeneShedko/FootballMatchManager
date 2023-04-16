@@ -1,7 +1,7 @@
 import { Tab, Nav, Row, Col } from 'react-bootstrap';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, Outlet } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { MAIN_ROUTE } from "../Utilts/Consts";
+import { TO_GAMES, TO_MAIN, TO_NOTIFICATION, TO_PLAYERS, TO_PROFILE, TO_TEAMS, TO_USER_GAMES, TO_USER_TEAMS } from "../Utilts/Consts";
 import { Context } from "../index";
 
 import Matches from "./UserAccaunt/Games/ViewGames/Games";
@@ -90,23 +90,23 @@ export default function UserProfile() {
 
     // ------------------------------------------------------------- //
 
-    function setNavKey()
-    {
+    function setNavKey() {
         setUserMatchNav({
             eventKey: <UserMatchesNavigator />
-        })    
+        })
     }
 
     // ------------------------------------------------------------- //
 
-    function setNotifKey()
-    {
+    function setNotifKey() {
         setNotif({
             eventKey: <Notifications />
         })
     }
 
     // ------------------------------------------------------------- //
+
+    /* Попробовать TOLINK? */
 
     return (
         <div id="userprofile-container" className='row m-0 h-100'>
@@ -115,55 +115,33 @@ export default function UserProfile() {
                     <Col sm={2} className="p-0">
                         <Nav className="flex-column upnav-container">
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="matches" onClick={setMatchesKey}>Матчи</Nav.Link>
+                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_GAMES, {state:{refresh:true}})}>Матчи</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="players" onClick={setPlayerKey}>Игроки</Nav.Link>
+                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_PLAYERS, {state:{refresh:true}})}>Игроки</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="teams" onClick={setTeamsKey}>Команды</Nav.Link>
+                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_TEAMS)}>Команды</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="profile">Профиль</Nav.Link>
+                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_PROFILE)} >Профиль</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="notification" onClick={setNotifKey}>Уведомления</Nav.Link>
+                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_NOTIFICATION)}>Уведомления</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="usermatches" onClick={setNavKey}>Мои матчи</Nav.Link>
+                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_USER_GAMES)}>Мои матчи</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="userteam" onClick={setNavKey}>Моя команда</Nav.Link>
+                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_USER_TEAMS)}>Моя команда</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" eventKey="exit" onClick={() => { user.setAuth(false); navigate(MAIN_ROUTE); }}>Выход</Nav.Link>
+                                <Nav.Link className="upnav-item-link" eventKey="exit" onClick={() => { user.setAuth(false); navigate(TO_MAIN); }}>Выход</Nav.Link>
                             </Nav.Item>
                         </Nav>
                     </Col>
                     <Col sm={10} className="p-0">
-                        <Tab.Content className="h-100">
-                            <Tab.Pane className="h-100" eventKey="matches">
-                                {mathesState.eventKey}
-                            </Tab.Pane>
-                            <Tab.Pane className="h-100" eventKey="players">
-                                {playersState.eventKey}
-                            </Tab.Pane>
-                            <Tab.Pane className="h-100" eventKey="teams">
-                                {teamsState.eventKey}
-                            </Tab.Pane>
-                            <Tab.Pane className="h-100" eventKey="profile">
-                                <Profile apUserId={user.getUserId} />
-                            </Tab.Pane>
-                            <Tab.Pane className="h-100" eventKey="usermatches">
-                                {userMatchesNav.eventKey}
-                            </Tab.Pane>
-                            <Tab.Pane className="h-100" eventKey="userteam">
-                                <UserTeamsInfoCard />
-                            </Tab.Pane>
-                            <Tab.Pane className="h-100" eventKey="notification">
-                                {nnotif.eventKey}
-                            </Tab.Pane>
-                        </Tab.Content>
+                        <Outlet />
                     </Col>
                 </Row>
             </Tab.Container>

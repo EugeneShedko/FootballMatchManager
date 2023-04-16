@@ -31,7 +31,6 @@ namespace FootballMatchManager.DataBase.Models
         public int fkTournamentId { get; set; } = 1;
 
         public List<ApUserGame> ApUsersGames {get;set;}
-        public List<Message> Messages { get; set; }
         public Tournament Tournament { get; set; }
 
         public Game() { }

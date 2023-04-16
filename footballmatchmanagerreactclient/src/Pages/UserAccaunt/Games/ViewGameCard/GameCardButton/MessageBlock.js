@@ -4,10 +4,10 @@ import "./../../../../../css/Message.css";
 
 export default function MessageBlock(props) {
 
-    const { user } = useContext(Context);
+    const { userContext } = useContext(Context);
     /* Нужно добавить переменную пользователя и айди отправитля на сервере */
 
-    const userNameStyle = props.messageInfo.senderId === user.getUserId ? "row mess-owner-name" : "row m-0";
+    const userNameStyle = props.messageInfo.senderId === userContext.userId ? "row mess-owner-name" : "row m-0";
 
     return (
         <div className="message-container">

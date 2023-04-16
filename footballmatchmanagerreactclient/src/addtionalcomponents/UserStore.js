@@ -1,6 +1,8 @@
-import { toast } from "react-toastify";
 import { makeAutoObservable } from "mobx";
 
+/* А может мне и не нужен класс? */
+/* Может просто создать объект в контексте? */
+/* Попробовать просто с объектом*/
 
 class UserStore
 {
