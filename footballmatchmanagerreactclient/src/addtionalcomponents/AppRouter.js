@@ -24,6 +24,9 @@ import CreateTeam from "../Pages/UserAccaunt/Teams/ViewTeams/CreateTeam";
 import TeamInfoCard from "../Pages/UserAccaunt/Teams/ViewTeamCard/TeamInfoCard";
 import UserMatchesCr from "../Pages/UserAccaunt/Games/GamesCreator";
 import UserMatchesPr from "../Pages/UserAccaunt/Games/GamesParticipant";
+import TeamGames from "../Pages/UserAccaunt/TeamGames/ViewTeamGames/TeamGames";
+import TeamGameCard from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInfoCard/TeamGamInfoCard";
+import CreateTeamGame from "../Pages/UserAccaunt/TeamGames/CreateTeamGame";
 
 const AppRouter = observer(() => {
 
@@ -43,6 +46,14 @@ const AppRouter = observer(() => {
                     <Route path="games" element={<Matches />}>
                         <Route path="creategame" element={<CreateMatch show={true} />} />
                     </Route>
+                    <Route path="teamgames" element={<TeamGames />}>
+                        <Route path="creategame" element={<CreateMatch show={true} />} />
+                    </Route>
+                    <Route path="teamgamecard/:id" element={<TeamGameCard />}>
+                        {/*<Route path="editgame" element={<EditGame show={true} />} /> */}
+                    </Route>
+                    <Route path="teamgamecreate" element={<CreateTeamGame show={true}/>} />
+
                     <Route path="gamecard/:id" element={<GameInfoCard />}>
                         <Route path="editgame" element={<EditGame show={true} />} />
                     </Route>

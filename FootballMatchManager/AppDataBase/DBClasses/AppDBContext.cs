@@ -1,4 +1,5 @@
-﻿using FootballMatchManager.DataBase.Models;
+﻿using FootballMatchManager.AppDataBase.Models;
+using FootballMatchManager.DataBase.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -16,8 +17,8 @@ namespace FootballMatchManager.DataBase.DBClasses
         public DbSet<ApUserTeam> ApUsersTeams { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Team> Teams { get; set; }
-        public DbSet<Tournament> Tournaments { get; set; }
-        public DbSet<TournamentTable> TournamentsTables { get; set; }
+        public DbSet<TeamGame> TeamsGames { get; set; }
+        public DbSet<ApUserTeamGame> ApUserTeamGames { get; set; }
         public AppDBContext(DbContextOptions<AppDBContext> options):base(options) 
         {
             Database.EnsureCreated();
@@ -47,12 +48,11 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<ApUserGame>().HasKey(apug => new {apug.PkFkUserId, apug.PkFkGameId, apug.PkUserType});
             modelBuilder.Entity<Message>().HasKey(m => m.PkId);
             modelBuilder.Entity<Game>().HasKey(g => g.PkId);
-            modelBuilder.Entity<TournamentTable>().HasKey(tt => new { tt.PkTournamentId, tt.PkTeamId });
             modelBuilder.Entity<Notification>().HasKey(n => n.PkId);            
             modelBuilder.Entity<Team>().HasKey(t => t.PkId);
             modelBuilder.Entity<ApUserTeam>().HasKey(aput => new { aput.PkFkTeamId, aput.PkFkUserId, aput.PkUserType });
-            modelBuilder.Entity<Tournament>().HasKey(t => t.PkId);
-            modelBuilder.Entity<Tournament>().HasData(new Tournament() { PkId = 1, Name = "default"});
+            modelBuilder.Entity<TeamGame>().HasKey(tg => tg.PkId);
+            modelBuilder.Entity<ApUserTeamGame>().HasKey(aputg => new {aputg.PkFkUserId, aputg.PkFkTeamGameId, aputg.PkFkUserType});
 
             //Плохо сделано, переделать связь многие ко многим
             modelBuilder.Entity<Comment>().HasOne(c => c.Sender).WithMany(apu => apu.CommentSenders).HasForeignKey(c => c.FkSenderId).OnDelete(DeleteBehavior.NoAction); 
@@ -60,15 +60,15 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<ApUserGame>().HasOne(apug => apug.ApUser).WithMany(apu => apu.ApUserGame).HasForeignKey(apug => apug.PkFkUserId).OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<ApUserGame>().HasOne(apug => apug.Game).WithMany(g => g.ApUsersGames).HasForeignKey(apug => apug.PkFkGameId).OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<Message>().HasOne(m => m.Sender).WithMany(apu => apu.Messages).HasForeignKey(m => m.FkSenderId).OnDelete(DeleteBehavior.Cascade); 
-            //modelBuilder.Entity<Message>().HasOne(m => m.Game).WithMany(g => g.Messages).HasForeignKey(m => m.FkGameId).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<Game>().HasOne(g => g.Tournament).WithMany(t => t.TournamentGames).HasForeignKey(g => g.fkTournamentId).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<TournamentTable>().HasOne(tt => tt.TournamentTeam).WithMany(t => t.TeamTournamentTable).HasForeignKey(tt => tt.PkTeamId).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<TournamentTable>().HasOne(tt => tt.Tournament).WithMany(t => t.TournamentTable).HasForeignKey(t => t.PkTournamentId).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<Tournament>().HasOne(t => t.TournamentCreator).WithMany(apu => apu.Tournaments).HasForeignKey(t => t.FkCreatorId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<ApUserTeam>().HasOne(aput => aput.ApUser).WithMany(apu => apu.Teams).HasForeignKey(aput => aput.PkFkUserId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<ApUserTeam>().HasOne(aput => aput.Team).WithMany(t => t.ApUserTeam).HasForeignKey(aput => aput.PkFkTeamId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Notification>().HasOne(n => n.Recipient).WithMany(apu => apu.NotificationsRecipients).HasForeignKey(n => n.FkRecipient).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Notification>().HasOne(n => n.Sender).WithMany(apu => apu.NotificationsSenders).HasForeignKey(n => n.FkSenderId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<TeamGame>().HasOne(tg => tg.FirstTeam).WithMany(t => t.FirstTeamsList).HasForeignKey(tg => tg.FkFirstTeamId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<TeamGame>().HasOne(tg => tg.SecondTeam).WithMany(t => t.SecondTeamList).HasForeignKey(tg => tg.FkSecondTeamId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ApUserTeamGame>().HasOne(aput => aput.ApUser).WithMany(apu => apu.ApUserTeamGames).HasForeignKey(aput => aput.PkFkUserId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<ApUserTeamGame>().HasOne(aput => aput.TeamGame).WithMany(tg => tg.ApUserTeamGames).HasForeignKey(aput => aput.PkFkUserId).OnDelete(DeleteBehavior.Cascade);
+        
         }
     }
 }

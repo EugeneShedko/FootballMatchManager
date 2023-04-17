@@ -14,9 +14,9 @@ namespace FootballMatchManager.DataBase.Models
         [Column("datetime")]
         public DateTime DateTime { get; set; }
         [Column("maxplayers")]
-        public int MaxPlayers { get; set; }
+        public int? MaxPlayers { get; set; }
         [Column("currplayers")]
-        public int CurrPlayers { get; set; } = 0;
+        public int? CurrPlayers { get; set; } = 0;
         [Column("status")]
         public string Status { get; set; } = "active";
         [Column("format")]
@@ -31,7 +31,6 @@ namespace FootballMatchManager.DataBase.Models
         public int fkTournamentId { get; set; } = 1;
 
         public List<ApUserGame> ApUsersGames {get;set;}
-        public Tournament Tournament { get; set; }
 
         public Game() { }
 
@@ -46,5 +45,6 @@ namespace FootballMatchManager.DataBase.Models
             this.Type = type;
         }
 
+        /* Новый конструктор для командный игр */
     }
 }

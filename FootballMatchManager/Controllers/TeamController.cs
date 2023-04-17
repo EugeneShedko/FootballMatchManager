@@ -256,44 +256,53 @@ namespace FootballMatchManager.Controllers
 
 }
 
-/*
-[HttpPut("{id}")]
-public void Put(int id, [FromBody] string value)
-{
-}
+        // ------------------------------------------------------------------------------------------------------ //
 
-[HttpDelete]
-[Route("leavefromteam/{teamId}/{userId}")]
-public ActionResult DeleteLeaveFromGame(int teamId, int userId)
-{
+        [HttpDelete]
+        [Route("leave-from-team/{teamId}")]
+        public ActionResult DeleteLeaveFromGame(int teamId)
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest(); }
 
-ApUserTeam apUserTeam = _unitOfWork.ApUserTeamRepository.GetItems()
-                                                    .FirstOrDefault(aput => aput.TeamId == teamId && aput.UserId == userId && aput.UserType == "participant");
+                int userId = int.Parse(HttpContext.User.Identity.Name);
 
-if (apUserTeam == null)
-{
-return BadRequest(new { message = "Вы являетесь участником команды" });
-}
+                /* Проверка на то, является ли пользователь организатором команды */
 
-_unitOfWork.ApUserTeamRepository.DeleteElement(apUserTeam);
+                ApUserTeam userCreat = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId, userId);
 
-_unitOfWork.Save();
+                if(userCreat != null)
+                {
+                    return BadRequest(new {message = "Не возможно покинуть команду, так как вы являетесь ее организатором. Назначьте другого пользователя"});
+                }
 
-Team team = _unitOfWork.TeamRepository.GetItem(teamId);
+                /* Получаем запись пользователя участника команды */
+                ApUserTeam userPart = _unitOfWork.ApUserTeamRepository.GetTeamParticipant(teamId, userId);
 
-List<ApUser> apUsers = _unitOfWork.ApUserTeamRepository.GetItems().Where(aput => aput.TeamId == teamId && aput.UserType == "participant")
-                                                                   .Select(aput => aput.ApUser)
-                                                                   .ToList();
+                /* Проверка на то, дейсвительно ли он является участником */
+                if(userPart == null) { return BadRequest(); }
 
-if (apUsers == null)
-{
-return Ok(new { message = "Вы покинули команду", currteam = team });
-}
-else
-{
-return Ok(new { message = "Вы покинули команду", users = apUsers, currteam = team });
-}
-}
-*/
+                /* Удаляем пользователя из команды */
+                _unitOfWork.ApUserTeamRepository.DeleteElement(userPart);
+                _unitOfWork.Save();
+
+                /* Получаем обновленный список пользователей команды */
+                List<ApUser> teamUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamId);
+
+                if (teamUsers == null)
+                {
+                    return Ok(new { message = "Вы покинули команду"});
+                }
+                else
+                {
+                    return Ok(new { message = "Вы покинули команду", users = teamUsers, });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

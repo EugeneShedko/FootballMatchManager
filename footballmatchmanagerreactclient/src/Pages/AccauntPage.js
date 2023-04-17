@@ -1,7 +1,7 @@
 import { Tab, Nav, Row, Col } from 'react-bootstrap';
 import { Link, useNavigate, Outlet } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
-import { TO_GAMES, TO_MAIN, TO_NOTIFICATION, TO_PLAYERS, TO_PLAYER_CARD, TO_PROFILE, TO_TEAMS, TO_USER_GAMES, TO_USER_TEAMS } from "../Utilts/Consts";
+import { TO_GAMES, TO_MAIN, TO_NOTIFICATION, TO_PLAYERS, TO_PLAYER_CARD, TO_PROFILE, TO_TEAMS, TO_TEAM_GAMES, TO_USER_GAMES, TO_USER_TEAMS } from "../Utilts/Consts";
 import { Context } from "../index";
 
 
@@ -22,7 +22,10 @@ export default function UserProfile() {
                     <Col sm={2} className="p-0">
                         <Nav className="flex-column upnav-container">
                             <Nav.Item className="upnav-item">
-                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_GAMES, {state:{refresh:true}})}>Матчи</Nav.Link>
+                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_GAMES, {state:{refresh:true}})}>Персональные матч</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item className="upnav-item">
+                                <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_TEAM_GAMES, {state:{refresh:true}})}>Командные матчи</Nav.Link>
                             </Nav.Item>
                             <Nav.Item className="upnav-item">
                                 <Nav.Link className="upnav-item-link" onClick={() => navigate(TO_PLAYERS, {state:{refresh:true}})}>Игроки</Nav.Link>

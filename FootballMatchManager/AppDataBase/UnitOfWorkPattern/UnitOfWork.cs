@@ -16,12 +16,32 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
         private MessageRepository _messageRepository;
         private NotificationRepository _notificationRepository;
         private TeamRepository _teamRepository;
-        private TournamentRepository _tournamentRepository;
-        private TournamentTableRepository _tournamentTableRepository;
+        private TeamGameRepasitory _teamGameRepasitory;
+        private ApUserTeamGameRepasitory _apUserTeamGameRepasitory;
 
         public UnitOfWork(AppDBContext dBContext)
         {
             this._dbcontext = dBContext;
+        }
+
+        public TeamGameRepasitory TeamGameRepasitory
+        {
+            get 
+            {
+                if (_teamGameRepasitory == null)
+                    _teamGameRepasitory = new TeamGameRepasitory(_dbcontext);
+                return _teamGameRepasitory;
+            }
+        }
+
+        public ApUserTeamGameRepasitory ApUserTeamGameRepasitory
+        {
+            get 
+            {
+                if (_apUserTeamGameRepasitory == null)
+                    _apUserTeamGameRepasitory = new ApUserTeamGameRepasitory(_dbcontext);
+                return _apUserTeamGameRepasitory;
+            }
         }
 
         public ApUserGameRepository ApUserGameRepository
@@ -110,28 +130,6 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
                 return _teamRepository;            }
         }
 
-        /*
-        public TournamentRepository TournamentRepository
-        {
-            get 
-            {
-                if(_tournamentRepository == null)
-                    _tournamentRepository= new TournamentRepository(_dbcontext);
-                return _tournamentRepository;
-            }
-        }
-        */
-        /*
-        public TournamentTableRepository TournamentTableRepository
-        {
-            get
-            {
-                if(_tournamentTableRepository == null)
-                    _tournamentTableRepository = new TournamentTableRepository(_dbcontext);
-                return _tournamentTableRepository;
-            }
-        }
-        */
         public void Save()
         {
             _dbcontext.SaveChanges();

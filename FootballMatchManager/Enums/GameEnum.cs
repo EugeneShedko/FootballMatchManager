@@ -3,6 +3,7 @@
     public enum GameEnum
     {
         CLOSED,
-        PUBLIC
+        PUBLIC,
+        TEAMGAME
     }
 }

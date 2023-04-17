@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using FootballMatchManager.AppDataBase.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FootballMatchManager.DataBase.Models
 {
@@ -17,7 +18,10 @@ namespace FootballMatchManager.DataBase.Models
         public string? Image { get; set; }
    
         public List<ApUserTeam> ApUserTeam { get; set; }
-        public List<TournamentTable> TeamTournamentTable { get; set; }
+
+        public List<TeamGame> FirstTeamsList { get; set; }
+
+        public List<TeamGame> SecondTeamList { get; set; }
 
         public Team() { }
 

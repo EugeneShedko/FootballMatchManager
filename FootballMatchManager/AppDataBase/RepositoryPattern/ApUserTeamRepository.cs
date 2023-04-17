@@ -85,6 +85,15 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         }
 
         // ------------------------------------------------------------- //
+        /* Возвращает запись организатора команды по айдикоманды и айди пользователя */
+        public ApUserTeam GetTeamCreator(int teamId, int userId)
+        {
+            return GetItems().FirstOrDefault(t => t.PkFkTeamId == teamId
+                                               && t.PkFkUserId == userId
+                                               && t.PkUserType == (int)ApUserTeamEnum.CREATOR);
+        }
+
+        // ------------------------------------------------------------- //
 
         /* Возврашает запись ApUserTeam организтора команды по идентификтору пользователя */
         public ApUserTeam GetTeamCreatorByUserId(int userId)

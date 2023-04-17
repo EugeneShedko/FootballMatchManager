@@ -18,9 +18,11 @@ export default function UserTeamsInfoCard() {
     const [teamId, setTeamId] = useState(null);
     const [userTeams, setUserTeams] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [reloadTeam, setReloadTeams] = useState(false);
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 
+    /* Может просто перечитать тогда? */
     useEffect(() => {
 
         axios.get('http://localhost:5004/api/team/user-team', { withCredentials: true })
@@ -37,6 +39,8 @@ export default function UserTeamsInfoCard() {
                 }
                 setTeamId(response.data.firstTeamId);
                 setIsLoading(true); 
+                //setReloadTeams(false);
+                console.log('EFFECT');
             })
             .catch(userError => {
                 if (userError.response) {
@@ -48,89 +52,27 @@ export default function UserTeamsInfoCard() {
                         });
                 }
             });
-    }, []);
+    }, [reloadTeam]);
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 
-    /*
-    function getTeamInfo(teamId) {
-        ** Здесь же сразу можно было добавить вычет сообщений **
-
-        axios.get('http://localhost:5004/api/team/team/' + teamId, { withCredentials: true })
-            .then((response) => {
-                setTeam(response.data.currteam);
-            })
-            .then(() => {
-                axios.get('http://localhost:5004/api/team/team-users/' + teamId, { withCredentials: true })
-                    .then((response) => {
-                        setTeamUsers(response.data);
-                    })
-                    .catch(userError => {
-                        if (userError.response) {
-                            toast.error(userError.response.message,
-                                {
-                                    position: toast.POSITION.TOP_CENTER,
-                                    autoClose: 2000,
-                                    pauseOnFocusLoss: false
-                                });
-                        }
-                    });
-            })
-            .catch(userError => {
-                if (userError.response) {
-                    toast.error(userError.response.message,
-                        {
-                            position: toast.POSITION.TOP_CENTER,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
-                }
-            });
+    function updateCard()
+    {
+        setReloadTeams(true);
+        console.log('UPDATE!');
     }
-    */
-    // -------------------------------------------------------------------------------------------------------------------------- //
-
-    /*
-    function leaveTeam() {
-
-        axios.delete('http://localhost:5004/api/profile/leavefromteam/' + props.teamId + '/' + user.getUserId, { withCredentials: true })
-            .then((response) => {
-                toast.success(response.data.message,
-                    {
-                        position: toast.POSITION.TOP_CENTER,
-                        autoClose: 2000,
-                        pauseOnFocusLoss: false
-                    });
-                setTeam(response.data.currteam);
-                setTeamUsers(response.data.users);
-            })
-            .catch((error) => {
-                if (error.response) {
-                    toast.error(error.response.data.message,
-                        {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
-                }
-            });
-
-    }
-    */
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 
     return (
         <>
-        {/* Почему то рендерится сначала со значением undefined, посмотреть в консоли */}
         {console.log('teamId')}
         {console.log(teamId)}
-        {console.log(isLoading)}
-        {/* Почему-то это только в этом месте происходит */}
         {
             isLoading ?
              teamId === -1 ? <NoExistTeamCard /> :<ExistsTeamCard  teamId={teamId}
                                                                    userTeams={userTeams}
+                                                                   update={updateCard}
                                                                    />
             : null                                                       
         }        

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FootballMatchManager.AppDataBase.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FootballMatchManager.DataBase.Models
@@ -15,5 +16,14 @@ namespace FootballMatchManager.DataBase.Models
 
         public Game Game { get; set; }
         public ApUser ApUser { get; set; }
+
+        public ApUserGame() { }
+
+        public ApUserGame(int gameId, int userID, string userType)
+        {
+            this.PkFkGameId = gameId;
+            this.PkFkUserId = userID;
+            this.PkUserType = userType;
+        }
     }
 }

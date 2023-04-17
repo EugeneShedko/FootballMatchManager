@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import TeamGameGenerator from "./TeamGamesGenerator";
 
-import GameGenerator from "./GameGenerator";
-
-import "./../../../../css/Games.css";
+import "./../../../../css/TeamsGames/Teams.css"
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { TO_CREATE_GAME } from "../../../../Utilts/Consts";
+import { TO_CREATE_GAME, TO_CREATE_TEAM_GAME } from "../../../../Utilts/Consts";
 
-export default function Matches() {
+export default function TeamGames() {
 
     /* ----------------------------------------------------------------------- */
 
@@ -21,6 +20,7 @@ export default function Matches() {
 
     /* ----------------------------------------------------------------------- */
 
+    /*
     useEffect(
         () => {
             axios.get('http://localhost:5004/api/profile/get-all-games', { withCredentials: true })
@@ -41,6 +41,7 @@ export default function Matches() {
             ;
         }, [isRefreshed]
     );
+    */
 
     /* ----------------------------------------------------------------------- */
 
@@ -82,27 +83,27 @@ export default function Matches() {
     /* ----------------------------------------------------------------------- */
 
     return (
-        <div className="row mpmatches-main-container">
-            <div className="col-9 mpmatches-container">
-                <GameGenerator games={games}
-                               setGames={setGames}
-                               searchString={searchString}
-                               />
+        <div className="row teams-main-container">
+            <div className="col-9 teams-container">
+                <TeamGameGenerator games={games}
+                                   setGames={setGames}
+                                   searchString={searchString}
+                                   />              
             </div>
-            <div className="col-3 mplefcol">
-                <div className="mp-fixed-container">
-                    <div className="row mplcrow">
-                        <input className="mpbutton-style" type="button" value="Создать матч" onClick={() => navigate(TO_CREATE_GAME)} />
+            <div className="col-3 tmlefcol">
+                <div className="tm-fixed-container">
+                    <div className="row tmlcrow">
+                        <input className="tmbutton-style" type="button" value="Создать матч" onClick={() => navigate(TO_CREATE_TEAM_GAME)} />
                     </div>
-                    <div className="row mplcrow">
-                        <input id="search-match-element"
+                    <div className="row tmlcrow">
+                        <input id="search-team-element"
                                type="text" 
                                placeholder="Введите название матча" 
                                value={searchString}
                                onChange={(e) => setSearchString(e.target.value)} 
                                />
                     </div>
-                    <div className="row filter-match-container">
+                    <div className="row filter-team-container">
                         <label>
                             <input type="checkbox" className="checkbox-style" name="uallmatch" value="5x5" />
                             5x5

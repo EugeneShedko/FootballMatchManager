@@ -12,25 +12,7 @@ export default function MessagesBlock(props) {
     const connection = useRef(null);
     const messagesContainer = useRef(null);
 
-    /* Проблема в том, что этот блок используется в играх и командах */
 
-    /* Как его использовать и там и там? */
-
-    /* Можно вынести в отдельные функции в вставляющем блоке */
-
-    /* Но его преимущество в том что он срабатывает когда он вставляется */
-
-    /* Когда он вставляется будет вызывать те же функции скорее всего */
-
-    /* Попробовать */
-
-    /* Попробовать сюда добавить props и проверить, как будет работать */
-
-    /* Очень хреново работает */
-
-    // ---------------------------------------------------------------------------------------------------------- //
-
-    /* Попробовать сделать отдельный метод в сообщениях для получения сообщений */
     useEffect(() => {
         axios.get('http://localhost:5004/api/message/game-messages/' + props.gameId, { withCredentials: true })
         .then((response) => {
@@ -38,17 +20,12 @@ export default function MessagesBlock(props) {
         })
         .catch(userError => {
             if (userError.response) {
-                toast.error("Не удалось получить сообщения матча",
-                    {
-                        position: toast.POSITION.TOP_CENTER,
-                        autoClose: 2000,
-                        pauseOnFocusLoss: false
-                    });
+                console.log('Не удалось получить сообщения матча');
             }
         });
 
         connectMessage();
-        console.log('MESSAGE START');
+        console.log('RENDER' + props.gameId);
 
         return () => {
             if (connection.current) {
@@ -56,8 +33,7 @@ export default function MessagesBlock(props) {
               connection.current.stop();
             }
           };
-
-    }, []); 
+    }, [props.gameId]); 
 
     // ---------------------------------------------------------------------------------------------------------- //
 
@@ -93,6 +69,7 @@ export default function MessagesBlock(props) {
         console.log(props.gameId, curMessage);
 
         /* Посмотреть этот метод на сервере */
+        /* Посмотреть, как сделаны эти методы */
         connection.current.invoke("SendMess", curMessage, parseInt(props.gameId, 10));
         
         setCurMessage("");

@@ -12,12 +12,10 @@ namespace FootballMatchManager.Controllers
     public class MessageController : ControllerBase
     {
         private UnitOfWork _unitOfWork;
-        private JwtService _jwtService;
 
-        public MessageController(UnitOfWork unitOfWork, JwtService jwtService)
+        public MessageController(UnitOfWork unitOfWork)
         {
             this._unitOfWork = unitOfWork;
-            this._jwtService = jwtService;
         }
 
         [HttpGet]

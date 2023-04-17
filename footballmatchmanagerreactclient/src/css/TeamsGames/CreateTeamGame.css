@@ -1,0 +1,51 @@
+.modal-content
+{
+    background-color: rgba(0,0,0,1);
+    border: 4px white solid;
+    border-radius: 20px;
+    color:white;
+}
+
+.modal-header
+{
+    text-align: center;
+}
+
+.btn-close
+{
+    background-color: white;
+}
+
+.input-container
+{
+    margin: 0% 0% 2% 0%;
+}
+
+.input-style
+{
+    width: 90%;
+    border: 3px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    font-style: italic;  
+
+}
+
+
+.input-button-style
+{
+    border: 4px solid white;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+}
+
+.input-button-style:hover
+{
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+

@@ -14,14 +14,11 @@ export default function ExistsTeamCard(props)
 
     useEffect(() => {
         getTeamInfo(props.teamId)
-    }, [props]);
+    }, [props.userTeams]);
 
     // ----------------------------------------------------------------------------------- //
 
     function getTeamInfo(teamId) {
-
-        console.log('FUNC');
-        console.log(teamId);
 
         axios.get('http://localhost:5004/api/team/team/' + teamId, { withCredentials: true })
             .then((response) => {
@@ -57,6 +54,35 @@ export default function ExistsTeamCard(props)
 
     // ----------------------------------------------------------------------------------- //
 
+    /* Нужно как-то сменить игру при уходе из команды */
+
+    function leaveTeam() {
+
+        axios.delete('http://localhost:5004/api/team/leave-from-team/' + team.pkId, { withCredentials: true })
+            .then((response) => {
+                toast.success(response.data.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+                //setTeamUsers(response.data.users);
+                props.update();
+            })
+            .catch((error) => {
+                if (error.response) {
+                    toast.error(error.response.data.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+        }        
+
+    // ------------------------------------------------------------------------------------ //
+
     return(
             <div className="row justify-content-center team-info-main-container">
             <div className="col-12 team-info-container">
@@ -77,7 +103,7 @@ export default function ExistsTeamCard(props)
                                     <input className="match-join-button"
                                         type="button"
                                         value="Покинуть"
-                                        //onClick={leaveTeam} 
+                                        onClick={leaveTeam} 
                                         />
                                 </div>
                             </div>
@@ -126,7 +152,7 @@ export default function ExistsTeamCard(props)
                         </div>
                         <div className="row team-mess-cont">
                             {/* Проблема блока, что везде ему передается айди игры */}
-                            <MessagesBlock gameId={props.teamId} />
+                            <MessagesBlock gameId={team.pkId} />
                         </div>
                     </div>
                 </div>
