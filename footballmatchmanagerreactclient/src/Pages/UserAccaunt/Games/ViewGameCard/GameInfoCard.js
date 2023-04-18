@@ -54,24 +54,6 @@ export default function GameInfoCard(props) {
                         }
                     });
             })
-            /*
-            .then(() => {
-                axios.get('http://localhost:5004/api/message/game-messages/' + gameId, { withCredentials: true })
-                    .then((response) => {
-                        setGameMessage(response.data);
-                    })
-                    .catch(userError => {
-                        if (userError.response) {
-                            toast.error("Не удалось получить сообщения матча",
-                                {
-                                    position: toast.POSITION.TOP_CENTER,
-                                    autoClose: 2000,
-                                    pauseOnFocusLoss: false
-                                });
-                        }
-                    });
-            })
-            */
             .catch(userError => {
                 if (userError.response) {
                     toast.error(userError.response.message,

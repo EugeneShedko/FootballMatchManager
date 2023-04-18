@@ -20,10 +20,10 @@ export default function TeamGames() {
 
     /* ----------------------------------------------------------------------- */
 
-    /*
+    /* Настроить получение командных матчей */
     useEffect(
         () => {
-            axios.get('http://localhost:5004/api/profile/get-all-games', { withCredentials: true })
+            axios.get('http://localhost:5004/api/teamgame/all-team-games', { withCredentials: true })
                 .then((response) => {
                     setGames(response.data);
                     setInitGames(response.data);
@@ -41,7 +41,6 @@ export default function TeamGames() {
             ;
         }, [isRefreshed]
     );
-    */
 
     /* ----------------------------------------------------------------------- */
 
@@ -60,14 +59,6 @@ export default function TeamGames() {
         }
 
         setGames(resultGames);
-
-        /* Для чего я ставил данное условие? */
-        /*
-        if(resultGames.length > 0)
-        {
-            setGames(resultGames);
-        }
-        */
     }
 
     /* ----------------------------------------------------------------------- */

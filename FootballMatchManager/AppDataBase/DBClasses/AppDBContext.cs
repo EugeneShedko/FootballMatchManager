@@ -50,6 +50,8 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<Game>().HasKey(g => g.PkId);
             modelBuilder.Entity<Notification>().HasKey(n => n.PkId);            
             modelBuilder.Entity<Team>().HasKey(t => t.PkId);
+            /* Команда по умолчанию необходима для организации командных матчей*/
+            modelBuilder.Entity<Team>().HasData(new Team() { PkId = 1, Name = "defaultteam", CrtDate = DateTime.Now, Image = "default/question.png" });
             modelBuilder.Entity<ApUserTeam>().HasKey(aput => new { aput.PkFkTeamId, aput.PkFkUserId, aput.PkUserType });
             modelBuilder.Entity<TeamGame>().HasKey(tg => tg.PkId);
             modelBuilder.Entity<ApUserTeamGame>().HasKey(aputg => new {aputg.PkFkUserId, aputg.PkFkTeamGameId, aputg.PkFkUserType});

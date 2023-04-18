@@ -10,8 +10,11 @@ export default function TeamBlock(props) {
 
     const navigate = useNavigate();
 
+    const teamLogoStyle = props.info.pkId === 1 ? "default-team-logo" : "team-logo";
+    // -------------------------------------------------------------------------------- //
+    
     function setGameInfoCard() {
-        navigate(TO_GAME_CARD + '/' + props.info.pkId);
+        navigate(TO_TEAM_GAME_CARD + '/' + props.info.pkId);
     }
 
     // -------------------------------------------------------------------------------- //
@@ -22,9 +25,9 @@ export default function TeamBlock(props) {
             <div className="row team-block-content">
                 <div className="col m-0 p-0">
                     <div className="row m-0 p-0">
-                        <div className="col-4 m-0 p-0">
+                        <div className="col-4 team-logo-cont">
                             <img className="team-logo"
-                                src="http://localhost:5004/default/sad-face.png"
+                                src={"http://localhost:5004/" + props.info.firstTeam.image}
                                 alt="" />
                         </div>
                         <div className="col-4 team-versus-cont">
@@ -32,20 +35,20 @@ export default function TeamBlock(props) {
                                 src="http://localhost:5004/default/versus.png"
                                 alt="" />
                         </div>
-                        <div className="col-4 m-0 p-0">
-                            <img className="team-logo"
-                                src="http://localhost:5004/default/sad-face.png"
+                        <div className="col-4 team-logo-cont">
+                            <img className={teamLogoStyle}
+                                src={"http://localhost:5004/" + props.info.secondTeam.image}
                                 alt="" />
                         </div>
                     </div>
                     <div className="row info-container">
-                        Хрен1
+                        {props.info.format}
                     </div>
                     <div className="row info-container">
-                        Хрен2
+                        {(new Date(props.info.dateTime)).toLocaleString().substring(0, (new Date(props.info.dateTime)).toLocaleString().length - 3)}
                     </div>
                     <div className="row info-container">
-                        Хрен3
+                        {props.info.adress}
                     </div>
                 </div>
             </div>

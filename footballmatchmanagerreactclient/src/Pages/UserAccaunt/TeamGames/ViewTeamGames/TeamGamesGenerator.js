@@ -13,21 +13,15 @@ export default function TeamGameGenerator(props) {
     return (
         <div className="row teams-absolute-container">
             {(searchGamse.length === 0 && props.searchString != '') && <div>Пользователей нет</div>}
-            {/*
+            {
                 searchGamse?.map((match) => (
                     <div className="mpinfo-block">
-                        <TeamBlock  info={match}
-                                    setGames={props.setGames}
-                                    setContState={props.setContState} />
+                        <TeamBlock info={match}
+                            setGames={props.setGames}
+                            />
                     </div>
                 ))
-                */}
-            <div className="team-info-block">
-                <TeamBlock //info={match}
-                           //setGames={props.setGames}
-                    />
-            </div>
-
+            }
         </div>
     );
 }

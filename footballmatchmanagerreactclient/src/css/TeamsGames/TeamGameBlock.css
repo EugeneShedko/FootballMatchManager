@@ -54,7 +54,12 @@
 {
     width: 100px;
     height: 100px;
-    /* Убрать потом */
+}
+
+.default-team-logo
+{
+    width: 85px;
+    height: 85px;
     filter: invert(100%)
 }
 

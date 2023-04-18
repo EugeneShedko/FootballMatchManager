@@ -29,13 +29,11 @@ namespace FootballMatchManager.AppDataBase.Models
 
         public TeamGame(string adress, DateTime date, string format, int firstTeamId)
         {
-            /* Не забыть добавить команду по умолчанию в бд */
-            /* С нулем по умолчанию */
             this.Adress = adress;
             this.DateTime= date;
             this.Format = format;
             this.FkFirstTeamId = firstTeamId;
-            this.FkSecondTeamId = 0;
+            this.FkSecondTeamId = 1;
         }
     }
 }

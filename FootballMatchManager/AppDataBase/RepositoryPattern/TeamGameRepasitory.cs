@@ -30,17 +30,32 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public TeamGame GetItem(int firstid, int secondid = 0)
         {
-            return _dbcontext.TeamsGames.Find(firstid);
+            return _dbcontext.TeamsGames.Include(t => t.FirstTeam)
+                                        .Include(t => t.SecondTeam)
+                                        .FirstOrDefault(tg => tg.PkId == firstid);
         }
 
         public IEnumerable<TeamGame> GetItems()
         {
-            return _dbcontext.TeamsGames.AsNoTracking().ToList();
+            return _dbcontext.TeamsGames.Include(t => t.FirstTeam)
+                                        .Include(t => t.SecondTeam)
+                                        .ToList();
         }
 
         public void UpdateElement(TeamGame item)
         {
             _dbcontext.Entry(item).State = EntityState.Modified;
         }
+
+        // ---------------------------------------------------------- //
+
+        /* Возвращает список всех командных матчей */
+        public List<TeamGame> GetAllTeamGames()
+        {
+            return GetItems().ToList();
+        }
+
+        // ---------------------------------------------------------- //
+
     }
 }

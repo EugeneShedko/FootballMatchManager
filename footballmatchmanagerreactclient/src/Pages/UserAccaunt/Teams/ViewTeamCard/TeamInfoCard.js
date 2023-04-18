@@ -154,8 +154,6 @@ export default function TeamInfoCard() {
                         </div>
                     }
                     <div className="col-3 h-100 p-0">
-                        {/* Пока что с сообщениями проблема */}
-                        {/*<MessagesBlock gameId={teamId} /> */}
                         {isPart ? <MessagesBlock gameId={teamId} /> : null }
                     </div>
                 </div>

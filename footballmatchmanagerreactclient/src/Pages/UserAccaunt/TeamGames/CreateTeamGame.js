@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./../../../css/TeamsGames/CreateTeamGame.css";
-import { TO_GAMES } from "../../../Utilts/Consts";
+import { TO_GAMES, TO_TEAM_GAMES } from "../../../Utilts/Consts";
 
 export default function CreateTeamGame(props) {
 
@@ -44,7 +44,7 @@ export default function CreateTeamGame(props) {
      // ------------------------------------------------------------------------------------------ //
 
      useEffect(() => {
-        if(inputError.gameNameError || inputError.gameFormatError || inputError.gameAdressError)
+        if(inputError.gameFormatError || inputError.gameAdressError)
         {
             setIsValid(false);
         }
@@ -116,23 +116,19 @@ export default function CreateTeamGame(props) {
             GameType: matchState.gameType
         }
 
-        axios.post('http://localhost:5004/api/profile/create-game', match, { withCredentials: true })
+        axios.post('http://localhost:5004/api/teamgame/create-team-game', match, { withCredentials: true })
             .then((response) => {
-                toast.success(response.data.reqmess, {
+                toast.success(response.data.message, {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
                     pauseOnFocusLoss: false
                 });
 
-                navigate(location.pathname.replace("/creategame", ""), {state:{refresh:true}});
-
-                /* Убрать вычитывание всех матчей на сервере */
-                //props.setAllMatches(response.data.allgames);
-                //props.onHide(false);
+                navigate(TO_TEAM_GAMES);
             })
             .catch(userError => {
                 if (userError.response) {
-                   toast.error("Ошибка создания матча", 
+                   toast.error(userError.response.data.message, 
                       {
                       position: toast.POSITION.TOP_CENTER,
                       autoClose: 2000,
@@ -146,7 +142,7 @@ export default function CreateTeamGame(props) {
 
     return (
         <Modal show={props.show}
-            onHide={() => navigate(location.pathname.replace("/creategame", ""))}
+            onHide={() => navigate(TO_TEAM_GAMES)}
             centered>
 
             <Modal.Header closeButton>

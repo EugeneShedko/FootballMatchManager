@@ -29,7 +29,7 @@ namespace FootballMatchManager.Controllers
             List<Game> allgames = _unitOfWork.GameRepository.GetAllGamesForUser();
 
             if (allgames == null)
-                {
+            {
                 return BadRequest(new {message = "Создайте матч!"});
             }
             else
@@ -232,63 +232,6 @@ namespace FootballMatchManager.Controllers
             }
         }
 
-        // ----------------------------------------------------------------------------------------------------------------------------------------- //
-
-        /* Вынести в отельный контроллер */
-        [Route("create-team-game")]
-        [HttpPost]
-        public IActionResult PostCreateTeamGame([FromBody] ShortGame shortGame)
-        {
-            /* Проврека на то, хватает ли у пользователя человек в команде, для создания матча */
-            try
-            {
-                if (HttpContext.User == null) { return BadRequest(); }
-
-                int userId = int.Parse(HttpContext.User.Identity.Name);
-
-                /* Получаю запись организатора команды */
-                ApUserTeam teamCreator = _unitOfWork.ApUserTeamRepository.GetTeamCreatorByUserId(userId);
-
-                if (teamCreator == null) 
-                {
-                    return BadRequest(new { message = "Вы не можете создать командный матч, так как не являетесь организатором ни одной команды" });
-                }
-
-                /* Создаю командный матч */
-                TeamGame teamGame = new TeamGame(shortGame.GameAdress, shortGame.GameDate, shortGame.GameFormat, teamCreator.PkFkTeamId);                
-                _unitOfWork.TeamGameRepasitory.AddElement(teamGame);
-                _unitOfWork.Save();
-                
-                /* Добавить пользователя как организатора */
-                /* Добавить пользователей команды, как участников*/
-                /* Получить все матчи  */
-
-                //ApUserGame gameCreator = new ApUserGame(teamGame.PkId, userId, ApUserGameType.Creator);
-                //_unitOfWork.ApUserGameRepository.AddElement(gameCreator);
-               // _unitOfWork.Save();
-
-                /* Здесь нужно добавить всех пользователей команды создателя на матч */
-
-                /*!!! Плохо, что возвращаю все матчи, пока что там*/
-
-                /* Проблема в том, что возврщать сюда */
-                /* Я не смогу тогда достать команды! */
-
-                /* Вариант создать двойную свзяь */
-                /* Добавлять команду по умаолчанию*/
-
-                /* Но игра не связана с командой */
-
-                /* Скорее всего нужно создавать отдельную таблицу с двойной связью и командой по умолчанию */
-
-                /* Остановился на этом месте */
-                return Ok();
-            }
-            catch(Exception ex)
-            {
-                return BadRequest();
-            }
-        }
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
         [Route("user-creat-game")]
