@@ -1,4 +1,5 @@
 ﻿using FootballMatchManager.DataBase.Models;
+using FootballMatchManager.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FootballMatchManager.AppDataBase.Models
@@ -13,7 +14,7 @@ namespace FootballMatchManager.AppDataBase.Models
         [Column("datetime")]
         public DateTime DateTime { get; set; }
         [Column("status")]
-        public string Status { get; set; } = "active";
+        public int Status { get; set; }
         [Column("format")]
         public string Format { get; set; }
 
@@ -34,6 +35,7 @@ namespace FootballMatchManager.AppDataBase.Models
             this.Format = format;
             this.FkFirstTeamId = firstTeamId;
             this.FkSecondTeamId = 1;
+            this.Status = (int)TeamGameStatus.SEARCH;
         }
     }
 }

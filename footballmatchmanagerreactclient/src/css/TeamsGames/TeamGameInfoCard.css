@@ -124,15 +124,27 @@
     font-size: 18px;       
 }
 
-.team-join-button-container
+.tg-button-cont
 {
-    margin: 20% 0% 0% 0%;
+    margin: 0;
+    padding: 0;
+    height: 50%; 
+}
+
+.tg-button-cont-2
+{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .team-join-button
 {
+    width: 100%;
     margin:0;
-    margin: 2% 0% 0% 0%;
+    padding: 0;
     border: 4px white solid;
     border-radius: 10px;
     background-color: rgba(0,0,0,0.6);

@@ -105,10 +105,45 @@ export default function NotificationBlock(props) {
 
     // ---------------------------------------------------------------------------------------- //
 
+    function acceptRequestTeamGame()
+    {
+        const data = new FormData();
+        data.append("teamGameId", props.notify.entityId);
+        data.append("userId", props.notify.fkSenderId);
+
+        axios.post('http://localhost:5004/api/teamgame/add-to-teamgame', data, { withCredentials: true })
+        .then((response) => {
+            var conn = userContext.notificonn;
+            conn.invoke("AcceptReqTeamGame", props.notify.pkId);
+            readNotifi();
+        })
+        .catch(userError => {
+            if (userError.response) {
+                toast.error(userError.response.data.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            }
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------- //
+
     function dismissRequestTeam()
     {
         var conn = userContext.notificonn;
         conn.invoke("DismissReqTeam", props.notify.pkId);
+        readNotifi();
+    }
+
+    // ---------------------------------------------------------------------------------------- /
+
+    function dismissRequestTeamGame()
+    {
+        var conn = userContext.notificonn;
+        conn.invoke("DismissReqTeamGame", props.notify.pkId);
         readNotifi();
     }
 
@@ -121,6 +156,8 @@ export default function NotificationBlock(props) {
                                                         acceptRequest={acceptRequestGame} />; break;
             case "requestforteam": return <RequestBlock dismissRequest={dismissRequestTeam}
                                                         acceptRequest={acceptRequestTeam} />; break;
+            case "requestforteamgame": return <RequestBlock dismissRequest={dismissRequestTeamGame}
+                                                        acceptRequest={acceptRequestTeamGame} />; break;
             default: return;
         }
     }

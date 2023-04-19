@@ -126,8 +126,6 @@ export default function GameInfoCard(props) {
     function sendRequestForPart() {
         var conn = userContext.notificonn;
 
-        /* Почему то не отправился ничерта */
-
         conn.invoke("Game", gameId, "requestforgame");
 
         // Отправлять сообщение с хаба!!!!! 

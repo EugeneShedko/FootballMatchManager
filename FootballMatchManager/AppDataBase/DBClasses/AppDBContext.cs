@@ -37,7 +37,12 @@ namespace FootballMatchManager.DataBase.DBClasses
                                                     new Constant() { PkId = 8, Group = "notification", Type = "text", Name = "dismissregteam", StrValue = "Пользователь {user} отклонил ваш запрос на присоединение к команде {team}" },
                                                     /* Так себе наименование у данной константы, потом возможно поменять */
                                                     new Constant() { PkId = 9, Group = "notification", Type = "text", Name = "errorreqteam", StrValue = "Невозможно отпарвить запрос на присоединение к команде, так как вы уже являетесь участником 3 команд" },
-                                                    new Constant() { PkId = 10, Group = "notification", Type = "text", Name = "teamreqsend", StrValue = "Ваш запрос на присоединение к команде {team} отправлен" }
+                                                    new Constant() { PkId = 10, Group = "notification", Type = "text", Name = "teamreqsend", StrValue = "Ваш запрос на присоединение к команде {team} отправлен" },
+                                                    new Constant() { PkId = 11, Group = "notification", Type = "requestforteamgame", Name = "requestforteamgame", StrValue = "{team} отправила запрос на присоединение к командному матчу {name}" },
+                                                    new Constant() { PkId = 12, Group = "notification", Type = "text", Name = "teamgamereqsend", StrValue = "Ваш запрос на присоединение к матчу отправлен" },
+                                                    new Constant() { PkId = 13, Group = "notification", Type = "text", Name = "dismissreqteamgame", StrValue = "Команда {team} отклонила ваш запрос на участие в матче {game}" },
+                                                    new Constant() { PkId = 14, Group = "notification", Type = "text", Name = "acceptreqteamgame", StrValue = "Команда {user} принял ваш запрос на участие в матче {game}" },
+                                                    new Constant() { PkId = 15, Group = "notification", Type = "text", Name = "leaveteamgame", StrValue = "Команда {team} покинула матч {game}" }
 
                                                     );
 

@@ -1,6 +1,7 @@
 ﻿using FootballMatchManager.AppDataBase.Models;
 using FootballMatchManager.DataBase.DBClasses;
 using FootballMatchManager.DataBase.Models;
+using FootballMatchManager.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.RepositoryPattern
@@ -52,5 +53,16 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             _dbcontext.Entry(item).State = EntityState.Modified;
         }
+
+        // ------------------------------------------------------------ //
+
+        /* Возвращает запись организатора командного матча по идентификатору командного матча */
+        public ApUserTeamGame GetTeamGameCreatorRecord(int teamGameId)
+        {
+            return GetItems().FirstOrDefault(aputg => aputg.PkFkTeamGameId == teamGameId
+                                                   && aputg.PkFkUserType == (int)ApUserGameTypeEnum.CREATOR);
+        }
+
+        // ------------------------------------------------------------ //
     }
 }

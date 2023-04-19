@@ -15,7 +15,7 @@ export default function TeamGameGenerator(props) {
             {(searchGamse.length === 0 && props.searchString != '') && <div>Пользователей нет</div>}
             {
                 searchGamse?.map((match) => (
-                    <div className="mpinfo-block">
+                    <div className="tg-info-block">
                         <TeamBlock info={match}
                             setGames={props.setGames}
                             />

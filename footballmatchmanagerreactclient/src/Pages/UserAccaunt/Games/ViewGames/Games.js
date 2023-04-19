@@ -59,14 +59,6 @@ export default function Matches() {
         }
 
         setGames(resultGames);
-
-        /* Для чего я ставил данное условие? */
-        /*
-        if(resultGames.length > 0)
-        {
-            setGames(resultGames);
-        }
-        */
     }
 
     /* ----------------------------------------------------------------------- */
