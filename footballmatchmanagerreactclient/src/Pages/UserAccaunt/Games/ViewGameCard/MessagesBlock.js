@@ -79,7 +79,7 @@ export default function MessagesBlock(props) {
 
     return (
         <>
-            <div id="xren" className="match-info-message-container" ref={messagesContainer}>
+            <div id="xren" className="tg-info-message-container" ref={messagesContainer}>
                 <div id="xren2" className="match-info-message-absolute-container">
                     <div className="row m-0">
                         {

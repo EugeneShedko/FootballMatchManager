@@ -46,7 +46,7 @@ const AppRouter = observer(() => {
                     <Route path="games" element={<Matches />}>
                         <Route path="creategame" element={<CreateMatch show={true} />} />
                     </Route>
-                    <Route path="teamgames" element={<TeamGames />}>
+                    <Route path="teamgames" element={<TeamGames req="all-team-games"/>}>
                         <Route path="creategame" element={<CreateMatch show={true} />} />
                     </Route>
                     <Route path="teamgamecard/:id" element={<TeamGameCard />}>
@@ -76,6 +76,9 @@ const AppRouter = observer(() => {
                         </Route>
                         <Route path="partgames" element={<UserMatchesPr />}>
                             <Route path="creategame" element={<CreateMatch show={true} />} />
+                        </Route>
+                        <Route path="teamgames" element={<TeamGames req="user-team-games"/>}>
+                            {/*<Route path="creategame" element={<CreateMatch show={true} />} />*/}
                         </Route>
                     </Route>
                     <Route path="userteams" element={<UserTeamsInfoCard />} />

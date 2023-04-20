@@ -5,7 +5,7 @@ import "./../../../css/usermatchesnavigator.css"
 import UserMatchesCr from "./GamesCreator";
 import UserMatchesPr from "./GamesParticipant";
 import { Routes, Route, Outlet, useNavigate } from "react-router-dom";
-import { TO_USER_GAMES_CREATOR, TO_USER_GAMES_PARTICIPANT } from "../../../Utilts/Consts";
+import { TO_USER_GAMES_CREATOR, TO_USER_GAMES_PARTICIPANT, TO_USER_TEAM_GAMES } from "../../../Utilts/Consts";
 
 export default function UserMatchesNavigator() {
 
@@ -25,6 +25,11 @@ export default function UserMatchesNavigator() {
                     <Nav.Item className="umnav-item">
                         <Nav.Link className="umnav-item-link" onClick={() => navigate(TO_USER_GAMES_CREATOR)}>
                             Организатор
+                        </Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item className="umnav-item">
+                        <Nav.Link className="umnav-item-link" onClick={() => navigate(TO_USER_TEAM_GAMES)}>
+                            Командные матчи
                         </Nav.Link>
                     </Nav.Item>
                 </Nav>

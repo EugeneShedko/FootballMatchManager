@@ -12,6 +12,8 @@ namespace FootballMatchManager.DataBase.Models
         public string Name { get; set; }
         [Column("crtDate")]
         public DateTime CrtDate {get;set;}
+        [Column("MemberQnt")]
+        public int MemberQnt { get; set; }
         [Column("description")]
         public string? Description { get; set; }
         [Column("Image")]
@@ -31,6 +33,8 @@ namespace FootballMatchManager.DataBase.Models
             this.CrtDate = DateTime.Now;
             this.Description = desc;
             this.Image = "teams/default-team-logo.png";
+            /* По умолчанию создатель команды ее участник */
+            this.MemberQnt = 1;
         }
 
     }

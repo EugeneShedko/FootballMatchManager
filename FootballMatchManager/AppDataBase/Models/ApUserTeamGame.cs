@@ -6,6 +6,7 @@ namespace FootballMatchManager.AppDataBase.Models
     [Table("APUSERTEAMGAME")]
     public class ApUserTeamGame
     {
+
         public int PkFkTeamGameId { get; set; }
         public int PkFkUserId { get; set; }
         public int PkFkUserType { get; set; }

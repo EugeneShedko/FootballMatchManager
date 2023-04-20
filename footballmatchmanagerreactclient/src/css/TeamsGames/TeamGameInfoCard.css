@@ -22,6 +22,13 @@
     height: 100%;
 }
 
+.team-info-col
+{
+    margin: 0;
+    padding: 0;
+    border-right: 5px white solid;
+}
+
 .team-info-cont
 {
     margin: 0;
@@ -55,13 +62,15 @@
     margin: 0;
     height: 60%;
     position: relative;
-    overflow: scroll;
+    overflow: hidden;
 }
 
 .tg-info-user-absolute-container
 {
     height: 100%;
     width: 100%;
+    padding: 0;
+    margin: 0;
     position: absolute;
 }
 
@@ -70,8 +79,9 @@
     height: 90%;
     padding: 0;
     margin: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
     position: relative;
-    overflow: scroll;
 }
 
 .tg-info-message-absolute-container
@@ -83,6 +93,15 @@
 .tg-info-text-container
 {
     padding: 1% 1% 1% 1%;
+}
+
+.tg-info-user-absolute-container
+{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: absolute;
 }
 
 .team-users-cont

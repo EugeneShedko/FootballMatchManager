@@ -22,7 +22,7 @@
 .team-block-content
 {
     margin: 0;
-    padding: 5% 5% 5% 5%;
+    padding: 2% 2% 2% 2%;
 }
 
 .team-versus-cont
@@ -71,4 +71,11 @@
     align-items: center;
     justify-content: center;
     color:white;
+}
+
+.team-game-name
+{
+    color: yellowgreen;
+    font-weight: bold;
+    font-size: 20px;
 }

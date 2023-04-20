@@ -92,7 +92,6 @@ namespace FootballMatchManager.Controllers
 
                 List<Team> allTeams = _unitOfWork.TeamRepository.GetAllTeams();
 
-                /* Изменить на стороне клиента еще отображение */
                 return Ok(allTeams);
 
             }
@@ -235,6 +234,7 @@ namespace FootballMatchManager.Controllers
                 ApUserTeam apUserTeam = new ApUserTeam(teamId, userId, (int)ApUserTeamEnum.PARTICIPANT);
 
                 _unitOfWork.ApUserTeamRepository.AddElement(apUserTeam);
+                team.MemberQnt = team.MemberQnt + 1;
                 _unitOfWork.Save();
 
                 List<ApUser> apUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamId);
@@ -268,7 +268,9 @@ namespace FootballMatchManager.Controllers
 
                 int userId = int.Parse(HttpContext.User.Identity.Name);
 
-                /* Проверка на то, является ли пользователь организатором команды */
+                Team team = _unitOfWork.TeamRepository.GetItem(teamId);
+
+                if (team == null) { return BadRequest(); }
 
                 ApUserTeam userCreat = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId, userId);
 
@@ -285,6 +287,11 @@ namespace FootballMatchManager.Controllers
 
                 /* Удаляем пользователя из команды */
                 _unitOfWork.ApUserTeamRepository.DeleteElement(userPart);
+                /* Уменьшаю количество участников в комнде */
+                if(team.MemberQnt > 0)
+                {
+                    team.MemberQnt = team.MemberQnt - 1;
+                }
                 _unitOfWork.Save();
 
                 /* Получаем обновленный список пользователей команды */

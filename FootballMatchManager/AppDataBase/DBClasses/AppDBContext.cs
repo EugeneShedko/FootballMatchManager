@@ -56,7 +56,7 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<Notification>().HasKey(n => n.PkId);            
             modelBuilder.Entity<Team>().HasKey(t => t.PkId);
             /* Команда по умолчанию необходима для организации командных матчей*/
-            modelBuilder.Entity<Team>().HasData(new Team() { PkId = 1, Name = "defaultteam", CrtDate = DateTime.Now, Image = "default/question.png" });
+            modelBuilder.Entity<Team>().HasData(new Team() { PkId = 1, Name = "", CrtDate = DateTime.Now, Image = "default/question.png" });
             modelBuilder.Entity<ApUserTeam>().HasKey(aput => new { aput.PkFkTeamId, aput.PkFkUserId, aput.PkUserType });
             modelBuilder.Entity<TeamGame>().HasKey(tg => tg.PkId);
             modelBuilder.Entity<ApUserTeamGame>().HasKey(aputg => new {aputg.PkFkUserId, aputg.PkFkTeamGameId, aputg.PkFkUserType});
@@ -74,7 +74,7 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<TeamGame>().HasOne(tg => tg.FirstTeam).WithMany(t => t.FirstTeamsList).HasForeignKey(tg => tg.FkFirstTeamId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<TeamGame>().HasOne(tg => tg.SecondTeam).WithMany(t => t.SecondTeamList).HasForeignKey(tg => tg.FkSecondTeamId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<ApUserTeamGame>().HasOne(aput => aput.ApUser).WithMany(apu => apu.ApUserTeamGames).HasForeignKey(aput => aput.PkFkUserId).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<ApUserTeamGame>().HasOne(aput => aput.TeamGame).WithMany(tg => tg.ApUserTeamGames).HasForeignKey(aput => aput.PkFkUserId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<ApUserTeamGame>().HasOne(aput => aput.TeamGame).WithMany(tg => tg.ApUserTeamGames).HasForeignKey(aput => aput.PkFkTeamGameId).OnDelete(DeleteBehavior.Cascade);
         
         }
     }

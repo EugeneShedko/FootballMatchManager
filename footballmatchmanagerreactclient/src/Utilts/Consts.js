@@ -35,4 +35,5 @@ export const TO_NOTIFICATION = "/accaunt/notifications";
 export const TO_USER_GAMES = "/accaunt/usergames";
 export const TO_USER_GAMES_CREATOR = "/accaunt/usergames/creatgames";
 export const TO_USER_GAMES_PARTICIPANT = "/accaunt/usergames/partgames";
+export const TO_USER_TEAM_GAMES = "/accaunt/usergames/teamgames";
 export const TO_USER_TEAMS = "/accaunt/userteams";

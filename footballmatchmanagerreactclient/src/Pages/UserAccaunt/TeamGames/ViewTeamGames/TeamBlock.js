@@ -10,9 +10,9 @@ export default function TeamBlock(props) {
 
     const navigate = useNavigate();
 
-    const teamLogoStyle = props.info.pkId === 1 ? "default-team-logo" : "team-logo";
+    const teamLogoStyle = props.info.secondTeam.pkId === 1 ? "default-team-logo" : "team-logo";
     // -------------------------------------------------------------------------------- //
-    
+
     function setGameInfoCard() {
         navigate(TO_TEAM_GAME_CARD + '/' + props.info.pkId);
     }
@@ -24,6 +24,9 @@ export default function TeamBlock(props) {
             <div className="team-back-block" />
             <div className="row team-block-content">
                 <div className="col m-0 p-0">
+                    <div className="row info-container team-game-name">
+                        {props.info.name}
+                    </div>
                     <div className="row m-0 p-0">
                         <div className="col-4 team-logo-cont">
                             <img className="team-logo"

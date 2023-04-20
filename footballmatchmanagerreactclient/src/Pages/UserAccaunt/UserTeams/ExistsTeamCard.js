@@ -115,6 +115,12 @@ export default function ExistsTeamCard(props)
                                     {(new Date(team.crtDate)).toLocaleString().substring(0, (new Date(team.crtDate)).toLocaleString().length - 3)}
                                 </div>
                                 <div className="row team-info-header">
+                                    Количество участников
+                                </div>
+                                <div className="row team-info-text">
+                                    {team.memberQnt}
+                                </div>
+                                <div className="row team-info-header">
                                     Описание команды
                                 </div>
                                 <div className="row team-info-text team-desc">
@@ -128,7 +134,7 @@ export default function ExistsTeamCard(props)
                             <div className="team-info-user-absolute-container">
                                 {
                                     teamUsers.map((player) => (
-                                        <div className="row m-0">
+                                        <div className="row m-0 p-0">
                                             <PlayerBlock info={player} />
                                         </div>
                                     ))

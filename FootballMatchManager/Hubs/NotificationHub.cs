@@ -322,6 +322,7 @@ namespace FootballMatchManager.Hubs
             try
             {
                 int userIdSender;
+
                 if (Context.User == null) { return; }
 
                 userIdSender = int.Parse(Context.User.Identity.Name);
@@ -334,15 +335,24 @@ namespace FootballMatchManager.Hubs
                 /* Получаем отправителя уведомления */
                 ApUser apUserSender = _unitOfWork.ApUserRepository.GetItem(userIdSender);
 
-                if (apUserSender == null) {return; }
+                if (apUserSender == null) { return; }
 
                 /* Проверяем является ли пользователь организатором команды */
                 ApUserTeam senderTeamCreat = _unitOfWork.ApUserTeamRepository.GetTeamCreatorByUserId(userIdSender);
 
-                if (senderTeamCreat == null) 
+                if (senderTeamCreat == null)
                 {
                     /* !!!!! Потом добавить данную константу в таблицу Constant */
                     await Clients.User(Convert.ToString(userIdSender))?.SendAsync("displayNotifi", "Вы не может отправить запрос на присоединение к командной игре, так как не являетесь организатором команды");
+                    return;
+                }
+
+                /* Получаю минимальное количество участников в матче */
+                int minMembers = int.Parse(userCreatRec.TeamGame.Format.Substring(0, 1));
+
+                if(senderTeamCreat.Team.MemberQnt < minMembers)
+                {
+                    await Clients.User(Convert.ToString(userIdSender))?.SendAsync("displayNotifi", "Вы не может отправить запрос на присоединение к командной игре, так как в вашей команде не достаточно участников");
                     return;
                 }
 

@@ -49,6 +49,17 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
                                              .ToList();
         }
 
+        public IEnumerable<ApUserTeamGame> GetItems2()
+        {
+            return _dbcontext.ApUserTeamGames.Include(up => up.ApUser)
+                                             .Include(up => up.TeamGame)
+                                                .ThenInclude(t => t.FirstTeam)
+                                             .Include(up => up.TeamGame)
+                                                .ThenInclude(t => t.SecondTeam)
+                                             .ToList();
+
+        }
+
         public void UpdateElement(ApUserTeamGame item)
         {
             _dbcontext.Entry(item).State = EntityState.Modified;
@@ -61,6 +72,27 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             return GetItems().FirstOrDefault(aputg => aputg.PkFkTeamGameId == teamGameId
                                                    && aputg.PkFkUserType == (int)ApUserGameTypeEnum.CREATOR);
+        }
+
+        // ------------------------------------------------------------ //
+
+        /* Возвращает запись участника командного матча по его айди и айди матча */
+
+        public ApUserTeamGame GetTeamGameParticiapnt(int teamGameId, int userId)
+        {
+            return GetItems().FirstOrDefault(aputg => aputg.PkFkTeamGameId == teamGameId
+                                                   && aputg.PkFkUserId == userId
+                                                   && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT);
+        }
+
+        // ------------------------------------------------------------ //
+
+        /* Получаем все матчи, в который пользователь является участником */
+        public List<TeamGame> GetPartUserTeamGames(int userId)
+        {
+            return GetItems2().Where(aputg => aputg.PkFkUserId == userId
+                                          && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT)
+                             .Select(aputg => aputg.TeamGame).ToList();
         }
 
         // ------------------------------------------------------------ //

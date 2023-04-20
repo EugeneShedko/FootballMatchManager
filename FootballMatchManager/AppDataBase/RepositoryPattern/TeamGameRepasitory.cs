@@ -52,7 +52,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         /* Возвращает список всех командных матчей */
         public List<TeamGame> GetAllTeamGames()
         {
-            return GetItems().ToList();
+            return GetItems().OrderByDescending(tg => tg.DateTime).ToList();
         }
 
         // ---------------------------------------------------------- //

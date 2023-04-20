@@ -40,8 +40,7 @@ export default function TeamBlock(props) {
                         {(new Date(props.info.crtDate)).toLocaleString().substring(0, (new Date(props.info.crtDate)).toLocaleString().length - 3)}
                     </div>
                     <div className="row m-0">
-                        {/* Добавить поле в бд */}
-                        Участники 0
+                        Участников: {props.info.memberQnt}
                     </div>                    
                 </div>
             </div>

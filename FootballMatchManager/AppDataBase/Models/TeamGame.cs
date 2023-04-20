@@ -9,6 +9,8 @@ namespace FootballMatchManager.AppDataBase.Models
     {
         [Column("pkId")]
         public int PkId { get; set; }
+        [Column("Name")]
+        public string Name { get; set; }
         [Column("adress")]
         public string Adress { get; set; }
         [Column("datetime")]
@@ -28,8 +30,9 @@ namespace FootballMatchManager.AppDataBase.Models
 
         public TeamGame() { }
 
-        public TeamGame(string adress, DateTime date, string format, int firstTeamId)
+        public TeamGame(string name, string adress, DateTime date, string format, int firstTeamId)
         {
+            this.Name = name;
             this.Adress = adress;
             this.DateTime= date;
             this.Format = format;
