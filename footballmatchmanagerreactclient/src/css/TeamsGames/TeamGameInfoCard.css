@@ -62,7 +62,8 @@
     margin: 0;
     height: 60%;
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden; */
+    overflow: scroll;
 }
 
 .tg-info-user-absolute-container

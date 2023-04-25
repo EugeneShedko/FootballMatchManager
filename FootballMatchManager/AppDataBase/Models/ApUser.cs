@@ -43,6 +43,9 @@ namespace FootballMatchManager.DataBase.Models
         public List<ApUserTeam> Teams { get; set; }
         public List<Notification> NotificationsRecipients { get; set; }
         public List<Notification> NotificationsSenders { get; set; }
+        public List<GameEvent> GameEvents { get; set; } 
+        public List<GameEvent> GameEventsEntity1 { get; set; }
+        public List<GameEvent> GameEventsEntity2 { get; set; }
         public ApUser() { }
         public ApUser(string email, string password, string role, string firstname, string lastname, string sex, string position,
                       DateTime birth, string status)

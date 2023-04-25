@@ -27,6 +27,7 @@ import UserMatchesPr from "../Pages/UserAccaunt/Games/GamesParticipant";
 import TeamGames from "../Pages/UserAccaunt/TeamGames/ViewTeamGames/TeamGames";
 import TeamGameCard from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInfoCard/TeamGamInfoCard";
 import CreateTeamGame from "../Pages/UserAccaunt/TeamGames/CreateTeamGame";
+import FinishTeamGame from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInfoCard/FinishTeamGame";
 
 const AppRouter = observer(() => {
 
@@ -50,8 +51,11 @@ const AppRouter = observer(() => {
                         <Route path="creategame" element={<CreateMatch show={true} />} />
                     </Route>
                     <Route path="teamgamecard/:id" element={<TeamGameCard />}>
+                        {/* Вот сюда можно попробовать добавить данный маршрут */}
                         {/*<Route path="editgame" element={<EditGame show={true} />} /> */}
                     </Route>
+                    <Route path="teamgamecard/:id/history" element = {<FinishTeamGame />} />
+
                     <Route path="teamgamecreate" element={<CreateTeamGame show={true}/>} />
 
                     <Route path="gamecard/:id" element={<GameInfoCard />}>
@@ -67,7 +71,9 @@ const AppRouter = observer(() => {
                         <Route path="createteam" element={<CreateTeam show={true} />} />
                     </Route>
                     <Route path="teamcard/:id" element={<TeamInfoCard />} />
+
                     <Route path="notifications" element={<Notifications />} />
+                    
                     <Route path="usergames/" element={<UserMatchesNavigator />}>
                         <Route index element={<UserMatchesCr />} />
                         <Route path="creategame" element={<CreateMatch show={true} />} />

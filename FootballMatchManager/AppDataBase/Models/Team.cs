@@ -24,7 +24,7 @@ namespace FootballMatchManager.DataBase.Models
         public List<TeamGame> FirstTeamsList { get; set; }
 
         public List<TeamGame> SecondTeamList { get; set; }
-
+        public List<GameEvent> GameEvents { get; set; } 
         public Team() { }
 
         public Team(string name, string desc)

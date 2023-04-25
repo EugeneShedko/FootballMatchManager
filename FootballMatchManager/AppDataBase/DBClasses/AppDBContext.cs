@@ -13,12 +13,14 @@ namespace FootballMatchManager.DataBase.DBClasses
         public DbSet<Constant> Constants { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Message> Messages { get; set; }
-
         public DbSet<ApUserTeam> ApUsersTeams { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<TeamGame> TeamsGames { get; set; }
         public DbSet<ApUserTeamGame> ApUserTeamGames { get; set; }
+        public DbSet<GameEventType> GameEventTypes { get; set; }
+        public DbSet<GameEvent> GameEvents { get; set; }    
+
         public AppDBContext(DbContextOptions<AppDBContext> options):base(options) 
         {
             Database.EnsureCreated();
@@ -60,7 +62,19 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<ApUserTeam>().HasKey(aput => new { aput.PkFkTeamId, aput.PkFkUserId, aput.PkUserType });
             modelBuilder.Entity<TeamGame>().HasKey(tg => tg.PkId);
             modelBuilder.Entity<ApUserTeamGame>().HasKey(aputg => new {aputg.PkFkUserId, aputg.PkFkTeamGameId, aputg.PkFkUserType});
+            modelBuilder.Entity<GameEventType>().HasKey(get => get.PkId);
+            /* Вообще тип должен быть уникальным */
+            modelBuilder.Entity<GameEventType>().HasData(
+                new GameEventType() { PkId = 1, EventTypeId = "goal", Text = "Гол!!!!!!", Image="" },
+                new GameEventType() { PkId = 2, EventTypeId = "yellowcard", Text = "Желтая карточка!", Image = "" },
+                new GameEventType() { PkId = 3, EventTypeId = "redcard", Text = "Красная карточка!", Image = "" },
+                new GameEventType() { PkId = 4, EventTypeId = "change", Text = "Замена!", Image = "" },
+                new GameEventType() { PkId = 5, EventTypeId = "penalty", Text = "Пенальти!", Image = "" },
+                new GameEventType() { PkId = 6, EventTypeId = "freekick", Text = "Штрафной удар!", Image = "" },
+                new GameEventType() { PkId = 7, EventTypeId = "corner", Text = "Углавой удар!", Image = "" }
+            );
 
+            modelBuilder.Entity<GameEvent>().HasKey(ge => ge.PkId);
             //Плохо сделано, переделать связь многие ко многим
             modelBuilder.Entity<Comment>().HasOne(c => c.Sender).WithMany(apu => apu.CommentSenders).HasForeignKey(c => c.FkSenderId).OnDelete(DeleteBehavior.NoAction); 
             modelBuilder.Entity<Comment>().HasOne(c => c.Recipient).WithMany(apu => apu.CommentsRecipients).HasForeignKey(c => c.FkRecipientId).OnDelete(DeleteBehavior.NoAction); 
@@ -75,7 +89,11 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<TeamGame>().HasOne(tg => tg.SecondTeam).WithMany(t => t.SecondTeamList).HasForeignKey(tg => tg.FkSecondTeamId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<ApUserTeamGame>().HasOne(aput => aput.ApUser).WithMany(apu => apu.ApUserTeamGames).HasForeignKey(aput => aput.PkFkUserId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<ApUserTeamGame>().HasOne(aput => aput.TeamGame).WithMany(tg => tg.ApUserTeamGames).HasForeignKey(aput => aput.PkFkTeamGameId).OnDelete(DeleteBehavior.Cascade);
-        
+            modelBuilder.Entity<GameEvent>().HasOne(ge => ge.GameType).WithMany(get => get.GameEvents).HasForeignKey(ge => ge.FkType).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<GameEvent>().HasOne(ge => ge.Player).WithMany(apu => apu.GameEvents).HasForeignKey(ge => ge.FkPlayerId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<GameEvent>().HasOne(ge => ge.EventTeam).WithMany(t => t.GameEvents).HasForeignKey(ge => ge.FkTeamId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<GameEvent>().HasOne(ge => ge.Entity1).WithMany(apu => apu.GameEventsEntity1).HasForeignKey(ge => ge.FkEntityId1).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<GameEvent>().HasOne(ge => ge.Entity2).WithMany(apu => apu.GameEventsEntity2).HasForeignKey(ge => ge.FkEntityId2).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

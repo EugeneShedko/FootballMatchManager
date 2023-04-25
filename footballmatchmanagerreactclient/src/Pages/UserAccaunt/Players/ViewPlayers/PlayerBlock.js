@@ -9,11 +9,7 @@ export default function PlayerBlock(props) {
 
     function setPlayerInfoPage()
     {
-        navigate(TO_PLAYER_CARD + '/' + props.info.pkId);
-        /*
-        props.setContState(<Profile apUserId={props.info.pkId}
-                                    setContState={props.setContState}/>);
-        */                            
+        navigate(TO_PLAYER_CARD + '/' + props.info.pkId);                    
     }
 
     // ----------------------------------------------------------------------------- //

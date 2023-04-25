@@ -34,11 +34,4 @@ const MyProvider = (props) => {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <MyProvider />
-    /*
-    <Context.Provider value={{
-        user: new UserStore()
-    }}>
-          <App/>
-    </Context.Provider>
-    */
 );

@@ -1,0 +1,78 @@
+.tgh-info-main-container
+{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tgh-info-container
+{
+    height: 100%;
+    margin: 0;
+    padding: 2% 2% 2% 2%;
+    background-color: rgba(0,0,0,0.6);
+    border:4px white solid;
+    border-radius: 20px;
+}
+
+.tgh-title
+{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    color:yellowgreen;
+    font-size: 30px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.tgh-info-cont
+{
+    margin: 0;
+    padding: 0;
+    height: 60%;
+    width: 100%;
+}
+
+.tgh-button-cont
+{
+    margin: 0;
+    padding: 0;
+    height: 40%;
+    width: 100%;
+}
+
+.tgh-row
+{
+    margin: 0;
+    padding: 0;
+    margin-top: 3%;
+    display: flex;
+    justify-content: center;
+}
+
+.input-style
+{
+    width: 85%;
+    border: 3px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    font-style: italic;  
+}
+
+.input-button
+{
+    font-style: normal;
+}
+
+.input-button:hover
+{
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}

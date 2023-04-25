@@ -1,4 +1,5 @@
-﻿using FootballMatchManager.AppDataBase.RepositoryPattern;
+﻿using FootballMatchManager.AppDataBase.Models;
+using FootballMatchManager.AppDataBase.RepositoryPattern;
 using FootballMatchManager.DataBase.DBClasses;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +19,32 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
         private TeamRepository _teamRepository;
         private TeamGameRepasitory _teamGameRepasitory;
         private ApUserTeamGameRepasitory _apUserTeamGameRepasitory;
+        private GameEventTypeRepository _gameEventTypeRepository;
+        private GameEventRepository _gameEventRepository;
 
         public UnitOfWork(AppDBContext dBContext)
         {
             this._dbcontext = dBContext;
+        }
+
+        public GameEventRepository GameEventRepository
+        {
+            get
+            {
+                if (_gameEventRepository == null)
+                    _gameEventRepository = new GameEventRepository(_dbcontext);
+                return _gameEventRepository;
+            }
+        }
+
+        public GameEventTypeRepository GameEventTypeRepository
+        {
+            get
+            {
+                if (_gameEventTypeRepository == null)
+                    _gameEventTypeRepository = new GameEventTypeRepository(_dbcontext);
+                return _gameEventTypeRepository;
+            }
         }
 
         public TeamGameRepasitory TeamGameRepasitory

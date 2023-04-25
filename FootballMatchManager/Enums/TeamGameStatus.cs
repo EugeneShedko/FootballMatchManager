@@ -3,6 +3,7 @@
     public enum TeamGameStatus
     {
         SEARCH,
-        WAIT
+        WAIT,
+        FINISHED
     }
 }

@@ -58,8 +58,6 @@ export default function TeamGameCard() {
 
     function getTeamUsers(teamId, setUsers) {
 
-        console.log('GETUSER');
-
         axios.get('http://localhost:5004/api/teamgame/team-users/' + teamId, { withCredentials: true })
             .then((response) => {
                 setUsers(response.data);
@@ -149,14 +147,15 @@ export default function TeamGameCard() {
                             </div>
                             <div className="row tg-button-cont">
                                 <div className="col tg-button-cont-2">
-                                    {userContext.userId === creatorId ?
-                                        <CreatorButtons />
-                                        :
-                                        <ParticipanButtons game={game}
-                                            sendReqForTeamGamePart={sendReqForTeamGamePart}
-                                            secTeamCreatorId={secTeamCreatorId}
-                                            leavFromTeamGame={leavFromTeamGame}
-                                        />
+                                    {
+                                        userContext.userId === creatorId ?
+                                            <CreatorButtons game={game} />
+                                            :
+                                            <ParticipanButtons game={game}
+                                                sendReqForTeamGamePart={sendReqForTeamGamePart}
+                                                secTeamCreatorId={secTeamCreatorId}
+                                                leavFromTeamGame={leavFromTeamGame}
+                                            />
                                     }
                                 </div>
                             </div>
@@ -198,7 +197,7 @@ export default function TeamGameCard() {
                                 </div>
                             </div>
                             <div className="row team-user-container">
-                                <div className="team-info-user-absolute-container">
+                                <div className="tg-info-user-absolute-container">
                                     {
                                         secondTeamUsers?.map((player) => (
                                             <div className="row m-0 p-0">

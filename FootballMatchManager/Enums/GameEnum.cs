@@ -4,6 +4,5 @@
     {
         CLOSED,
         PUBLIC,
-        TEAMGAME
     }
 }

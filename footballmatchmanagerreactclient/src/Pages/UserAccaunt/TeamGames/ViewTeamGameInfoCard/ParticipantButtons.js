@@ -33,7 +33,8 @@ export default function ParticipanButtons(props) {
 
     return (
         <div className="col tg-button-cont-2">
-            {/* Скорее всего по другому построить кнопки */}
+            {/* Здесь тоже проверяется на статус, это хорошо */}
+            {/* Обазятельно изменить на статус */}            
             {
                props.game.status === 0 ?
                <JoinButton /> : 

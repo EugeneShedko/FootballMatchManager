@@ -99,6 +99,14 @@ namespace FootballMatchManager.Controllers
                     return BadRequest();
                 }
 
+                /* Проверка на завершенность матча */
+                if(teamGame.Status < (int)TeamGameStatus.FINISHED && teamGame.DateTime < DateTime.Now)
+                {
+                    teamGame.Status = (int)TeamGameStatus.FINISHED;
+                    _unitOfWork.Save();
+                }
+
+                /* Определяю, является ли запрашиваем пользователь участником матча */
                 ApUserTeamGame userPart = _unitOfWork.ApUserTeamGameRepasitory.GetTeamGameParticiapnt(teamGame.PkId, userId);
 
                 if (userPart != null)
@@ -160,6 +168,34 @@ namespace FootballMatchManager.Controllers
                 else
                 {
                     return Ok(teamUsers);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
+
+        [Route("game-event-type")]
+        [HttpGet]
+        public IActionResult GetGameEventTypes()
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                /* Получаем список всех типов событий матча */
+                List<GameEventType> gameEventTypes = _unitOfWork.GameEventTypeRepository.GetItems().ToList();
+ 
+                if (gameEventTypes == null)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return Ok(gameEventTypes);
                 }
             }
             catch (Exception ex)
