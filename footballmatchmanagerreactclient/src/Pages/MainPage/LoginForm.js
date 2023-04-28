@@ -115,19 +115,6 @@ export default function Loginform(props) {
 
                 if(response.data.user.role === "user")
                 {
-                    /* Что то нужно придумать с соединением */ 
-                    /* Как вариант пересоздавать этот объект! */
-                    /* Пока что буду заниматься другим*/
-
-                    /* Хреново как-то выглядит */
-                    /*
-                    let conn = {};
-                    connectGame().then(data => {
-                        console.log('!!!!!');
-                        console.log(data);
-                        conn = data;
-                    });
-                    */
 
                     const conn = connectGame();
 
@@ -138,12 +125,6 @@ export default function Loginform(props) {
                         userId: response.data.user.pkId,
                         userName: response.data.user.firstName + ' ' + response.data.user.lastName});
 
-                    /*    
-                    user.setAdmin(false);
-                    user.setAuth(true);
-                    user.setUserId(response.data.user.pkId);
-                    user.setUserName(response.data.user.firstName + ' ' + response.data.user.lastName);
-                    */
                     navigate(TO_ACCAUNT);
                 }
                 else
@@ -181,10 +162,6 @@ export default function Loginform(props) {
         nothubconn.on("displayNotifi", displayNotifMess);
 
         nothubconn.start();
-
-        console.log('NOTIFI');
-        console.log(nothubconn);
-
         return nothubconn;
     }
 

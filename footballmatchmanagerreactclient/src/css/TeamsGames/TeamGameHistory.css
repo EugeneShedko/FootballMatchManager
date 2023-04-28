@@ -76,3 +76,9 @@
     color: black;
     font-weight: bold;
 }
+
+.error-msg
+{
+    color: red;
+    font-size: 15px;
+}
