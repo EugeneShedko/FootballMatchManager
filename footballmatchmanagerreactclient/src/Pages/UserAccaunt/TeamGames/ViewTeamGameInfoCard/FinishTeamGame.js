@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { values } from "mobx";
+import GameEventsContainer from "./GameEventsContainer";
 
 
 export default function FinishTeamGame() {
@@ -11,12 +12,30 @@ export default function FinishTeamGame() {
     const [gameId, setGameId] = useState(parseInt(useParams().id));
     const [game, setGame] = useState({});
     const [isLoading, setIsLoading] = useState(false);
+    /* Типы событий */
     const [eventTypes, setEventTypes] = useState([]);
     const [teams, setTeams] = useState([]);
     /* Попробовать потом все запихать в один объект */
     const [currentEventType, setCurrentEventType] = useState("");
     const [currentTeamId, setCurrentTeamId] = useState();
+    /* Массив события для отображения */
+    const [gameEventsView, setGameEventsView] = useState([]);
+    /* Массив события для сервера */
     const [gameEvents, setGameEvents] = useState([]);
+    /*объект для отображения*/
+    const [gameEventView, setGameEventView] = useState({
+        type: null,
+        eventTypeId: null,
+        time: null,
+        player: null,
+        playerImage: null,
+        team: null,
+        entityId1: null,
+        entityId1Image: null,
+        entityId2: null,
+        entityId2Image: null,
+    });
+    /* Объект для сервера */
     const [gameEvent, setGameEvent] = useState({
         type: null,
         time: null,
@@ -140,13 +159,13 @@ export default function FinishTeamGame() {
 
         const team = teams.find((item) => item.teamId === parseInt(currentTeamId));
 
-        //console.log('SWITCH');
-        //console.log(gameEvent);
-
         switch (currentEventType) {
             case "goal": return <PlayerForm teamUsers={team.users} />;
             case "yellowcard": return <PlayerForm teamUsers={team.users} />;
             case "redcard": return <PlayerForm teamUsers={team.users} />;
+            case "penalty": return <PlayerForm teamUsers={team.users} />;
+            case "freekick": return <PlayerForm teamUsers={team.users} />;
+            case "corner": return <PlayerForm teamUsers={team.users} />;
             case "change": return <ChangeForm teamUsers={team.users} />;
             default: return null;
         }
@@ -244,9 +263,6 @@ export default function FinishTeamGame() {
         else
             isDisabledTemp.type = false;
 
-        console.log('START');
-        console.log(isDisabled);
-
         if (isValid.type && isDisabledTemp.type) {
             isDisabledTemp.entityId1 = true;
             isDisabledTemp.entityId2 = true;
@@ -258,10 +274,15 @@ export default function FinishTeamGame() {
             isDisabledTemp.player = false;
         }
 
+
         switch (currentEventType) {
+
             case "goal": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
             case "yellowcard": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
             case "redcard": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
+            case "penalty": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
+            case "freekick": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
+            case "corner": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
             case "change": isDisabledTemp.button = (isValid.entityId1 && isDisabledTemp.entityId1) && (isValid.entityId2 && isDisabledTemp.entityId2); break;
             default: isDisabledTemp.button = false;
         }
@@ -304,6 +325,12 @@ export default function FinishTeamGame() {
         });
         setIsValid({ ...isValid, team: true });
         setFieldError({ ...fieldError, team: '' });
+
+        /* Формирую объект View */
+        if (game.firstTeam.pkId === parseInt(event.target.value))
+            setGameEventView({ ...gameEventView, team: game.firstTeam.name });
+        else
+            setGameEventView({ ...gameEventView, team: game.secondTeam.name });
     }
 
     function timeFieldHandler(event) {
@@ -316,6 +343,9 @@ export default function FinishTeamGame() {
         setGameEvent({ ...gameEvent, time: event.target.value });
         setIsValid({ ...isValid, time: true })
         setFieldError({ ...fieldError, time: '' });
+
+        /* Формирую объект view */
+        setGameEventView({ ...gameEventView, time: event.target.value });
     }
 
     function typeFieldHandler(event) {
@@ -328,6 +358,13 @@ export default function FinishTeamGame() {
         setGameEvent({ ...gameEvent, type: event.target.value });
         setIsValid({ ...isValid, type: true });
         setFieldError({ ...fieldError, type: '' });
+
+        /* Формирую объект view */
+        const typeName = eventTypes.find((type) => type.eventTypeId === event.target.value);
+        if (typeName !== undefined) {
+            setGameEventView({ ...gameEventView, type: typeName.text,
+                                                 eventTypeId: typeName.eventTypeId});
+        }
     }
 
     function playerFieldHandler(event) {
@@ -340,6 +377,19 @@ export default function FinishTeamGame() {
         setGameEvent({ ...gameEvent, playerId: event.target.value });
         setIsValid({ ...isValid, player: true });
         setFieldError({ ...fieldError, player: '' });
+
+        /* Формирую объект View */
+        const team = teams.find((team) => team.teamId === parseInt(gameEvent.teamId));
+        if (team === undefined) { return; }
+
+        const player = team.users.find((user) => user.pkId === parseInt(event.target.value));
+        if (player === undefined) { return; }
+
+        setGameEventView({
+            ...gameEventView, player: player.firstName + ' ' + player.lastName,
+            playerImage: player.image
+        });
+
     }
 
     function changeFieldHandler(event) {
@@ -350,7 +400,19 @@ export default function FinishTeamGame() {
             return;
         }
         setGameEvent({ ...gameEvent, [event.target.name]: event.target.value });
-        setIsValid({ ...isValid, [event.target.name]: '' })
+        setIsValid({ ...isValid, [event.target.name]:true});
+        setFieldError({ ...fieldError,[event.target.name]: '' });
+
+
+        /* Формирую объект View */
+        const team = teams.find((team) => team.teamId === parseInt(gameEvent.teamId));
+        if (team === undefined) { return; }
+
+        const player = team.users.find((user) => user.pkId === parseInt(event.target.value));
+        if (player === undefined) { return; }
+
+        setGameEventView({...gameEventView, [event.target.name]: player.firstName + ' ' + player.lastName,
+                                            [event.target.name + 'Image']: player.image});
     }
 
     // ------- Устанавливает, было ли посещено поле ввода ------- //
@@ -368,6 +430,25 @@ export default function FinishTeamGame() {
 
     // --------------------------------------------------------------- //
 
+    function addTeamGameEvent() {
+        //setGameEvents((prev) => [...prev, gameEvent]);
+        setGameEvents([...gameEvents, gameEvent]);
+        setGameEventsView([...gameEventsView, gameEventView]);
+        {/* Сброс пока что ничерта не работает */ }
+        setGameEvent({
+            type: '-1',
+            time: '',
+            playerId: '-1',
+            teamId: '-1',
+            entityId1: '-1',
+            entityId2: '-1'
+        });
+
+
+    }
+
+    // --------------------------------------------------------------- //
+
     if (isLoading) {
         return (
             <div className="row tgh-info-main-container">
@@ -378,9 +459,10 @@ export default function FinishTeamGame() {
                     <div className="row tgh-info-cont">
                         <div className="col m-0 p-0">
                             <div className="row tgh-row">
-                            {(isVisited.team && fieldError.team) && <div className="error-msg">{fieldError.team}</div>}
+                                {(isVisited.team && fieldError.team) && <div className="error-msg">{fieldError.team}</div>}
                                 <select name="team"
                                     className="input-style"
+                                    value={gameEvent.teamId}
                                     disabled={!isDisabled.team}
                                     onChange={e => teamFieldHandler(e)}
                                     onBlur={e => blurHandler(e)}
@@ -397,6 +479,7 @@ export default function FinishTeamGame() {
                                     className="input-style"
                                     type="text"
                                     placeholder="Введите минуту события"
+                                    value={gameEvent.time}
                                     disabled={!isDisabled.time}
                                     onChange={e => timeFieldHandler(e)}
                                     onBlur={e => blurHandler(e)}
@@ -407,6 +490,7 @@ export default function FinishTeamGame() {
                                 <select name="type"
                                     className="input-style"
                                     disabled={!isDisabled.type}
+                                    value={gameEvent.type}
                                     /* Записывается тип, что не хорошо */
                                     /* Я бы даже сказал очень хреново */
                                     onChange={e => typeFieldHandler(e)}
@@ -431,6 +515,7 @@ export default function FinishTeamGame() {
                                     type="button"
                                     value="Добавить"
                                     disabled={!isDisabled.button}
+                                    onClick={addTeamGameEvent}
                                 />
 
                             </div>
@@ -445,8 +530,8 @@ export default function FinishTeamGame() {
                     </div>
 
                 </div>
-                <div className="col-4 tgh-info-container">
-
+                <div className="col-4 tgh-event-cont">
+                    <GameEventsContainer events={gameEventsView} />
                 </div>
             </div>
         );

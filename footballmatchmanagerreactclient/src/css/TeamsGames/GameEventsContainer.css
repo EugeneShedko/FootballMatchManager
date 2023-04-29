@@ -1,0 +1,16 @@
+.ge-info-cont
+{
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.ge-info-absolute-cont
+{
+    width: 100%;
+    position: absolute;
+}

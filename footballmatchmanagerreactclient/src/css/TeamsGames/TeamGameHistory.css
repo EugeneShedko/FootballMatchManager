@@ -18,6 +18,16 @@
     border-radius: 20px;
 }
 
+.tgh-event-cont
+{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0,0,0,0.6);
+    border:4px white solid;
+    border-radius: 20px;
+}
+
 .tgh-title
 {
     margin: 0;
