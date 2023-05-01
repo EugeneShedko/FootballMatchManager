@@ -1,73 +1,97 @@
-.tg-info-main-container
-{
+.tg-info-main-container {
     height: 100%;
     margin: 0;
     padding: 0;
 }
 
-.tg-info-container
-{
+.tg-info-container {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: rgba(0,0,0,0.6);
-    border:4px white solid;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 4px white solid;
     border-radius: 20px;
 }
 
-.team-column
-{
+.team-column {
     margin: 0;
     padding: 0;
     height: 100%;
 }
 
-.team-info-col
-{
+.team-info-col {
     margin: 0;
     padding: 0;
     border-right: 5px white solid;
 }
 
-.team-info-cont
-{
+.team-info-cont {
     margin: 0;
     padding: 0;
     height: 40%;
+}
+
+.curr-team-info-cont 
+{
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
 
-.team-name
+.team-game-score-cont
 {
-    padding: 0% 0% 5% 0%;
     margin: 0;
-    color:yellowgreen;
-    font-size: 20px;
-    font-weight: bold;       
+    padding: 0;
+    width: 100%;
+    height: 100%;
 }
 
-.team-image
+.current-score-cont
 {
+    margin: 0;
+    padding: 0;
+    color: yellowgreen;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+}
+
+.team-name {
+    padding: 0% 0% 5% 0%;
+    margin: 0;
+    color: yellowgreen;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.team-image {
     width: 150px;
     height: 150px;
     filter: invert(100%);
 }
 
-.team-user-container
-{
+.team-user-container {
     padding: 0;
     margin: 0;
     height: 60%;
-    position: relative;
-    /* overflow: hidden; */
-    overflow: scroll;
 }
 
-.tg-info-user-absolute-container
+.curr-team-user-cont
 {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.tg-info-user-absolute-container {
     height: 100%;
     width: 100%;
     padding: 0;
@@ -75,8 +99,7 @@
     position: absolute;
 }
 
-.tg-info-message-container
-{
+.tg-info-message-container {
     height: 90%;
     padding: 0;
     margin: 0;
@@ -85,19 +108,17 @@
     position: relative;
 }
 
-.tg-info-message-absolute-container
-{
+.tg-info-message-absolute-container {
     width: 100%;
     position: absolute;
 }
 
-.tg-info-text-container
-{
+.tg-info-text-container {
     padding: 1% 1% 1% 1%;
+    border-right: 4px solid white;
 }
 
-.tg-info-user-absolute-container
-{
+.tg-info-user-absolute-container {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -105,21 +126,18 @@
     position: absolute;
 }
 
-.team-users-cont
-{
+.team-users-cont {
     padding: 0;
     margin: 0;
 }
 
-.tg-info-cont
-{
+.tg-info-cont {
     margin: 0;
     padding: 0;
     height: 50%;
 }
 
-.tg-info-cont-2
-{
+.tg-info-cont-2 {
     margin: 0;
     padding: 0;
     display: flex;
@@ -128,31 +146,27 @@
     flex-direction: column;
 }
 
-.tg-info-header
-{
+.tg-info-header {
     margin: 0;
     padding: 0;
-    color:white;
-    font-size: 20px;   
+    color: white;
+    font-size: 20px;
 }
 
-.tg-info-text
-{
+.tg-info-text {
     margin: 0% 0% 2% 0%;
     padding: 0;
-    color:yellowgreen;
-    font-size: 18px;       
+    color: yellowgreen;
+    font-size: 18px;
 }
 
-.tg-button-cont
-{
+.tg-button-cont {
     margin: 0;
     padding: 0;
-    height: 50%; 
+    height: 50%;
 }
 
-.tg-button-cont-2
-{
+.tg-button-cont-2 {
     margin: 0;
     padding: 0;
     display: flex;
@@ -160,41 +174,36 @@
     align-items: center;
 }
 
-.team-join-button
-{
+.team-join-button {
     width: 100%;
-    margin:0;
+    margin: 0;
     padding: 0;
     border: 4px white solid;
     border-radius: 10px;
-    background-color: rgba(0,0,0,0.6);
-    color:white;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
 }
 
-.team-join-button:hover
-{
+.team-join-button:hover {
     background-color: white;
-    color:black;
+    color: black;
     font-weight: bold;
 }
 
-.message-send-container
-{
+.message-send-container {
     margin: 0;
     padding: 0;
     height: 10%;
     border-top: 4px white solid;
 }
 
-.message-send-area
-{
+.message-send-area {
     padding: 0;
     margin: 0;
-    border-right: 4px white solid;    
+    border-right: 4px white solid;
 }
 
-.message-enter-button
-{
+.message-enter-button {
     padding: 0% 0% 0% 2%;
     margin: 0;
     width: 100%;
@@ -202,8 +211,7 @@
     border: 2px solid black;
 }
 
-.message-send-button
-{
+.message-send-button {
     width: 100%;
     height: 100%;
     border-radius: 0px 0px 20px 0px;
@@ -214,27 +222,24 @@
 /* ----------------------------------------------------------- */
 /*       Стили для карточки профиля команд пользователя        */
 
-.team-switch-cont
-{
+.team-switch-cont {
     width: 100%;
     height: 10%;
     padding: 0;
     margin: 0;
 }
 
-.team-switch
-{
+.team-switch {
     width: 100%;
     border-bottom: 3px white solid;
-    background-color: rgba(0,0,0,0.6);
-    color:yellowgreen;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: yellowgreen;
     font-style: italic;
-    font-weight: bold;  
+    font-weight: bold;
     font-size: 20px;
 }
 
-.team-mess-cont
-{
+.team-mess-cont {
     width: 100%;
     height: 90%;
     padding: 0;
@@ -245,36 +250,30 @@
 /* ----------------------------------------------------------- */
 /* Здесь начинается админ, я его пока что еще не трогал */
 
-.match-admin-button
-{
+.match-admin-button {
     margin: 2% 0% 0% 0%;
     height: 7%;
 }
 
-.match-just-button
-{
+.match-just-button {
     background-color: white;
 }
 
-.match-just-button:hover
-{
+.match-just-button:hover {
     background-color: yellowgreen;
 }
 
-.match-danger-button
-{
+.match-danger-button {
     color: white;
     background-color: red;
 }
 
-.match-danger-button:hover
-{
+.match-danger-button:hover {
     cursor: pointer;
-    background-color: #8B0000;    
+    background-color: #8B0000;
 }
 
-.match-full-text
-{
+.match-full-text {
     color: red;
     font-size: 23px;
     text-align: center;

@@ -19,6 +19,10 @@ namespace FootballMatchManager.AppDataBase.Models
         public int Status { get; set; }
         [Column("format")]
         public string Format { get; set; }
+        [Column("firstteamgoals")]
+        public string? FirstTeamGoals { get;set; }
+        [Column("secondteamgoals")]
+        public string? SecondTeamGoals { get;set; }
 
         public int FkFirstTeamId { get; set; }
         public int FkSecondTeamId { get; set; }

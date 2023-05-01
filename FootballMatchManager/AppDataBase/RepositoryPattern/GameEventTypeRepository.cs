@@ -48,6 +48,15 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             _dbcontext.Entry(item).State = EntityState.Modified;
         }
 
+        // ---------------------------------------------------------- //
+
+        //Возвращет тип события матча по его наименованию
+
+        public GameEventType GetGameEventTypeByName(string typeName)
+        {
+            /* Продолжить здесь */
+            return GetItems().FirstOrDefault(ge => ge.EventTypeId == typeName);
+        }
 
     }
 }

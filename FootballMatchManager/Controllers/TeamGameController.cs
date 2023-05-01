@@ -225,6 +225,17 @@ namespace FootballMatchManager.Controllers
                     return BadRequest(new { message = "Вы не можете создать командный матч, так как не являетесь организатором ни одной команды" });
                 }
 
+                /* Определяю минимальное количество участников матча команды */
+                int minMembers = int.Parse(shortGame.GameFormat.Substring(0, 1));
+
+                /* Проверяю достаточно ли участников в команде */
+                if (teamCreator.Team.MemberQnt < minMembers)
+                {
+                    return BadRequest(new {message = "Вы не можете создать командный матч, так как в вашей команде не достаточно участников" });
+                }
+                /* Проверка на количетсво участников в команде */
+
+
                 /* Создаю командный матч */
                 TeamGame teamGame = new TeamGame(shortGame.GameName, shortGame.GameAdress, shortGame.GameDate, shortGame.GameFormat, teamCreator.PkFkTeamId);
                 _unitOfWork.TeamGameRepasitory.AddElement(teamGame);

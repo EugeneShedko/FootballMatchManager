@@ -25,11 +25,11 @@ namespace FootballMatchManager.DataBase.Models
         [Column("birth")]
         public DateTime? Birth {get;set;}
         [Column("gamesQnt")]
-        public string? GamesQnt { get; set; }
+        public int? GamesQnt { get; set; }
         [Column("goalsQnt")]
-        public string? GoalsQnt { get; set; }
+        public int? GoalsQnt { get; set; }
         [Column("assistsQnt")]
-        public string? AssistsQnt { get; set; }
+        public int? AssistsQnt { get; set; }
         [Column("status")]
         public string? Status { get; set; }
         [Column("image")]
@@ -59,9 +59,9 @@ namespace FootballMatchManager.DataBase.Models
             this.Position = position;
             this.Birth = birth;
             this.Status = status;
-            this.GamesQnt = "0";
-            this.GoalsQnt = "0";
-            this.AssistsQnt = "0";
+            this.GamesQnt = 0;
+            this.GoalsQnt = 0;
+            this.AssistsQnt = 0;
             this.Image = "default-profile-icon.jpg";
         }
     }

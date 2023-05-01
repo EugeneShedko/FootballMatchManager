@@ -9,5 +9,6 @@
         public static string PENALTY = "penalty";
         public static string FREEKICK = "freekick";
         public static string CORNER = "corner";
+        public static string ASSIST = "assist";
     }
 }

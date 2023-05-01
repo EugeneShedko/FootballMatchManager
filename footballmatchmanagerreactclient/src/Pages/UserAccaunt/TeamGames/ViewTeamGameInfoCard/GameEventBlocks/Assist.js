@@ -1,6 +1,6 @@
 import "./../../../../../css/TeamsGames/GameEventBlock.css";
 
-export default function Penalty(props) {
+export default function Assist(props) {
 
     const data = props.mode === 'view' ? {
         eventText: props.event1.gameType.text,
@@ -20,7 +20,7 @@ export default function Penalty(props) {
             eventTeam: props.event2.team
         }
 
-    // ---------------------------------------------------------------- //
+    // ------------------------------------------------------------------------ //
 
     return (
         <div className={"game-event-cont " + props.align}>

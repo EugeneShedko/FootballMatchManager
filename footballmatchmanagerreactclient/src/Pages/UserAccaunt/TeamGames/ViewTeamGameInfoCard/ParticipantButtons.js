@@ -31,17 +31,28 @@ export default function ParticipanButtons(props) {
 
     // ---------------------------------------------------------- //
 
+    function selectButtons(gameStatus)
+    {
+        switch (gameStatus) 
+        {
+            case 0: return <JoinButton />; 
+            case 1: return props.secTeamCreatorId === userContext.userId ? <LeavButton /> : null; 
+            case 2: return <></>;
+            case 3: return <></>;
+        }
+    }
+
+    // ---------------------------------------------------------- //
     return (
         <div className="col tg-button-cont-2">
-            {/* Здесь тоже проверяется на статус, это хорошо */}
-            {/* Обазятельно изменить на статус */}            
-            {
+            {selectButtons(props.game.status)}
+            {/* *
                props.game.status === 0 ?
                <JoinButton /> : 
                props.secTeamCreatorId === userContext.userId ?               
                <LeavButton />               
                :
-               null} 
+               null  */} 
         </div>
     );
 }

@@ -1,14 +1,15 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./../../../../css/TeamsGames/TeamGameHistory.css"
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { values } from "mobx";
 import GameEventsContainer from "./GameEventsContainer";
+import { TO_GAME_CARD, TO_TEAM_GAME_CARD } from "../../../../Utilts/Consts";
 
 
 export default function FinishTeamGame() {
 
+    const navigate = useNavigate();
     const [gameId, setGameId] = useState(parseInt(useParams().id));
     const [game, setGame] = useState({});
     const [isLoading, setIsLoading] = useState(false);
@@ -18,6 +19,7 @@ export default function FinishTeamGame() {
     /* Попробовать потом все запихать в один объект */
     const [currentEventType, setCurrentEventType] = useState("");
     const [currentTeamId, setCurrentTeamId] = useState();
+
     /* Массив события для отображения */
     const [gameEventsView, setGameEventsView] = useState([]);
     /* Массив события для сервера */
@@ -25,16 +27,26 @@ export default function FinishTeamGame() {
     /*объект для отображения*/
     const [gameEventView, setGameEventView] = useState({
         type: null,
+        typeImage: null,
         eventTypeId: null,
         time: null,
         player: null,
         playerImage: null,
         team: null,
+        teamId: null,
         entityId1: null,
         entityId1Image: null,
         entityId2: null,
         entityId2Image: null,
     });
+
+    /* Объект для сервера */
+
+    const [teamGameScore, setTeamGameScore] = useState({
+        firstTeamGoals: '',
+        secodnTeamGoals: ''
+    });
+
     /* Объект для сервера */
     const [gameEvent, setGameEvent] = useState({
         type: null,
@@ -42,7 +54,7 @@ export default function FinishTeamGame() {
         playerId: null,
         teamId: null,
         entityId1: null,
-        entityId2: null,
+        entityId2: null
     });
     /* Объект, указывающий валидно ли поле */
     const [isValid, setIsValid] = useState({
@@ -52,7 +64,9 @@ export default function FinishTeamGame() {
         player: false,
         entityId1: false,
         entityid2: false,
-        button: false
+        button: false,
+        firstTeamGoals: false,
+        secodnTeamGoals: false
     });
     /* Объект указывающий доступно ли поле */
     const [isDisabled, setIsDisabled] = useState({
@@ -62,7 +76,8 @@ export default function FinishTeamGame() {
         player: false,
         entityId1: false,
         entityId2: false,
-        button: false
+        button: false,
+        finishButton: false
     });
     /* Объект указывающий посещалось ли поле */
     const [isVisited, setIsVisited] = useState({
@@ -80,7 +95,9 @@ export default function FinishTeamGame() {
         type: '\u25CF Данное поле обязательно для заполнения.',
         player: '\u25CF Данное поле обязательно для заполнения.',
         entityId1: '\u25CF Данное поле обязательно для заполнения.',
-        entityId2: '\u25CF Данное поле обязательно для заполнения.'
+        entityId2: '\u25CF Данное поле обязательно для заполнения.',
+        firstTeamGoals: '\u25CF Счет матча обязателен для заполнения.',
+        secodnTeamGoals: '\u25CF Счет матча обязателен для заполнения.'
     }
     /* Объект ошибок полей */
     const [fieldError, setFieldError] = useState({
@@ -89,7 +106,9 @@ export default function FinishTeamGame() {
         type: '',
         player: '',
         entityId1: '',
-        entityId2: ''
+        entityId2: '',
+        firstTeamGoals: '\u25CF Счет матча обязателен для заполнения.',
+        secodnTeamGoals: '\u25CF Счет матча обязателен для заполнения.'
     });
 
     // --------------------------------------------------------------- //
@@ -161,6 +180,7 @@ export default function FinishTeamGame() {
 
         switch (currentEventType) {
             case "goal": return <PlayerForm teamUsers={team.users} />;
+            case "assist": return <PlayerForm teamUsers={team.users} />;
             case "yellowcard": return <PlayerForm teamUsers={team.users} />;
             case "redcard": return <PlayerForm teamUsers={team.users} />;
             case "penalty": return <PlayerForm teamUsers={team.users} />;
@@ -239,7 +259,7 @@ export default function FinishTeamGame() {
         );
     }
 
-    //-------------------- Обработчик валидности полей --------------- //
+    //-------------------- Обработчик валидности полей события  --------------- //
 
     useEffect(() => {
 
@@ -250,7 +270,8 @@ export default function FinishTeamGame() {
             player: isDisabled.player,
             entityId1: isDisabled.entityId1,
             entityId2: isDisabled.entityId2,
-            button: isDisabled.button
+            button: isDisabled.button,
+            finishButton: isDisabled.finishButton
         };
 
         if (isValid.team)
@@ -278,6 +299,7 @@ export default function FinishTeamGame() {
         switch (currentEventType) {
 
             case "goal": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
+            case "assist": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
             case "yellowcard": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
             case "redcard": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
             case "penalty": isDisabledTemp.button = isValid.player && isDisabledTemp.player ? true : false; break;
@@ -287,19 +309,25 @@ export default function FinishTeamGame() {
             default: isDisabledTemp.button = false;
         }
 
+        if (isValid.firstTeamGoals && isValid.secodnTeamGoals)
+            isDisabledTemp.finishButton = true;
+        else
+            isDisabledTemp.finishButton = false;            
+
         setIsDisabled({
             ...isDisabled, time: isDisabledTemp.time,
             type: isDisabledTemp.type,
             player: isDisabledTemp.player,
             entityId1: isDisabledTemp.entityId1,
             entityId2: isDisabledTemp.entityId2,
-            button: isDisabledTemp.button
+            button: isDisabledTemp.button,
+            finishButton: isDisabledTemp.finishButton
         });
 
 
     }, [isValid])
 
-    // ------------------ Обработчики полей ввода -------------------- //
+    // ------------------- Обработчики полей ввода -------------------- //
 
     /* Сбрасываю игрока при переключении комады, так как хранился игрок другой команды */
     /* И он подтяшивался при следующем изменении*/
@@ -308,7 +336,9 @@ export default function FinishTeamGame() {
         if (event.target.value === null || event.target.value === '-1') {
             setIsValid({ ...isValid, team: false });
             setGameEvent({
-                ...gameEvent, playerId: '-1',
+                ...gameEvent,
+                teamId: '-1',
+                playerId: '-1',
                 entityId1: '-1',
                 entityId2: '-1'
             });
@@ -327,10 +357,17 @@ export default function FinishTeamGame() {
         setFieldError({ ...fieldError, team: '' });
 
         /* Формирую объект View */
+        /* Можно было бы вычитывать команду, как в игроке и не нужно было бы условие */
         if (game.firstTeam.pkId === parseInt(event.target.value))
-            setGameEventView({ ...gameEventView, team: game.firstTeam.name });
+            setGameEventView({
+                ...gameEventView, team: game.firstTeam.name,
+                teamId: game.firstTeam.pkId
+            });
         else
-            setGameEventView({ ...gameEventView, team: game.secondTeam.name });
+            setGameEventView({
+                ...gameEventView, team: game.secondTeam.name,
+                teamId: game.secondTeam.pkId
+            });
     }
 
     function timeFieldHandler(event) {
@@ -338,6 +375,7 @@ export default function FinishTeamGame() {
         if (event.target.value === null || event.target.value === '') {
             setIsValid({ ...isValid, time: false });
             setFieldError({ ...fieldError, time: errors.time });
+            setGameEvent({ ...gameEvent, time: event.target.value });
             return;
         }
         setGameEvent({ ...gameEvent, time: event.target.value });
@@ -352,6 +390,7 @@ export default function FinishTeamGame() {
         if (event.target.value === null || event.target.value === '-1') {
             setIsValid({ ...isValid, type: false });
             setFieldError({ ...fieldError, type: errors.type });
+            setGameEvent({ ...gameEvent, type: event.target.value });
             return;
         }
         setCurrentEventType(event.target.value);
@@ -362,8 +401,11 @@ export default function FinishTeamGame() {
         /* Формирую объект view */
         const typeName = eventTypes.find((type) => type.eventTypeId === event.target.value);
         if (typeName !== undefined) {
-            setGameEventView({ ...gameEventView, type: typeName.text,
-                                                 eventTypeId: typeName.eventTypeId});
+            setGameEventView({
+                ...gameEventView, type: typeName.text,
+                typeImage: typeName.image,
+                eventTypeId: typeName.eventTypeId
+            });
         }
     }
 
@@ -400,8 +442,8 @@ export default function FinishTeamGame() {
             return;
         }
         setGameEvent({ ...gameEvent, [event.target.name]: event.target.value });
-        setIsValid({ ...isValid, [event.target.name]:true});
-        setFieldError({ ...fieldError,[event.target.name]: '' });
+        setIsValid({ ...isValid, [event.target.name]: true });
+        setFieldError({ ...fieldError, [event.target.name]: '' });
 
 
         /* Формирую объект View */
@@ -411,8 +453,24 @@ export default function FinishTeamGame() {
         const player = team.users.find((user) => user.pkId === parseInt(event.target.value));
         if (player === undefined) { return; }
 
-        setGameEventView({...gameEventView, [event.target.name]: player.firstName + ' ' + player.lastName,
-                                            [event.target.name + 'Image']: player.image});
+        setGameEventView({
+            ...gameEventView, [event.target.name]: player.firstName + ' ' + player.lastName,
+            [event.target.name + 'Image']: player.image
+        });
+    }
+
+    function scoreFieldHandler(event) {
+
+        setTeamGameScore({ ...teamGameScore, [event.target.name]: event.target.value });
+
+        if (event.target.value === null || event.target.value === '') {
+            setIsValid({ ...isValid, [event.target.name]: false });
+            setFieldError({ ...fieldError, [event.target.name]: errors.firstTeamGoals });
+            return;
+        }
+
+        setIsValid({ ...isValid, [event.target.name]: true });
+        setFieldError({ ...fieldError, [event.target.name]: '' });
     }
 
     // ------- Устанавливает, было ли посещено поле ввода ------- //
@@ -428,13 +486,15 @@ export default function FinishTeamGame() {
         }
     }
 
-    // --------------------------------------------------------------- //
+    // -----------------  Добавить событие -------------------- //
 
     function addTeamGameEvent() {
         //setGameEvents((prev) => [...prev, gameEvent]);
+
         setGameEvents([...gameEvents, gameEvent]);
         setGameEventsView([...gameEventsView, gameEventView]);
-        {/* Сброс пока что ничерта не работает */ }
+
+        /* Скидываю объект события */
         setGameEvent({
             type: '-1',
             time: '',
@@ -444,20 +504,146 @@ export default function FinishTeamGame() {
             entityId2: '-1'
         });
 
+        /* Проблема при заполнении, как обрабатывать данные поля? */
+
+        /* Скидываю валидность */
+        setIsValid({
+            team: false,
+            time: false,
+            type: false,
+            player: false,
+            entityId1: false,
+            entityid2: false,
+            button: false,
+            firstTeamGoals: isValid.firstTeamGoals ? true : false,
+            secodnTeamGoals: isValid.secodnTeamGoals ? true : false
+        });
+        /* Скидываю доступность */
+        setIsDisabled({
+            team: true,
+            time: false,
+            type: false,
+            player: false,
+            entityId1: false,
+            entityId2: false,
+            button: false
+        });
 
     }
 
-    // --------------------------------------------------------------- //
+    // ------------------ Заврешить матч -------------------------- //
 
+    function finishGame() {
+
+        const data = {
+            GameId: gameId,
+            FirstTeamGoals: teamGameScore.firstTeamGoals,
+            SecondTeamGoals: teamGameScore.secodnTeamGoals,
+            GameEvents: gameEvents
+        }
+
+        axios.post('http://localhost:5004/api/gameevent/finish-team-game', data, { withCredentials: true })
+            .then((response) => {
+                toast.success(response.data.message, {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false
+                });
+                navigate(TO_TEAM_GAME_CARD + '/' + gameId);
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error("Ошибка создания матча",
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+    }
+
+    // -------------------- Отменить завершение матча ---------------------------- //
+
+    function cancelFinish()
+    {
+        navigate(TO_TEAM_GAME_CARD + '/' + gameId);
+    }
+
+
+    // ------------------- Удлаяет событие из списка событий ------------------------- //
+
+    function deleteTeamGameEvent(delind)
+    {  
+        const view = [...gameEventsView];
+        const server = [...gameEvents];
+        view.sort((event1, event2) => parseInt(event1.time) - parseInt(event2.time)).splice(delind, 1);
+        server.sort((event1, event2) => parseInt(event1.time) - parseInt(event2.time)).splice(delind, 1);
+        setGameEventsView(view);
+        setGameEvents(server);
+    }
+
+    // --------------------------------------------------------------- //
+    
     if (isLoading) {
         return (
             <div className="row tgh-info-main-container">
                 <div className="col-4 tgh-info-container">
-                    <div className="tgh-title">
-                        Хронология
+                    <div className="row tgh-game-score">
+                        <div className="col m-0 p-0">
+                            <div className="row tgh-title">
+                                Счет матча
+                            </div>
+                            <div className="row m-0 p-0">
+                                <div className="col-5 tgh-team-score-cont">
+                                    <div className="row m-0 p-0">
+                                        {game.firstTeam.name}
+                                    </div>
+                                </div>
+                                <div className="col-2 m-0 p-0" />
+                                <div className="col-5 tgh-team-score-cont">
+                                    <div className="row m-0 p-0">
+                                        {game.secondTeam.name}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row m-0 p-0">
+                                <div className="col-5 m-0 p-0">
+                                    <div className="row tgh-row">
+                                        <input name="firstTeamGoals"
+                                            className="input-style"
+                                            type="text"
+                                            placeholder="Голов"
+                                            value={teamGameScore.firstTeamGoals}
+                                            onChange={e => scoreFieldHandler(e)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-2 tgh-score-scop">
+                                    <div className="row tgh-row">
+                                        -
+                                    </div>
+                                </div>
+                                <div className="col-5 m-0 p-0">
+                                    <div className="row tgh-row">
+                                        <input name="secodnTeamGoals"
+                                            className="input-style"
+                                            type="text"
+                                            placeholder="Голов"
+                                            value={teamGameScore.secodnTeamGoals}
+                                            onChange={e => scoreFieldHandler(e)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            {(fieldError.firstTeamGoals || fieldError.secodnTeamGoals) && <div className="error-msg">{errors.firstTeamGoals}</div>}
+                        </div>
                     </div>
                     <div className="row tgh-info-cont">
                         <div className="col m-0 p-0">
+                            <div className="row tgh-title">
+                                Хронология
+                            </div>
                             <div className="row tgh-row">
                                 {(isVisited.team && fieldError.team) && <div className="error-msg">{fieldError.team}</div>}
                                 <select name="team"
@@ -467,7 +653,6 @@ export default function FinishTeamGame() {
                                     onChange={e => teamFieldHandler(e)}
                                     onBlur={e => blurHandler(e)}
                                 >
-                                    {/* Попробовать сюда добваить значение value */}
                                     <option value="-1" selected>Выберите команду</option>
                                     <option value={game.firstTeam.pkId} >{game.firstTeam.name}</option>
                                     <option value={game.secondTeam.pkId}>{game.secondTeam.name}</option>
@@ -491,8 +676,6 @@ export default function FinishTeamGame() {
                                     className="input-style"
                                     disabled={!isDisabled.type}
                                     value={gameEvent.type}
-                                    /* Записывается тип, что не хорошо */
-                                    /* Я бы даже сказал очень хреново */
                                     onChange={e => typeFieldHandler(e)}
                                     onBlur={e => blurHandler(e)}
                                 >
@@ -524,14 +707,27 @@ export default function FinishTeamGame() {
                                     className="input-style input-button"
                                     type="button"
                                     value="Заверишть матч"
+                                    disabled={!isDisabled.finishButton}
+                                    onClick={finishGame}
+                                />
+                            </div>
+                            <div className="row tgh-row">
+                                <input name="gameName"
+                                    className="input-style input-button"
+                                    type="button"
+                                    value="Оменить завершение"
+                                    onClick={cancelFinish}
                                 />
                             </div>
                         </div>
                     </div>
-
                 </div>
-                <div className="col-4 tgh-event-cont">
-                    <GameEventsContainer events={gameEventsView} />
+                <div className="col-6 tgh-event-cont">
+                    <GameEventsContainer mode="create"
+                        teamId={game.firstTeam.pkId}
+                        events={gameEventsView} 
+                        deleteTeamGameEvent={deleteTeamGameEvent}
+                        />
                 </div>
             </div>
         );

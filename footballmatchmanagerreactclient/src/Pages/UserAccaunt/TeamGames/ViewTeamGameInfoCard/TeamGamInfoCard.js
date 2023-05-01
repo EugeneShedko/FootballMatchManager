@@ -9,6 +9,8 @@ import CreatorButtons from "./CreatorButtons";
 import ParticipanButtons from "./ParticipantButtons";
 
 import "./../../../../css/TeamsGames/TeamGameInfoCard.css";
+import ParticipantPlayers from "./ParticipantPayers";
+import GameEventsContainer from "./GameEventsContainer";
 
 export default function TeamGameCard() {
 
@@ -24,6 +26,8 @@ export default function TeamGameCard() {
     const [secondTeamUsers, setSecondTeamUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isReload, setIsReload] = useState(false);
+    /* События матча */
+    const [gameEvents, setGameEvents] = useState([]);
 
     // ---------------------------------------------------------------------------------------- //
 
@@ -32,8 +36,14 @@ export default function TeamGameCard() {
         axios.get('http://localhost:5004/api/teamgame/team-game/' + gameId, { withCredentials: true })
             .then((response) => {
                 setGame(response.data.game);
-                getTeamUsers(response.data.game.firstTeam.pkId, setFirstTeamUsers);
-                getTeamUsers(response.data.game.secondTeam.pkId, setSecondTeamUsers);
+
+                if (response.data.game.status < 3) {
+                    getTeamUsers(response.data.game.firstTeam.pkId, setFirstTeamUsers);
+                    getTeamUsers(response.data.game.secondTeam.pkId, setSecondTeamUsers);
+                }
+                else {
+                    getTeamGameEvents();
+                }
 
                 setCreatorId(response.data.creatorId);
                 setSecTeamCreator(response.data.secTeamCreatorId)
@@ -61,6 +71,26 @@ export default function TeamGameCard() {
         axios.get('http://localhost:5004/api/teamgame/team-users/' + teamId, { withCredentials: true })
             .then((response) => {
                 setUsers(response.data);
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- //    
+
+    function getTeamGameEvents() {
+
+        axios.get('http://localhost:5004/api/gameevent/game-events/' + gameId, { withCredentials: true })
+            .then((response) => {
+                setGameEvents(response.data);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -160,52 +190,54 @@ export default function TeamGameCard() {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-3 team-info-col">
-                            <div className="team-info-cont">
-                                <div className="row team-name">
-                                    {game.firstTeam.name}
+                        <div className="col-6 team-info-col">
+                            <div className="row team-info-cont">
+                                <div className="col-5 curr-team-info-cont">
+                                    <div className="row team-name">
+                                        {game.firstTeam.name}
+                                    </div>
+                                    <div className="row m-0 p-0">
+                                        <img className="team-image"
+                                            src={"http://localhost:5004/" + game.firstTeam.image}
+                                            alt=""
+                                        />
+                                    </div>
                                 </div>
-                                <div className="row m-0 p-0">
-                                    <img className="team-image"
-                                        src={"http://localhost:5004/" + game.firstTeam.image}
-                                        alt=""
-                                    />
+                                <div className="col-2 curr-team-info-cont">
+                                    <div className="row team-game-score-cont">
+                                        <div className="col-5 current-score-cont">
+                                            {game.firstTeamGoals}
+                                        </div>
+                                        <div className="col-2 current-score-cont">
+                                            -
+                                        </div>
+                                        <div className="col-5 current-score-cont">
+                                            {game.firstTeamGoals}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-5 curr-team-info-cont">
+                                    <div className="row team-name">
+                                        {game.secondTeam.name}
+                                    </div>
+                                    <div className="row m-0 p-0">
+                                        <img className="team-image"
+                                            src={"http://localhost:5004/" + game.secondTeam.image}
+                                            alt=""
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <div className="row team-user-container">
-                                <div className="tg-info-user-absolute-container">
-                                    {
-                                        firstTeamUsers?.map((player) => (
-                                            <div className="row m-0 p-0">
-                                                <PlayerBlock info={player} />
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-3 team-info-col">
-                            <div className="team-info-cont">
-                                <div className="row team-name">
-                                    {game.secondTeam.name}
-                                </div>
-                                <div className="row m-0 p-0">
-                                    <img className="team-image"
-                                        src={"http://localhost:5004/" + game.secondTeam.image}
-                                        alt=""
+                                {
+                                    game.status === 3 ? <GameEventsContainer mode="view"
+                                        teamId={game.firstTeam.pkId}
+                                        events={gameEvents}
                                     />
-                                </div>
-                            </div>
-                            <div className="row team-user-container">
-                                <div className="tg-info-user-absolute-container">
-                                    {
-                                        secondTeamUsers?.map((player) => (
-                                            <div className="row m-0 p-0">
-                                                <PlayerBlock info={player} />
-                                            </div>
-                                        ))
-                                    }
-                                </div>
+                                        : <ParticipantPlayers firstTeamUsers={firstTeamUsers}
+                                            secondTeamUsers={secondTeamUsers}
+                                        />
+                                }
                             </div>
                         </div>
                         <div className="col-3 h-100 p-0">

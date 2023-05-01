@@ -15,8 +15,6 @@ namespace FootballMatchManager.Hubs
             _unitOfWork = unitOfWork;
         }
 
-        /* Скорее всего на отдельное действие отдельную логику прописывать нужно */
-        /* Констунту сообщения скорее всего не обязательно писать, для каждого своя будет видимо */
         public async Task AcceptReqGame(int inNotifiId)
         {
             try
@@ -273,7 +271,6 @@ namespace FootballMatchManager.Hubs
             await Clients.User(Convert.ToString(reqNotifi.FkSenderId))?.SendAsync("displayNotifi", notiffiMess);
 
         }
-
         public async Task DismissReqTeam(int inNotifiId)
         {
             try

@@ -12,7 +12,7 @@
 {
     height: 100%;
     margin: 0;
-    padding: 2% 2% 2% 2%;
+    padding: 0;
     background-color: rgba(0,0,0,0.6);
     border:4px white solid;
     border-radius: 20px;
@@ -28,6 +28,15 @@
     border-radius: 20px;
 }
 
+.tgh-game-score
+{
+    margin: 0;
+    padding: 5% 10% 5% 10%;
+    height: 25%;
+    width: 100%;
+    border-bottom: 3px white solid;
+}
+
 .tgh-title
 {
     margin: 0;
@@ -40,19 +49,38 @@
     justify-content: center;
 }
 
-.tgh-info-cont
+.tgh-team-score-cont
 {
     margin: 0;
     padding: 0;
-    height: 60%;
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+
+.tgh-score-scop
+{
+    margin: 0;
+    padding: 0;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.tgh-info-cont
+{
+    margin: 0;
+    padding: 0% 5% 5% 5%;
+    height: 45%;
     width: 100%;
+    border-bottom: 3px white solid;
 }
 
 .tgh-button-cont
 {
     margin: 0;
-    padding: 0;
-    height: 40%;
+    padding: 5% 5% 5% 5%;
+    height: 30%;
     width: 100%;
 }
 

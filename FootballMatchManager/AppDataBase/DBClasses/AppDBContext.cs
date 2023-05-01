@@ -65,13 +65,14 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<GameEventType>().HasKey(get => get.PkId);
             /* Вообще тип должен быть уникальным */
             modelBuilder.Entity<GameEventType>().HasData(
-                new GameEventType() { PkId = 1, EventTypeId = "goal", Text = "Гол!!!!!!", Image="" },
-                new GameEventType() { PkId = 2, EventTypeId = "yellowcard", Text = "Желтая карточка!", Image = "" },
-                new GameEventType() { PkId = 3, EventTypeId = "redcard", Text = "Красная карточка!", Image = "" },
-                new GameEventType() { PkId = 4, EventTypeId = "change", Text = "Замена!", Image = "" },
-                new GameEventType() { PkId = 5, EventTypeId = "penalty", Text = "Пенальти!", Image = "" },
-                new GameEventType() { PkId = 6, EventTypeId = "freekick", Text = "Штрафной удар!", Image = "" },
-                new GameEventType() { PkId = 7, EventTypeId = "corner", Text = "Углавой удар!", Image = "" }
+                new GameEventType() { PkId = 1, EventTypeId = "goal", Text = "Гол!", Image= "default/event-goal.png" },
+                new GameEventType() { PkId = 2, EventTypeId = "yellowcard", Text = "Желтая карточка!", Image = "default/event-card.png" },
+                new GameEventType() { PkId = 3, EventTypeId = "redcard", Text = "Красная карточка!", Image = "default/event-card.png" },
+                new GameEventType() { PkId = 4, EventTypeId = "change", Text = "Замена!", Image = "default/event-change.png" },
+                new GameEventType() { PkId = 5, EventTypeId = "penalty", Text = "Пенальти!", Image = "default/event-penalty.png" },
+                new GameEventType() { PkId = 6, EventTypeId = "freekick", Text = "Штрафной удар!", Image = "event-free-kick2.png" },
+                new GameEventType() { PkId = 7, EventTypeId = "corner", Text = "Углавой удар!", Image = "default/event-corner.png" },
+                new GameEventType() { PkId = 8, EventTypeId = "assist", Text = "Голевой пас!", Image = "default/event-assist.png" }
             );
 
             modelBuilder.Entity<GameEvent>().HasKey(ge => ge.PkId);

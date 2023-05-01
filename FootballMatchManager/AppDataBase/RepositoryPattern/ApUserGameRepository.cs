@@ -54,6 +54,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------ //
 
+        /* Возвращает список участников матча */
         public List<ApUser> GetGameUsers(int gameid)
         {
             return GetItems().Where(apug => apug.PkFkGameId == gameid

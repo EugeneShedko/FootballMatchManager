@@ -153,9 +153,9 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest("Пользователя не существует");
             }
 
-            apUser.GamesQnt = gamesNumber;
-            apUser.GoalsQnt = goalsNumber;
-            apUser.AssistsQnt = assistsNumber;
+            apUser.GamesQnt = int.Parse(gamesNumber);
+            apUser.GoalsQnt = int.Parse(goalsNumber);
+            apUser.AssistsQnt = int.Parse(assistsNumber);
 
             _unitOfWork.Save();
 

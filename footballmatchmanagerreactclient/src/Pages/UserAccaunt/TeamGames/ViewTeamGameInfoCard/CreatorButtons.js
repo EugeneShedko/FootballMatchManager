@@ -11,8 +11,10 @@ export default function CreatorButtons(props) {
     function selectButtons(gameStatus) {
         
         switch (gameStatus) {
-            case 2: return <FinishGame />;break;
-            default: return <></>;break;
+            case 2: return <FinishGame />;
+            /* Пока что такие кнопки возвращаются у органиазатора матча */
+            case 3: return <></>;
+            default: return <></>;
         }
     }
 

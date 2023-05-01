@@ -96,5 +96,21 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         }
 
         // ------------------------------------------------------------ //
+
+        /// <summary>
+        /// Возвращает список участников командного матча по айди матча
+        /// </summary>
+        /// <param name="teamGameId"> Идентификатор командного матча </param>
+        /// <returns></returns>
+
+        public List<ApUser> GetTeamGameParticipants(int teamGameId)
+        {
+            return GetItems().Where(aputg => aputg.PkFkTeamGameId == teamGameId
+                                   && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT)
+                      .Select(aputg => aputg.ApUser)
+                      .ToList();
+        }
+
+        // ------------------------------------------------------------ //
     }
 }
