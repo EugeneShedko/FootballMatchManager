@@ -51,7 +51,14 @@ namespace FootballMatchManager.Controllers
 
             if(game == null)
             {
-                return BadRequest(new { message = "Матч не найден" });
+                return BadRequest();
+            }
+
+            /* Проверка на завершенность матча */
+            if (game.Status < (int)TeamGameStatus.FINISHED && game.DateTime < DateTime.Now)
+            {
+                game.Status = (int)TeamGameStatus.FINISHED;
+                _unitOfWork.Save();
             }
 
             ApUserGame apUserGamePt = _unitOfWork.ApUserGameRepository.GetItems()

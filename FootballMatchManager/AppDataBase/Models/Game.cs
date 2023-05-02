@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using FootballMatchManager.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FootballMatchManager.DataBase.Models
 {
@@ -18,7 +19,7 @@ namespace FootballMatchManager.DataBase.Models
         [Column("currplayers")]
         public int? CurrPlayers { get; set; } = 0;
         [Column("status")]
-        public string Status { get; set; } = "active";
+        public int Status { get; set; }
         [Column("format")]
         public string Format { get; set; }
         [Column("firstteamgoals")]
@@ -43,8 +44,7 @@ namespace FootballMatchManager.DataBase.Models
             this.Format = format;
             this.CurrPlayers = 1;
             this.Type = type;
+            this.Status = (int)TeamGameStatus.WAIT;
         }
-
-        /* Новый конструктор для командный игр */
     }
 }

@@ -45,8 +45,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         // ---------------------------------------------------------- //
         public List<Game> GetAllGamesForUser()
         {
-            return GetItems().Where(g => g.Status != "block" )
-                             .OrderByDescending(g => g.DateTime)
+            return GetItems().OrderByDescending(g => g.DateTime)
                              .ToList();
         }
     }

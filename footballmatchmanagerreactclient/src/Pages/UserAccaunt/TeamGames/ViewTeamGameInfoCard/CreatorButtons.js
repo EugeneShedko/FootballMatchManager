@@ -20,15 +20,12 @@ export default function CreatorButtons(props) {
 
     // -------------------------------------------------------------- //
 
-    /* Нужно еще как-то передать параметры */
-    /* Не понятно правда, как это сделать*/
-
     function FinishGame() {
         
         return (
             <input className="team-join-button"
                    type="button"
-                   value="Зварешить матч"
+                   value="Завершить матч"
                    onClick={() => navigate(location.pathname + TO_TEAM_GAME_HISTORY)}
             />
         );
@@ -36,7 +33,6 @@ export default function CreatorButtons(props) {
 
     // -------------------------------------------------------------- //
 
-    /* Передавать черз пропсы игру */
     return (
         <>
             {selectButtons(props.game.status)}

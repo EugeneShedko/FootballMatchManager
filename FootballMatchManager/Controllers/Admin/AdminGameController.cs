@@ -88,7 +88,7 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest(new { message = "Игры не существует" });
             }
 
-            game.Status = "block";
+            //game.Status = "block";
 
             _unitOfWork.Save();
 
@@ -108,7 +108,7 @@ namespace FootballMatchManager.Controllers.Admin
                 return BadRequest(new { message = "Игры не существует" });
             }
 
-            game.Status = "active";
+            //game.Status = "active";
 
             _unitOfWork.Save();
 

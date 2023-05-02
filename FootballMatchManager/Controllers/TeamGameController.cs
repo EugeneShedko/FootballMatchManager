@@ -237,7 +237,12 @@ namespace FootballMatchManager.Controllers
 
 
                 /* Создаю командный матч */
-                TeamGame teamGame = new TeamGame(shortGame.GameName, shortGame.GameAdress, shortGame.GameDate, shortGame.GameFormat, teamCreator.PkFkTeamId);
+                TeamGame teamGame = new TeamGame(shortGame.GameName, 
+                                                 shortGame.GameAdress, 
+                                                 shortGame.GameDate, 
+                                                 shortGame.GameFormat, 
+                                                 teamCreator.PkFkTeamId);
+
                 _unitOfWork.TeamGameRepasitory.AddElement(teamGame);
                 _unitOfWork.Save();
 

@@ -5,12 +5,13 @@ import { toast } from "react-toastify";
 import PlayerBlock from "./../../Players/ViewPlayers/PlayerBlock";
 import { Context } from "../../../../index";
 import CreatorButton from "./GameCardButton/CreatorButtons";
-import UserButton from "./GameCardButton/UserButtons";
 import MessagesBlock from "./MessagesBlock";
 
 import "./../../../../css/GameInfoCard.css";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { TO_EDIT_GAME, TO_GAMES } from "../../../../Utilts/Consts";
+import ParticipanButtons from "../../TeamGames/ViewTeamGameInfoCard/ParticipantButtons";
+import ParticipantButton from "./GameCardButton/ParticipantButtons";
 
 export default function GameInfoCard(props) {
 
@@ -23,6 +24,7 @@ export default function GameInfoCard(props) {
     const [isPart, setIsPart] = useState(false);
     const [isCreat, setIsCreat] = useState(false);
     const [gameMessage, setGameMessage] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     // ---------------------------------------------------------------------------------------- //
 
@@ -39,6 +41,7 @@ export default function GameInfoCard(props) {
                 axios.get('http://localhost:5004/api/profile/game-users/' + gameId, { withCredentials: true })
                     .then((response) => {
                         setGameUsers(response.data);
+                        setIsLoading(true);
                     })
                     .catch(userError => {
                         if (userError.response) {
@@ -66,24 +69,24 @@ export default function GameInfoCard(props) {
 
     // ------------------------------ Перечитывает данные при обновлении матча ----------------------------------- //
     /* Тупой метод, все равно компонент обновляется */
-    /* Пока что пускай будет*/ 
+    /* Пока что пускай будет*/
 
     useEffect(() => {
         axios.get('http://localhost:5004/api/profile/game/' + gameId + "/" + userContext.userId, { withCredentials: true })
-        .then((response) => {
-            setGame(response.data.currgame);
-            setIsPart(response.data.isPart);
-            setIsCreat(response.data.isCreat);
-        }).catch(userError => {
-            if (userError.response) {
-                toast.error(userError.response.message,
-                    {
-                        position: toast.POSITION.TOP_CENTER,
-                        autoClose: 2000,
-                        pauseOnFocusLoss: false
-                    });
-            }
-        });
+            .then((response) => {
+                setGame(response.data.currgame);
+                setIsPart(response.data.isPart);
+                setIsCreat(response.data.isCreat);
+            }).catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
     }, [location.state && location.state.refresh]);
 
     // ---------------------------------------------------------------------------------------- //
@@ -163,7 +166,7 @@ export default function GameInfoCard(props) {
                 }
             });
 
-        /* Почему оно стоит здесь?, перенести под успешный ответ */    
+        /* Почему оно стоит здесь?, перенести под успешный ответ */
         var conn = userContext.notificonn;
         conn.invoke("Game", gameId, "leavefromgame");
     }
@@ -179,7 +182,7 @@ export default function GameInfoCard(props) {
                         autoClose: 2000,
                         pauseOnFocusLoss: false
                     });
-                navigate(TO_GAMES);        
+                navigate(TO_GAMES);
             })
             .catch((error) => {
                 if (error.response) {
@@ -198,82 +201,87 @@ export default function GameInfoCard(props) {
 
     function editGame() {
 
-        navigate(location.pathname + TO_EDIT_GAME, {state: {
-            gameId: game.pkId,
-            gameName: game.name,
-            gameDate: new Date(game.dateTime),
-            gameFormat: game.format,
-            gameAdress: game.adress,
-        }});
+        navigate(location.pathname + TO_EDIT_GAME, {
+            state: {
+                gameId: game.pkId,
+                gameName: game.name,
+                gameDate: new Date(game.dateTime),
+                gameFormat: game.format,
+                gameAdress: game.adress,
+            }
+        });
     }
 
     // ---------------------------------------------------------------------------------------- //
 
-    return (
-        <div className="row justify-content-center match-info-main-container">
-            <div className="col-10 match-info-container">
-                <div className="row m-0 h-100">
-                    <div className="col-4 match-info-text-container">
-                        <div className="row match-info-title">
-                            {game.name}
-                        </div>
-                        <div className="row match-info-header">
-                            Время матча
-                        </div>
-                        <div className="row match-info-text">
-                            {(new Date(game.dateTime)).toLocaleString().substring(0, (new Date(game.dateTime)).toLocaleString().length - 3)}
-                        </div>
-                        <div className="row match-info-header">
-                            Формат матча
-                        </div>
-                        <div className="row match-info-text">
-                            {game.format}
-                        </div>
-                        <div className="row match-info-header">
-                            Адрес
-                        </div>
-                        <div className="row match-info-text">
-                            {game.adress}
-                        </div>
-                        <div className="row match-info-header">
-                            Текущее количество игроков
-                        </div>
-                        {/*можно вывести еше максимальное*/}
-                        <div className="row match-info-text">
-                            {game.currPlayers}/{game.maxPlayers}
-                        </div>
-                        <div className="row match-join-button-container">
-                            <UserButton game = {game}
-                                        isPart = {isPart}
-                                        leaveMatch = {leaveMatch}
-                                        sendRequestForPart = {sendRequestForPart}
-                                        addToMatch = {addToMatch}
-                                        />
-                            {isCreat ? <CreatorButton editGame={editGame}
-                                                      deleteMatch={deleteMatch} />
-                            : null}
+    if (isLoading) {
+        return (
+            <div className="row justify-content-center match-info-main-container">
+                <div className="col-10 match-info-container">
+                    <div className="row m-0 h-100">
+                        <div className="col-4 match-info-text-container">
+                            <div className="row match-info-title">
+                                {game.name}
+                            </div>
+                            <div className="row match-info-header">
+                                Время матча
+                            </div>
+                            <div className="row match-info-text">
+                                {(new Date(game.dateTime)).toLocaleString().substring(0, (new Date(game.dateTime)).toLocaleString().length - 3)}
+                            </div>
+                            <div className="row match-info-header">
+                                Формат матча
+                            </div>
+                            <div className="row match-info-text">
+                                {game.format}
+                            </div>
+                            <div className="row match-info-header">
+                                Адрес
+                            </div>
+                            <div className="row match-info-text">
+                                {game.adress}
+                            </div>
+                            <div className="row match-info-header">
+                                Текущее количество игроков
+                            </div>
+                            {/*можно вывести еше максимальное*/}
+                            <div className="row match-info-text">
+                                {game.currPlayers}/{game.maxPlayers}
+                            </div>
+                            <div className="row match-join-button-container">
+                                {isCreat ? <CreatorButton gameStatus={game.status}
+                                                          editGame={editGame}
+                                                          deleteMatch={deleteMatch} />
+                                    :
+                                    <ParticipantButton game={game}
+                                        isPart={isPart}
+                                        leaveMatch={leaveMatch}
+                                        sendRequestForPart={sendRequestForPart}
+                                        addToMatch={addToMatch}
+                                    />}
 
-                        </div>
-                    </div>
-                    {
-                        <div className="col-4 match-info-user-container">
-                            <div className="match-info-user-absolute-container">
-                                {
-                                    gameUsers.map((player) => (
-                                        <div className="row m-0">
-                                            <PlayerBlock info={player} />
-                                        </div>
-                                    ))
-                                }
                             </div>
                         </div>
-                    }
-                    <div className="col-4 h-100 p-0">
-                        {isPart ? <MessagesBlock gameId = {gameId}/> : null}
+                        {
+                            <div className="col-4 match-info-user-container">
+                                <div className="match-info-user-absolute-container">
+                                    {
+                                        gameUsers.map((player) => (
+                                            <div className="row m-0">
+                                                <PlayerBlock info={player} />
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </div>
+                        }
+                        <div className="col-4 h-100 p-0">
+                            {isPart ? <MessagesBlock gameId={gameId} /> : null}
+                        </div>
                     </div>
                 </div>
+                <Outlet />
             </div>
-            <Outlet />
-        </div>
-    );
+        );
+    }
 }    
