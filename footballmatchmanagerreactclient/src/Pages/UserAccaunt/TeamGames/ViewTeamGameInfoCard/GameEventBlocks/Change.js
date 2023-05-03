@@ -5,10 +5,11 @@ export default function Change(props) {
     /* Скорее всего здесь ошибка посмотреть! */
 
     const data = props.mode === 'view' ? {
-        eventText: props.event1.gameType.text,
-        eventIcon: props.event1.gameType.image,
-        eventTime: props.event1.time,
-        eventTeam: props.event1.eventTeam.name,
+        gameType: props.event1.gameType,
+        eventText: props.event1.gameEventType.text,
+        eventIcon: props.event1.gameEventType.image,
+        eventTime: props.event1.time? props.event1.time + "'" : '',
+        eventTeam: props.event1.eventTeam ? props.event1.eventTeam.name : '',
         entityId1: props.event1.entity1.firstName + ' ' + props.event1.entity1.lastName,
         entityId1Image: props.event1.entity1.image,
         entityId2: props.event1.entity2.firstName + ' ' + props.event1.entity2.lastName,
@@ -16,9 +17,10 @@ export default function Change(props) {
     }
         :
         {
+            gameType: props.event2.gameType,
             eventText: props.event2.type,
             eventIcon: props.event2.typeImage,
-            eventTime: props.event2.time,
+            eventTime: props.event2.time ? props.event2.time + "'" : '',
             eventPlayer: props.event2.player,
             playerImage: props.event2.playerImage,
             eventTeam: props.event2.team,
@@ -29,7 +31,7 @@ export default function Change(props) {
         }
 
     return (
-        <div className={"game-event-cont " + props.align}>
+        <div className={data.gameType === 'game' ? "game-event-cont-100" : "game-event-cont " + props.align}>
             <div className="game-event-back-block" />
             <div className="row m-0 p-0">
                 <div className="col m-0 p-0">
@@ -43,7 +45,7 @@ export default function Change(props) {
                             {data.eventText}
                         </div>
                         <div className="col-2 p-0 m-0">
-                            {data.eventTime}'
+                            {data.eventTime}
                         </div>
                     </div>
                     <div className="row user-info-row">

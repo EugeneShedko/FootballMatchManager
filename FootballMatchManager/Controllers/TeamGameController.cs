@@ -229,10 +229,12 @@ namespace FootballMatchManager.Controllers
                 int minMembers = int.Parse(shortGame.GameFormat.Substring(0, 1));
 
                 /* Проверяю достаточно ли участников в команде */
+                /*
                 if (teamCreator.Team.MemberQnt < minMembers)
                 {
                     return BadRequest(new {message = "Вы не можете создать командный матч, так как в вашей команде не достаточно участников" });
                 }
+                */
                 /* Проверка на количетсво участников в команде */
 
 

@@ -28,6 +28,20 @@
     border-radius: 20px;
 }
 
+/* Индивидуальные матчи */
+.gh-event-cont
+{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0,0,0,0.6);
+    border:4px white solid;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .tgh-game-score
 {
     margin: 0;
@@ -76,18 +90,49 @@
     border-bottom: 3px white solid;
 }
 
+/* Для индивидуальных матчей */
+.gh-info-cont
+{
+    margin: 0;
+    padding: 5% 5% 5% 5%;
+    height: 50%;
+    width: 100%;
+    border-bottom: 3px white solid;
+}
+
 .tgh-button-cont
 {
     margin: 0;
     padding: 5% 5% 5% 5%;
-    height: 30%;
+    height: 50%;
     width: 100%;
+}
+
+.gh-button-cont
+{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .tgh-row
 {
     margin: 0;
     padding: 0;
+    margin-top: 3%;
+    display: flex;
+    justify-content: center;
+}
+
+/* Для индивидуальных матчей */
+.gh-row
+{
+    margin: 0;
+    padding: 0;
+    width: 100%;
     margin-top: 3%;
     display: flex;
     justify-content: center;

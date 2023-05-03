@@ -12,6 +12,8 @@ import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { TO_EDIT_GAME, TO_GAMES } from "../../../../Utilts/Consts";
 import ParticipanButtons from "../../TeamGames/ViewTeamGameInfoCard/ParticipantButtons";
 import ParticipantButton from "./GameCardButton/ParticipantButtons";
+import GameParticipantPlayers from "./GameCardButton/GameParticipantPlayers";
+import GameEventsContainer from "../../TeamGames/ViewTeamGameInfoCard/GameEventsContainer";
 
 export default function GameInfoCard(props) {
 
@@ -20,11 +22,15 @@ export default function GameInfoCard(props) {
     const location = useLocation()
     const [gameId, setGameId] = useState(useParams().id);
     const [game, setGame] = useState({});
+    /* ЗДЕСЬ ПРОБЛЕМА С ПОЛЬЗОВАТЕЛЯМИ */
+    /* ТО ЧТО Я ВЫНЕС ИХ В ОТДЕЛЬНЫЙ КОМПОНЕНТ*/
     const [gameUsers, setGameUsers] = useState([]);
     const [isPart, setIsPart] = useState(false);
     const [isCreat, setIsCreat] = useState(false);
-    const [gameMessage, setGameMessage] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    /* События матча */
+    const [gameEvents, setGameEvents] = useState([]);
+    const [refreshGameUser, setRefreshGameUsers] = useState(false);
 
     // ---------------------------------------------------------------------------------------- //
 
@@ -36,23 +42,13 @@ export default function GameInfoCard(props) {
                 setGame(response.data.currgame);
                 setIsPart(response.data.isPart);
                 setIsCreat(response.data.isCreat);
-            })
-            .then(() => {
-                axios.get('http://localhost:5004/api/profile/game-users/' + gameId, { withCredentials: true })
-                    .then((response) => {
-                        setGameUsers(response.data);
-                        setIsLoading(true);
-                    })
-                    .catch(userError => {
-                        if (userError.response) {
-                            toast.error(userError.response.message,
-                                {
-                                    position: toast.POSITION.TOP_CENTER,
-                                    autoClose: 2000,
-                                    pauseOnFocusLoss: false
-                                });
-                        }
-                    });
+
+                if (response.data.currgame.status === 3)
+                {
+                    getGameEvents();
+                }
+
+                setIsLoading(true);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -77,6 +73,14 @@ export default function GameInfoCard(props) {
                 setGame(response.data.currgame);
                 setIsPart(response.data.isPart);
                 setIsCreat(response.data.isCreat);
+
+                if (response.data.currgame.status === 3)
+                {
+                    getGameEvents();
+                }
+
+                setIsLoading(true);
+
             }).catch(userError => {
                 if (userError.response) {
                     toast.error(userError.response.message,
@@ -99,7 +103,11 @@ export default function GameInfoCard(props) {
 
         axios.post('http://localhost:5004/api/profile/add-to-game', data, { withCredentials: true })
             .then((response) => {
-                setGameUsers(response.data.users);
+
+                setRefreshGameUsers(!refreshGameUser);
+                //Убрать вычитывание пользователей на стороне сервера
+                //setGameUsers(response.data.users);
+                
                 setGame(response.data.currgame);
                 setIsPart(true);
                 toast.success(response.data.message, {
@@ -152,7 +160,11 @@ export default function GameInfoCard(props) {
                         pauseOnFocusLoss: false
                     });
                 setGame(response.data.currgame);
-                setGameUsers(response.data.users);
+
+                setRefreshGameUsers(!refreshGameUser);
+                //Убрать вычитывание пользователей на стороне сервера
+                //setGameUsers(response.data.users);
+                
                 setIsPart(false);
             })
             .catch((error) => {
@@ -214,6 +226,28 @@ export default function GameInfoCard(props) {
 
     // ---------------------------------------------------------------------------------------- //
 
+    function getGameEvents()
+    {
+        axios.get('http://localhost:5004/api/gameevent/game-events/' + gameId, { withCredentials: true })
+        .then((response) => {
+            console.log('RESDATA');
+            console.log(response.data);
+            setGameEvents(response.data);
+        })
+        .catch(userError => {
+            if (userError.response) {
+                toast.error(userError.response.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            }
+        });
+    }
+
+    // ---------------------------------------------------------------------------------------- //
+
     if (isLoading) {
         return (
             <div className="row justify-content-center match-info-main-container">
@@ -250,8 +284,8 @@ export default function GameInfoCard(props) {
                             </div>
                             <div className="row match-join-button-container">
                                 {isCreat ? <CreatorButton gameStatus={game.status}
-                                                          editGame={editGame}
-                                                          deleteMatch={deleteMatch} />
+                                    editGame={editGame}
+                                    deleteMatch={deleteMatch} />
                                     :
                                     <ParticipantButton game={game}
                                         isPart={isPart}
@@ -262,19 +296,15 @@ export default function GameInfoCard(props) {
 
                             </div>
                         </div>
-                        {
-                            <div className="col-4 match-info-user-container">
-                                <div className="match-info-user-absolute-container">
-                                    {
-                                        gameUsers.map((player) => (
-                                            <div className="row m-0">
-                                                <PlayerBlock info={player} />
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                            </div>
-                        }
+                        <div className="col-4 match-info-user-container">
+                            {
+                                game.status === 3 ? <GameEventsContainer mode="view"
+                                                    events={gameEvents}
+                                />
+                                    : <GameParticipantPlayers gameId={gameId}
+                                                              refresh={refreshGameUser} />
+                            }
+                        </div>
                         <div className="col-4 h-100 p-0">
                             {isPart ? <MessagesBlock gameId={gameId} /> : null}
                         </div>

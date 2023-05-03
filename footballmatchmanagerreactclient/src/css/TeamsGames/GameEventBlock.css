@@ -8,6 +8,17 @@
     color: white;
 }
 
+.game-event-cont-100
+{
+    width: 100%;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: 5px white solid;
+    border-radius: 20px;
+    color: white;
+}
+
 .event-right {
     align-self: flex-end;
 }
@@ -63,7 +74,10 @@
 
 .user-info {
     margin: 0;
-    padding: 0;
+    padding: 0% 3% 0% 3%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .user-icon-cont {

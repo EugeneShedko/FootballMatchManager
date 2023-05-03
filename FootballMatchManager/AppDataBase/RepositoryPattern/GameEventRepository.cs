@@ -34,7 +34,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         /* Здесь потом много повключать нужно будет */
         public IEnumerable<GameEvent> GetItems()
         {
-            return _dbcontext.GameEvents.Include(ge => ge.GameType)
+            return _dbcontext.GameEvents.Include(ge => ge.GameEventType)
                                         .Include(ge => ge.Player)
                                         .Include(ge => ge.EventTeam)
                                         .Include(ge => ge.Entity1)
@@ -49,11 +49,13 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ---------------------------------------------------------- //
 
-        /* Возвращает события матча по идентификатору матча */
-        public List<GameEvent> GatGameEventsByGameId(int gameId)
+        /* Возвращает события матча по идентификатору матча и типу матча */
+        public List<GameEvent> GatGameEventsByGameId(int gameId, string gameType)
         {
             /* Нужна подгрузка данныx */
-            return GetItems().Where(ge => ge.GameId == gameId).ToList();
+            return GetItems().Where(ge => ge.GameId == gameId
+                                       && ge.GameType == gameType)
+                             .ToList();
         }
     }
 }

@@ -88,7 +88,7 @@ export default function TeamGameCard() {
 
     function getTeamGameEvents() {
 
-        axios.get('http://localhost:5004/api/gameevent/game-events/' + gameId, { withCredentials: true })
+        axios.get('http://localhost:5004/api/gameevent/team-game-events/' + gameId, { withCredentials: true })
             .then((response) => {
                 setGameEvents(response.data);
             })

@@ -22,10 +22,7 @@ namespace FootballMatchManager.DataBase.Models
         public int Status { get; set; }
         [Column("format")]
         public string Format { get; set; }
-        [Column("firstteamgoals")]
-        public int? FirstTeamGoals { get; set; }
-        [Column("secondteamgoals")]
-        public int? SecondTeamGoals { get; set; }
+
         [Column("type")]
         public int Type { get; set; }
         [Column("fktournamentid")]

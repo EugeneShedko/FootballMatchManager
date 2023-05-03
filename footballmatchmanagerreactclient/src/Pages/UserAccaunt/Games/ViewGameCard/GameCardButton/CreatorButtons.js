@@ -1,9 +1,10 @@
+import { useLocation, useNavigate } from "react-router-dom";
+import { TO_GAME_HISTORY } from "../../../../../Utilts/Consts";
+
 export default function CreatorButton(props) {
 
-    /* Эти кнопки должны быть доступны только в определенный статус */
-    /* Кнопку Покинуть нужно убрать у организатора */
-
-    /* Нужно передавать статус матча */
+    const navigate = useNavigate();
+    const location = useLocation();
 
     // --------- Функция выбора кнопок -------------- //
 
@@ -15,7 +16,6 @@ export default function CreatorButton(props) {
                            <EditGameButton /> 
                            <DeleteGameButton />
                            </>;
-            {/* Кнопка завершения матча */}
             case 2: return <><FinishGame /></>                              
             case 3: return <></>                              
             default: return <></>;               
@@ -63,6 +63,7 @@ export default function CreatorButton(props) {
                 <input className="match-join-button"
                     type="button"
                     value="Завершить матч"
+                    onClick={() => navigate(location.pathname + TO_GAME_HISTORY)}
                      />
 
             </>

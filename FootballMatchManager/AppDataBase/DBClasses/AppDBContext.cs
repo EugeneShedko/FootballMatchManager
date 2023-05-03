@@ -70,7 +70,7 @@ namespace FootballMatchManager.DataBase.DBClasses
                 new GameEventType() { PkId = 3, EventTypeId = "redcard", Text = "Красная карточка!", Image = "default/event-card.png" },
                 new GameEventType() { PkId = 4, EventTypeId = "change", Text = "Замена!", Image = "default/event-change.png" },
                 new GameEventType() { PkId = 5, EventTypeId = "penalty", Text = "Пенальти!", Image = "default/event-penalty.png" },
-                new GameEventType() { PkId = 6, EventTypeId = "freekick", Text = "Штрафной удар!", Image = "event-free-kick2.png" },
+                new GameEventType() { PkId = 6, EventTypeId = "freekick", Text = "Штрафной удар!", Image = "default/event-free-kick2.png" },
                 new GameEventType() { PkId = 7, EventTypeId = "corner", Text = "Углавой удар!", Image = "default/event-corner.png" },
                 new GameEventType() { PkId = 8, EventTypeId = "assist", Text = "Голевой пас!", Image = "default/event-assist.png" }
             );
@@ -90,7 +90,7 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<TeamGame>().HasOne(tg => tg.SecondTeam).WithMany(t => t.SecondTeamList).HasForeignKey(tg => tg.FkSecondTeamId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<ApUserTeamGame>().HasOne(aput => aput.ApUser).WithMany(apu => apu.ApUserTeamGames).HasForeignKey(aput => aput.PkFkUserId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<ApUserTeamGame>().HasOne(aput => aput.TeamGame).WithMany(tg => tg.ApUserTeamGames).HasForeignKey(aput => aput.PkFkTeamGameId).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<GameEvent>().HasOne(ge => ge.GameType).WithMany(get => get.GameEvents).HasForeignKey(ge => ge.FkType).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<GameEvent>().HasOne(ge => ge.GameEventType).WithMany(get => get.GameEvents).HasForeignKey(ge => ge.FkType).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<GameEvent>().HasOne(ge => ge.Player).WithMany(apu => apu.GameEvents).HasForeignKey(ge => ge.FkPlayerId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<GameEvent>().HasOne(ge => ge.EventTeam).WithMany(t => t.GameEvents).HasForeignKey(ge => ge.FkTeamId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<GameEvent>().HasOne(ge => ge.Entity1).WithMany(apu => apu.GameEventsEntity1).HasForeignKey(ge => ge.FkEntityId1).OnDelete(DeleteBehavior.NoAction);

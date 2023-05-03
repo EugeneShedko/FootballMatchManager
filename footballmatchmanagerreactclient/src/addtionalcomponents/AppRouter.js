@@ -28,6 +28,7 @@ import TeamGames from "../Pages/UserAccaunt/TeamGames/ViewTeamGames/TeamGames";
 import TeamGameCard from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInfoCard/TeamGamInfoCard";
 import CreateTeamGame from "../Pages/UserAccaunt/TeamGames/CreateTeamGame";
 import FinishTeamGame from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInfoCard/FinishTeamGame";
+import FinishGame from "../Pages/UserAccaunt/Games/ViewGameHistoryCard/FinishGame";
 
 const AppRouter = observer(() => {
 
@@ -47,6 +48,12 @@ const AppRouter = observer(() => {
                     <Route path="games" element={<Matches />}>
                         <Route path="creategame" element={<CreateMatch show={true} />} />
                     </Route>
+                    <Route path="gamecard/:id" element={<GameInfoCard />}>
+                        <Route path="editgame" element={<EditGame show={true} />} />
+                    </Route>
+                    {/* Добавить сюда компонент */}
+                    <Route path="gamecard/:id/history" element = {<FinishGame />} />                    
+
                     <Route path="teamgames" element={<TeamGames req="all-team-games"/>}>
                         <Route path="creategame" element={<CreateMatch show={true} />} />
                     </Route>
@@ -57,10 +64,6 @@ const AppRouter = observer(() => {
                     <Route path="teamgamecard/:id/history" element = {<FinishTeamGame />} />
 
                     <Route path="teamgamecreate" element={<CreateTeamGame show={true}/>} />
-
-                    <Route path="gamecard/:id" element={<GameInfoCard />}>
-                        <Route path="editgame" element={<EditGame show={true} />} />
-                    </Route>
 
                     <Route path="players" element={<Players />} />
                     <Route path="playercard/:id" element={<Profile />}>

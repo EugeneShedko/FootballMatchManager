@@ -10,6 +10,8 @@ namespace FootballMatchManager.AppDataBase.Models
         public int PkId { get; set; }
         [Column("gameId")]
         public int GameId { get; set; }
+        [Column("gametype")]
+        public string GameType { get; set; }
         [Column("type")]
         public int FkType { get; set; }
         [Column("time")]
@@ -17,15 +19,13 @@ namespace FootballMatchManager.AppDataBase.Models
         [Column("playerId")]
         public int? FkPlayerId { get; set; }
         [Column("teamId")]
-        public int FkTeamId { get; set; }
+        public int? FkTeamId { get; set; }
         [Column("entityId1")]
         public int? FkEntityId1 { get; set; }
         [Column("entityId2")]
         public int? FkEntityId2 { get; set; }
 
-        /* Пока что не делать связь на игру, так как */
-        /* Может буду добавлять и к персональным матчам */
-        public GameEventType GameType { get; set; }
+        public GameEventType GameEventType { get; set; }
         public ApUser Player { get; set; }
         public Team EventTeam { get; set; }
         public ApUser Entity1 { get;set; }
@@ -33,15 +33,16 @@ namespace FootballMatchManager.AppDataBase.Models
 
         public GameEvent(){}
 
-        public GameEvent(int gameId, int typeId, string time, int playerId, int teamId, int entityId1, int entityId2)
+        public GameEvent(int gameId, int typeId, string time, int playerId, int teamId, int entityId1, int entityId2, string gameType)
         {
             this.GameId = gameId;
             this.FkType = typeId;
             this.Time = time;
             this.FkPlayerId = playerId != -1 ? playerId : null;
-            this.FkTeamId = teamId;
+            this.FkTeamId =  teamId != -1 ? teamId : null;
             this.FkEntityId1 = entityId1 != -1 ? entityId1 : null;
             this.FkEntityId2 = entityId2 != -1 ? entityId2 : null;
+            this.GameType = gameType;
         }
     }
 }

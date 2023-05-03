@@ -3,18 +3,20 @@ import "./../../../../../css/TeamsGames/GameEventBlock.css";
 export default function Corner(props) {
 
     const data = props.mode === 'view' ? {
-        eventText: props.event1.gameType.text,
-        eventIcon: props.event1.gameType.image,
-        eventTime: props.event1.time,
+        gameType: props.event1.gameType,
+        eventText: props.event1.gameEventType.text,
+        eventIcon: props.event1.gameEventType.image,
+        eventTime: props.event1.time? props.event1.time + "'" : '',
         playerImage: props.event1.player.image,
         eventPlayer: props.event1.player.firstName + ' ' + props.event1.player.lastName,
-        eventTeam: props.event1.eventTeam.name
+        eventTeam: props.event1.eventTeam ? props.event1.eventTeam.name : ''
     }
         :
         {
+            gameType: props.event2.gameType,
             eventText: props.event2.type,
             eventIcon: props.event2.typeImage,
-            eventTime: props.event2.time,
+            eventTime: props.event2.time ? props.event2.time + "'" : '',
             eventPlayer: props.event2.player,
             playerImage: props.event2.playerImage,
             eventTeam: props.event2.team
@@ -23,13 +25,12 @@ export default function Corner(props) {
     // ------------------------------------------------------------------------ //
 
     return (
-        <div className={"game-event-cont " + props.align}>
+        <div className={data.gameType === 'game' ? "game-event-cont-100" : "game-event-cont " + props.align}>
             <div className="game-event-back-block" />
             <div className="row m-0 p-0">
                 <div className="col m-0 p-0">
                     <div className="row game-event-row">
                         <div className="col-1 p-0 m-0">
-                            {/* Нужна переменная */}
                             <img className="event-icon"
                                 src={"http://localhost:5004/" + data.eventIcon}
                                 alt="" />
@@ -38,7 +39,7 @@ export default function Corner(props) {
                             {data.eventText}
                         </div>
                         <div className="col-2 p-0 m-0">
-                            {data.eventTime}'
+                            {data.eventTime}
                         </div>
                     </div>
                     <div className="row user-info-row">

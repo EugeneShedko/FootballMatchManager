@@ -11,6 +11,9 @@ import Assist from "./GameEventBlocks/Assist";
 
 export default function GameEventsContainer(props) {
 
+    console.log('GENEVENT');
+    console.log(props.events);
+
     const eventsCont = useRef(null);
 
     // -------------------------------------------------------- //
@@ -21,12 +24,23 @@ export default function GameEventsContainer(props) {
         let align;
 
         if (props.mode === 'view') {
-            type = event.gameType.eventTypeId;
-            align = event.eventTeam.pkId === props.teamId ? "event-left" : "event-right";
+            type = event.gameEventType.eventTypeId;
+
+            /* Проверка на то, передается ли айди команды */
+            /* Нужно для разграничения командных и индивидуальных матчей */
+            if (props.hasOwnProperty('teamId'))
+                align = event.eventTeam.pkId === props.teamId ? "event-left" : "event-right";
+            else
+                align = "event-left";
+
         }
         else {
             type = event.eventTypeId;
-            align = event.teamId === props.teamId ? "event-left" : "event-right";
+            if (props.hasOwnProperty('teamId'))
+                align = event.teamId === props.teamId ? "event-left" : "event-right";
+            else
+                align = "event-left";
+
         }
 
         switch (type) {
@@ -76,7 +90,7 @@ export default function GameEventsContainer(props) {
                 event2={event}
                 index={index}
                 deleteTeamGameEvent={props.deleteTeamGameEvent}
-                
+
             />;
             case "corner": return <Corner mode={props.mode}
                 teamId={props.teamId}
@@ -111,7 +125,7 @@ export default function GameEventsContainer(props) {
         <div className="ge-info-cont" ref={eventsCont}>
             <div className="ge-info-absolute-cont">
                 {props.events?.sort((event1, event2) => parseInt(event1.time) - parseInt(event2.time))
-                              .map((event, index) => getEventComponent(event, index))}
+                    .map((event, index) => getEventComponent(event, index))}
             </div>
         </div>
     )
