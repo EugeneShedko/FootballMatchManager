@@ -167,10 +167,8 @@ namespace FootballMatchManager.Hubs
                 return;
             }
         }
-
         public async Task RequestToAddTeam(int teamId)
         {
-            /* Может в хабе посылать обратно */
 
             try
             {
@@ -235,7 +233,6 @@ namespace FootballMatchManager.Hubs
                 return;
             }
         }
-
         public async Task AcceptReqTeam(int inNotifiId)
         {
             int notifiId;
@@ -513,6 +510,156 @@ namespace FootballMatchManager.Hubs
                 _unitOfWork.Save();
 
                 await Clients.User(Convert.ToString(teamGameCreator.PkFkUserId))?.SendAsync("displayNotifi", notiffiMess);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
+        /* Приглашение пользователя в команду */
+        public async Task InvitationToTeam(int invitedUser)
+        {
+            try
+            {
+                int userIdSender;
+                string notiffiMess;
+
+                if (Context.User == null) { return; }
+
+                userIdSender = int.Parse(Context.User.Identity.Name);
+
+                /* Получаю команду по айди организтара */
+                Team team = _unitOfWork.ApUserTeamRepository.GetTeamByCreator(userIdSender);
+
+                if(team == null)
+                {
+                    Constant errorMsg = _unitOfWork.ConstantRepository.GetConstantByName("errorinviteteam");
+                    if (errorMsg == null) { return; }
+ 
+                    await Clients.User(Context.User.Identity.Name)?.SendAsync("displayNotifiError", errorMsg.StrValue);
+                    return;
+                }
+
+                /* Получаю пользователя организатора команды */
+                ApUser teamCreator = _unitOfWork.ApUserRepository.GetItem(userIdSender);
+
+                if(teamCreator == null) { return; }
+
+                /* Получаю сообщение уведомления */
+                Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("requstforinviteteam");
+
+                if (constant == null) { return; }
+
+                /* Формируем текст уведомления */
+                notiffiMess = constant.StrValue.Replace("{user}", teamCreator.FirstName + ' ' + teamCreator.LastName)
+                                               .Replace("{team}", team.Name);
+
+                /* тип в константы добавлен специально для уведомлений */
+                /* Формирую уведомление */
+                Notification notifi = new Notification(invitedUser, constant.Type, notiffiMess, team.PkId, teamCreator.PkId);
+
+                _unitOfWork.NotificationRepository.AddElement(notifi);
+                _unitOfWork.Save();
+
+                /* Отправляем уведомление пользователю, которого приглашают в команду */
+                await Clients.User(Convert.ToString(invitedUser))?.SendAsync("displayNotifi", notiffiMess);
+
+
+                /* Получаем констанут для отправки сообщения пользователю, который отправил приглашение */
+                Constant sendReq = _unitOfWork.ConstantRepository.GetConstantByName("teaminvitesend");
+                if (sendReq == null) { return; }
+
+                await Clients.User(Context.User.Identity.Name)?.SendAsync("displayNotifi", sendReq.StrValue);
+
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
+        public async Task DismissInvitationToTeam(int inNotifiId)
+        {
+            try
+            {
+                int userIdSender;
+                if (Context.User == null) { return; }
+
+                /* Айди пользователя, отправляющего ответ */
+                userIdSender = int.Parse(Context.User.Identity.Name);
+
+                /* Получаем отправленное приглашение на присоединение к команде */
+                Notification reqNotifi = _unitOfWork.NotificationRepository.GetItem(inNotifiId);
+                if (reqNotifi == null) { return; }
+
+                /* Получаем константу уведомления */
+                Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("dismissinviteteam");
+                if (constant == null) { return; }
+
+                if (reqNotifi.EntityId == null) { return; }
+
+                /* Получаем команду с которой связан запрос */
+                Team team = _unitOfWork.TeamRepository.GetItem((int)reqNotifi.EntityId);
+
+                /* Формирую текст уведомления */
+                string notiffiMess = constant.StrValue.Replace("{user}", reqNotifi.Recipient.FirstName + ' ' + reqNotifi.Recipient.LastName)
+                                                      .Replace("{team}", team.Name);
+
+                /* Создаю новый объект уведомления */
+                Notification notification = new Notification(reqNotifi.FkSenderId, constant.Type, notiffiMess, (int)reqNotifi.EntityId, userIdSender);
+
+                _unitOfWork.NotificationRepository.AddElement(notification);
+                _unitOfWork.Save();
+
+                /* Отправляем уведомление пользователю */
+                await Clients.User(Convert.ToString(reqNotifi.FkSenderId))?.SendAsync("displayNotifiError", notiffiMess);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
+        public async Task AcceptInvitationToTeam(int inNotifiId)
+        {
+            try
+            {
+                int notifiId;
+                int userIdSender;
+
+                if (Context.User == null) { return; }
+
+                /* Айди пользователя, отправляющего ответ */
+                userIdSender = int.Parse(Context.User.Identity.Name);
+
+                /* Получаем отправленное приглашение на присоединение к команде */
+                Notification reqNotifi = _unitOfWork.NotificationRepository.GetItem(inNotifiId);
+                if (reqNotifi == null) { return; }
+
+                Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("acceptinviteteam");
+                if (constant == null) { return; }
+
+                if (reqNotifi.EntityId == null) { return; }
+
+                /* Получаем команду с которой связан запрос */
+                Team team = _unitOfWork.TeamRepository.GetItem((int)reqNotifi.EntityId);
+
+                /* Формирую текст уведомления */
+                string notiffiMess = constant.StrValue.Replace("{user}", reqNotifi.Recipient.FirstName + ' ' + reqNotifi.Recipient.LastName)
+                                                      .Replace("{team}", team.Name);
+
+                /* Создаю новый объект уведомления */
+                Notification notification = new Notification(reqNotifi.FkSenderId, constant.Type, notiffiMess, (int)reqNotifi.EntityId, userIdSender);
+                _unitOfWork.NotificationRepository.AddElement(notification);
+                _unitOfWork.Save();
+
+                await Clients.User(Convert.ToString(reqNotifi.FkSenderId))?.SendAsync("displayNotifi", notiffiMess);
+
+                /* Формирую и отправляю уведомление пользователю, который принял запрос */
+                Constant successNotifi = _unitOfWork.ConstantRepository.GetConstantByName("acceptinviteteamsend");
+                if(successNotifi == null) { return; }
+                string successMess = successNotifi.StrValue.Replace("{team}", team.Name);
+
+                await Clients.User(Convert.ToString(reqNotifi.FkRecipient))?.SendAsync("displayNotifi", notiffiMess);
+
             }
             catch (Exception ex)
             {

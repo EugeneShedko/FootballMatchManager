@@ -149,15 +149,54 @@ export default function NotificationBlock(props) {
 
     // ---------------------------------------------------------------------------------------- //
 
+    function acceptInviteTeam()
+    {
+        /* Здесь нужно подумать, каккого пользователя добавлять */
+        const data = new FormData();
+        data.append("teamId", props.notify.entityId);
+        data.append("userId", props.notify.fkRecipient);
+
+        axios.post('http://localhost:5004/api/team/add-to-team', data, { withCredentials: true })
+        .then((response) => {
+            var conn = userContext.notificonn;
+            conn.invoke("AcceptInvitationToTeam", props.notify.pkId);
+            readNotifi();
+        })
+        .catch(userError => {
+            if (userError.response) {
+                toast.error(userError.response.data.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            }
+        });
+
+    }
+
+    // ---------------------------------------------------------------------------------------- //
+    
+    function dismissInviteTeam()
+    {
+        var conn = userContext.notificonn;
+        conn.invoke("DismissInvitationToTeam", props.notify.pkId);
+        readNotifi();
+    }    
+
+    // ---------------------------------------------------------------------------------------- //
+
     function getButtonBlock(notifi) {
         switch (notifi.type) {
-            case "text": return <ReadBlock readNotifi={readNotifi} />; break;
+            case "text": return <ReadBlock readNotifi={readNotifi} />;
             case "requestforgame": return <RequestBlock dismissRequest={dismissRequestGame}
-                                                        acceptRequest={acceptRequestGame} />; break;
+                                                        acceptRequest={acceptRequestGame} />;
             case "requestforteam": return <RequestBlock dismissRequest={dismissRequestTeam}
-                                                        acceptRequest={acceptRequestTeam} />; break;
+                                                        acceptRequest={acceptRequestTeam} />;
             case "requestforteamgame": return <RequestBlock dismissRequest={dismissRequestTeamGame}
-                                                        acceptRequest={acceptRequestTeamGame} />; break;
+                                                        acceptRequest={acceptRequestTeamGame} />;
+            case "requstforinviteteam": return <RequestBlock dismissRequest={dismissInviteTeam}
+                                                             acceptRequest={acceptInviteTeam} />;
             default: return;
         }
     }

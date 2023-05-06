@@ -31,7 +31,7 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<Constant>().HasKey(c => c.PkId);
             modelBuilder.Entity<Constant>().HasData(new Constant() { PkId = 1, Group = "notification", Type = "text" ,Name = "addtogame", StrValue = "Пользователь {user} присоединлся к матчу {game}"}, 
                                                     new Constant() { PkId = 2, Group = "notification", Type = "text", Name = "leavefromgame", StrValue = "Пользователь {user} покинул матч {game}"},
-                                                    new Constant() { PkId = 3, Group = "notification", Type = "requestforgame", Name = "requestforgame", StrValue = "Пользователь {user} отправил запрос на участие в матче {game}. Разршеить?" },
+                                                    new Constant() { PkId = 3, Group = "notification", Type = "requestforgame", Name = "requestforgame", StrValue = "Пользователь {user} отправил запрос на участие в матче {game}. Разрешить?" },
                                                     new Constant() { PkId = 4, Group = "notification", Type = "text", Name = "dismissreqgame", StrValue = "Пользователь {user} отклонил ваш запрос на участие в матче {game}" },
                                                     new Constant() { PkId = 5, Group = "notification", Type = "text", Name = "acceptreqgame", StrValue = "Пользователь {user} принял ваш запрос на участие в матче {game}" },
                                                     new Constant() { PkId = 6, Group = "notification", Type = "requestforteam", Name = "requestforteam", StrValue = "Пользователь {user} отправил запрос на присоединение к команде {team}. Разршеить?" },
@@ -44,8 +44,14 @@ namespace FootballMatchManager.DataBase.DBClasses
                                                     new Constant() { PkId = 12, Group = "notification", Type = "text", Name = "teamgamereqsend", StrValue = "Ваш запрос на присоединение к матчу отправлен" },
                                                     new Constant() { PkId = 13, Group = "notification", Type = "text", Name = "dismissreqteamgame", StrValue = "Команда {team} отклонила ваш запрос на участие в матче {game}" },
                                                     new Constant() { PkId = 14, Group = "notification", Type = "text", Name = "acceptreqteamgame", StrValue = "Команда {user} принял ваш запрос на участие в матче {game}" },
-                                                    new Constant() { PkId = 15, Group = "notification", Type = "text", Name = "leaveteamgame", StrValue = "Команда {team} покинула матч {game}" }
-
+                                                    new Constant() { PkId = 15, Group = "notification", Type = "text", Name = "leaveteamgame", StrValue = "Команда {team} покинула матч {game}" },
+                                                    new Constant() { PkId = 16, Group = "notification", Type = "text", Name = "errorinviteteam", StrValue = "Невозможно отправить приглашение на присоединение к команде, так как вы не являетесь организатором команды" },
+                                                    new Constant() { PkId = 17, Group = "notification", Type = "requstforinviteteam", Name = "requstforinviteteam", StrValue = "Пользователь {user} приглашает вас присоединиться к команде {team}." },
+                                                    new Constant() { PkId = 18, Group = "notification", Type = "text", Name = "teaminvitesend", StrValue = "Ваше приглашение успешно отправлено!" },
+                                                    new Constant() { PkId = 19, Group = "notification", Type = "text", Name = "dismissinviteteam", StrValue = "Пользователь {user} отклонил ваше приглашение на присоединение к команде {team}." },
+                                                    new Constant() { PkId = 20, Group = "notification", Type = "text", Name = "acceptinviteteam", StrValue = "Пользователь {user} принял ваше приглашение на присоединение к команде {team}." },
+                                                    /* -------------- */
+                                                    new Constant() { PkId = 21, Group = "notification", Type = "text", Name = "acceptinviteteamsend", StrValue = "Вы присоединились к команде {team}" }
                                                     );
 
             modelBuilder.Entity<Comment>().HasKey(c => c.PkId);

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { TO_ACCAUNT, TO_MAIN, TO_REGISTRATION } from "../../Utilts/Consts";
 import { Context } from "../../index";
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import {displayNotifMess} from "./../../addtionalcomponents/AuxiliaryFunctions";
+import {displayNotifMess, displayNotifiError} from "./../../addtionalcomponents/AuxiliaryFunctions";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -160,6 +160,7 @@ export default function Loginform(props) {
         
 
         nothubconn.on("displayNotifi", displayNotifMess);
+        nothubconn.on("displayNotifiError", displayNotifiError);
 
         nothubconn.start();
         return nothubconn;

@@ -9,3 +9,13 @@ export function displayNotifMess(message)
             pauseOnFocusLoss: false
         });
 }
+
+export function displayNotifiError(message)
+{
+    toast.error(message,
+        {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 2000,
+            pauseOnFocusLoss: false
+        });
+}

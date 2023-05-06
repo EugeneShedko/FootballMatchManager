@@ -219,9 +219,12 @@ namespace FootballMatchManager.Controllers
                 int teamId = int.Parse(Request.Form["teamId"]);
                 int userId = int.Parse(Request.Form["userId"]);
 
-                //Можно было бы добавить количество участников
-                Team team = _unitOfWork.TeamRepository.GetItem(teamId);
+                if (_unitOfWork.ApUserTeamRepository.GetTeamsByParticipant(userId).Count >= 3)
+                {
+                    return BadRequest(new {message = "Невозможно присоединить пользователя к команде, так как он уже является участником 3 команд."});
+                }
 
+                Team team = _unitOfWork.TeamRepository.GetItem(teamId);
                 if(team == null) { return BadRequest(); }
 
                 ApUserTeam apUserTeamEx = _unitOfWork.ApUserTeamRepository.GetTeamParticipant(teamId, userId);

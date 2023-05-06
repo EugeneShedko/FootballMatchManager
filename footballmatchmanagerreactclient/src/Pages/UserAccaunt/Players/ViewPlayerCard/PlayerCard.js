@@ -17,9 +17,7 @@ export default function Profile() {
     const location = useLocation();
 
     const { userContext } = useContext(Context);
-
     const [userId, setUserId] = useState(parseInt(useParams().id));
-    
     const [profileInfo, setProfileInfo] = useState({});
     const [changes, setChanges] = useState({
         userFirstName: "",
@@ -189,6 +187,13 @@ export default function Profile() {
 
     // ------------------------------------------------------------------------------------------------ //
 
+    function sendReqToAddTeam()
+    {
+        var conn = userContext.notificonn;
+        conn.invoke("InvitationToTeam", userId);
+    }
+
+    // ------------------------------------------------------------------------------------------------ //
     return (
         <div className="row profile-container">
             <div className="row profile-info-container m-0">
@@ -222,7 +227,6 @@ export default function Profile() {
                     <div className="row prtext">
                         Email: {profileInfo.email}
                     </div>
-                    {/*Пока что стат, нет полей в бд*/}
                     <div className="row icon-row">
                         <div className="col-3 p-0">
                             <div className="row">
@@ -271,15 +275,21 @@ export default function Profile() {
                         </div>
                     </div>
                 </div>
-                <div className="col-2 p-0 h-100">
+                <div className="col-2 p-0 m-0 h-100">
                     <div className="row m-0 admin-button">
                         {
                             userContext.userId === userId ?
                             <input type="button"
                                    value="Изменить"
-                                   className="just-button"
-                                   onClick={edit} />
-                            : null
+                                   className="profile-button"
+                                   onClick={edit} 
+                                   />
+                            : 
+                            <input type="button"
+                                   value="Пригласить в команду"
+                                   className="profile-button"
+                                   onClick={sendReqToAddTeam}
+                                   />
                         }
                     </div>
                 </div>
@@ -315,14 +325,6 @@ export default function Profile() {
                 </div>
             </div>
             <Outlet />
-            {/*
-            <EditProfile setProfileInfo={setProfileInfo}
-                info={changes}
-                setInfo={setChanges}
-                show={editProfileVisible}
-                onHide={setEditProfileVisible} 
-            />
-            */}
         </div>
     );
 }
