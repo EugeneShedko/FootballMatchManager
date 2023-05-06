@@ -24,6 +24,8 @@ export default function NotificationBlock(props) {
         readNotifi();
     }
 
+    // ---------------------------------------------------------------------------------------- //
+
     function acceptRequestGame() {
         /* Плохо сделано, потому что выходит как бы некое разделение */
         /* Может хреново отработать */
@@ -186,6 +188,42 @@ export default function NotificationBlock(props) {
 
     // ---------------------------------------------------------------------------------------- //
 
+    function acceptInviteGame()
+    {
+        const data = new FormData();
+        data.append("gameId", props.notify.entityId);
+        data.append("userId", props.notify.fkRecipient);
+
+        axios.post('http://localhost:5004/api/profile/add-to-game', data, { withCredentials: true })
+            .then((response) => {
+                var conn = userContext.notificonn;
+                conn.invoke("AcceptInvitationToGame", props.notify.pkId);
+                readNotifi();
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.data.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                    readNotifi();    
+                }
+            });
+    }
+
+    // ---------------------------------------------------------------------------------------- //
+
+    function dismissInviteGame()
+    {
+        var conn = userContext.notificonn;
+        conn.invoke("DismissInvitationToGame", props.notify.pkId);
+        readNotifi();
+    }
+
+    // ---------------------------------------------------------------------------------------- //
+
     function getButtonBlock(notifi) {
         switch (notifi.type) {
             case "text": return <ReadBlock readNotifi={readNotifi} />;
@@ -197,6 +235,8 @@ export default function NotificationBlock(props) {
                                                         acceptRequest={acceptRequestTeamGame} />;
             case "requstforinviteteam": return <RequestBlock dismissRequest={dismissInviteTeam}
                                                              acceptRequest={acceptInviteTeam} />;
+            case "requesttoinvitegame": return <RequestBlock dismissRequest={dismissInviteGame}
+                                                             acceptRequest={acceptInviteGame} />;
             default: return;
         }
     }

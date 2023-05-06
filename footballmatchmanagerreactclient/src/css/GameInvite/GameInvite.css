@@ -1,0 +1,18 @@
+.mi-info-main-container {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.mi-info-container
+{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0,0,0,0.6);
+    border:4px white solid;
+    border-radius: 20px;
+    position: relative;
+}

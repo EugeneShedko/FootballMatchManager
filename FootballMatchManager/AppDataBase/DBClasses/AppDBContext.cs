@@ -50,8 +50,11 @@ namespace FootballMatchManager.DataBase.DBClasses
                                                     new Constant() { PkId = 18, Group = "notification", Type = "text", Name = "teaminvitesend", StrValue = "Ваше приглашение успешно отправлено!" },
                                                     new Constant() { PkId = 19, Group = "notification", Type = "text", Name = "dismissinviteteam", StrValue = "Пользователь {user} отклонил ваше приглашение на присоединение к команде {team}." },
                                                     new Constant() { PkId = 20, Group = "notification", Type = "text", Name = "acceptinviteteam", StrValue = "Пользователь {user} принял ваше приглашение на присоединение к команде {team}." },
-                                                    /* -------------- */
-                                                    new Constant() { PkId = 21, Group = "notification", Type = "text", Name = "acceptinviteteamsend", StrValue = "Вы присоединились к команде {team}" }
+                                                    new Constant() { PkId = 21, Group = "notification", Type = "text", Name = "acceptinviteteamsend", StrValue = "Вы присоединились к команде {team}!" },
+                                                    new Constant() { PkId = 22, Group = "notification", Type = "requesttoinvitegame", Name = "requesttoinvitegame", StrValue = "Пользователь {user} приглашает вас принять участие в игре {game}" },
+                                                    new Constant() { PkId = 23, Group = "notification", Type = "text", Name = "dismissinvitegame", StrValue = "Пользователь {user} отклонил ваше приглашение на присоединение к матчу {game}." },
+                                                    new Constant() { PkId = 24, Group = "notification", Type = "text", Name = "acceptinvitegame", StrValue = "Пользователь {user} принял ваше приглашение на присоединение к матчу {game}." },
+                                                    new Constant() { PkId = 25, Group = "notification", Type = "text", Name = "acceptinvitegamesend", StrValue = "Вы присоединились к матчу {game}!" }
                                                     );
 
             modelBuilder.Entity<Comment>().HasKey(c => c.PkId);

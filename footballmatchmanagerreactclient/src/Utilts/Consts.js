@@ -15,6 +15,7 @@ export const TO_GAMES = "/accaunt/games";
 export const TO_CREATE_GAME = "/accaunt/games/creategame";
 export const TO_EDIT_GAME = "/editgame";
 export const TO_GAME_CARD = "/accaunt/gamecard";
+export const TO_GAME_INVITE = "/gameinvite"
 export const TO_GAME_HISTORY = "/history";
 
 export const TO_TEAM_GAMES = "/accaunt/teamgames";

@@ -131,6 +131,8 @@ export default function GameInfoCard(props) {
         conn.invoke("Game", String(props.gameId), "addtogame");
     }
 
+    // ---------------------------------------------------------------------------------------- //
+
     function sendRequestForPart() {
         var conn = userContext.notificonn;
         conn.invoke("Game", gameId, "requestforgame");

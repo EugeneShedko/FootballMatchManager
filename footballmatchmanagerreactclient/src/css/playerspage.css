@@ -13,6 +13,7 @@
 
 .ppplayers-absolute-container
 {
+    width: 100%;
     display: flex;
     justify-content: space-evenly;
     margin: 0;
@@ -48,6 +49,14 @@
 {
     margin: -1% 0% 1.5% 0%;
     cursor: pointer;
+}
+
+.ppinfo-block-no-hover
+{
+    margin: 0% 0% 1.5% 0%;
+    padding:0;
+    width: 24vw;
+    height: 20vh;
 }
 
 #search-player-element

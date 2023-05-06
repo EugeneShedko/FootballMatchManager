@@ -25,12 +25,6 @@ export default function Players(props) {
                 })
                 .catch(userError => {
                     if (userError.response) {
-                        toast.error("Ошибка получения пользователей",
-                            {
-                                position: toast.POSITION.TOP_CENTER,
-                                autoClose: 2000,
-                                pauseOnFocusLoss: false
-                            });
                     }
                 });
             ;
@@ -57,14 +51,6 @@ export default function Players(props) {
         }
 
         setPlayers(resultPlayers);
-
-        /* Для чего я поставил данное условие? */
-        /*
-        if(resultPlayers.length > 0)
-        {
-            setPlayers(resultPlayers);
-        }
-        */
     }
 
     // --------------------------------------------------------------------------------------- //
@@ -86,7 +72,7 @@ export default function Players(props) {
             <div className="col-9 ppplayers-container">
                 <PlayerGenerator players={players}
                                  searchString={searchString}
-                                 setContState={props.setContState} />
+                                  />
             </div>
             <div className="col-3 pplefcol">
                 <div className="pp-fixed-container">

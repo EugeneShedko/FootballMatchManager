@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { TO_GAME_HISTORY } from "../../../../../Utilts/Consts";
+import { TO_GAME_HISTORY, TO_GAME_INVITE } from "../../../../../Utilts/Consts";
 
 export default function CreatorButton(props) {
 
@@ -8,17 +8,16 @@ export default function CreatorButton(props) {
 
     // --------- Функция выбора кнопок -------------- //
 
-    function selectGameButtons(gameStatus) 
-    {
-        switch(gameStatus)
-        {
+    function selectGameButtons(gameStatus) {
+        switch (gameStatus) {
             case 1: return <>
-                           <EditGameButton /> 
-                           <DeleteGameButton />
-                           </>;
-            case 2: return <><FinishGame /></>                              
-            case 3: return <></>                              
-            default: return <></>;               
+                <InviteUser />
+                <EditGameButton />
+                <DeleteGameButton />
+            </>;
+            case 2: return <><FinishGame /></>
+            case 3: return <></>
+            default: return <></>;
         }
     }
 
@@ -56,18 +55,29 @@ export default function CreatorButton(props) {
 
     /* Пока что кнопка без обработчика */
 
-    function FinishGame()
-    {
+    function FinishGame() {
         return (
             <>
                 <input className="match-join-button"
                     type="button"
                     value="Завершить матч"
                     onClick={() => navigate(location.pathname + TO_GAME_HISTORY)}
-                     />
+                />
 
             </>
-        );  
+        );
+    }
+
+    // --------------------------------------------------------- //
+
+    function InviteUser() {
+        return (
+            <input className="match-join-button"
+                type="button"
+                value="Пригласить игрока"
+                onClick={() => navigate(location.pathname + TO_GAME_INVITE)}
+            />
+        );
     }
 
     // --------------------------------------------------------- //

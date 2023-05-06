@@ -1,9 +1,8 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import MessagesBlock from "../../Games/ViewGameCard/MessagesBlock";
-import PlayerBlock from "../../Players/ViewPlayers/PlayerBlock";
 import { toast } from "react-toastify";
-import { useAsyncError, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Context } from "../../../..";
 import CreatorButtons from "./CreatorButtons";
 import ParticipanButtons from "./ParticipantButtons";

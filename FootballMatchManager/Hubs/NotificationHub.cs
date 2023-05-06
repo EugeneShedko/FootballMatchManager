@@ -658,7 +658,148 @@ namespace FootballMatchManager.Hubs
                 if(successNotifi == null) { return; }
                 string successMess = successNotifi.StrValue.Replace("{team}", team.Name);
 
-                await Clients.User(Convert.ToString(reqNotifi.FkRecipient))?.SendAsync("displayNotifi", notiffiMess);
+                await Clients.User(Convert.ToString(reqNotifi.FkRecipient))?.SendAsync("displayNotifi", successMess);
+
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
+        /* Приглашение пользователя в индивидуальный матча */
+        public async Task InvitationToGame(int invitedUser, int gameId)
+        {
+            try
+            {
+
+                int userIdSender;
+                string notiffiMess;
+
+                if (Context.User == null) { return; }
+
+                userIdSender = int.Parse(Context.User.Identity.Name);
+
+                /* Получаю матч по идентификатору */
+                Game game = _unitOfWork.GameRepository.GetItem(gameId);
+                if (game == null) { return; }
+
+                /* Получаю организатора по идентификаору */
+                ApUser gameCreator = _unitOfWork.ApUserRepository.GetItem(userIdSender);
+                if (gameCreator == null) { return; }
+
+                /* Получаю сообщение уведомления */
+                Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("requesttoinvitegame");
+                if (constant == null) { return; }
+
+                /* Формируем текст уведомления */
+                notiffiMess = constant.StrValue.Replace("{user}", gameCreator.FirstName + ' ' + gameCreator.LastName)
+                                               .Replace("{game}", game.Name);
+
+                /* тип в константы добавлен специально для уведомлений */
+                /* Формирую уведомление */
+                Notification notifi = new Notification(invitedUser, constant.Type, notiffiMess, game.PkId, gameCreator.PkId);
+
+                _unitOfWork.NotificationRepository.AddElement(notifi);
+                _unitOfWork.Save();
+
+                /* Отправляем уведомление пользователю, которого приглашают в команду */
+                await Clients.User(Convert.ToString(invitedUser))?.SendAsync("displayNotifi", notiffiMess);
+
+
+                /* Получаем констанут для отправки сообщения пользователю, который отправил приглашение */
+                Constant sendReq = _unitOfWork.ConstantRepository.GetConstantByName("teaminvitesend");
+                if (sendReq == null) { return; }
+
+                await Clients.User(Context.User.Identity.Name)?.SendAsync("displayNotifi", sendReq.StrValue);
+
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
+        public async Task DismissInvitationToGame(int inNotifiId)
+        {
+            try
+            {
+                int userIdSender;
+                if (Context.User == null) { return; }
+
+                /* Айди пользователя, отправляющего ответ */
+                userIdSender = int.Parse(Context.User.Identity.Name);
+
+                /* Получаем отправленное приглашение на присоединение к команде */
+                Notification reqNotifi = _unitOfWork.NotificationRepository.GetItem(inNotifiId);
+                if (reqNotifi == null) { return; }
+
+                /* Получаем константу уведомления */
+                Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("dismissinvitegame");
+                if (constant == null) { return; }
+
+                if (reqNotifi.EntityId == null) { return; }
+
+                /* Получаем игру с которой связан запрос */
+                Game game = _unitOfWork.GameRepository.GetItem((int)reqNotifi.EntityId);
+
+                /* Формирую текст уведомления */
+                string notiffiMess = constant.StrValue.Replace("{user}", reqNotifi.Recipient.FirstName + ' ' + reqNotifi.Recipient.LastName)
+                                                      .Replace("{game}", game.Name);
+
+                /* Создаю новый объект уведомления */
+                Notification notification = new Notification(reqNotifi.FkSenderId, constant.Type, notiffiMess, (int)reqNotifi.EntityId, userIdSender);
+
+                _unitOfWork.NotificationRepository.AddElement(notification);
+                _unitOfWork.Save();
+
+                /* Отправляем уведомление пользователю */
+                await Clients.User(Convert.ToString(reqNotifi.FkSenderId))?.SendAsync("displayNotifiError", notiffiMess);
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
+        public async Task AcceptInvitationToGame(int inNotifiId)
+        {
+            try
+            {
+                int notifiId;
+                int userIdSender;
+
+                if (Context.User == null) { return; }
+
+                /* Айди пользователя, отправляющего ответ */
+                userIdSender = int.Parse(Context.User.Identity.Name);
+
+                /* Получаем отправленное приглашение на присоединение к матчу */
+                Notification reqNotifi = _unitOfWork.NotificationRepository.GetItem(inNotifiId);
+                if (reqNotifi == null) { return; }
+
+                Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("acceptinvitegame");
+                if (constant == null) { return; }
+
+                if (reqNotifi.EntityId == null) { return; }
+
+                /* Получаем команду с которой связан запрос */
+                Game game = _unitOfWork.GameRepository.GetItem((int)reqNotifi.EntityId);
+
+                /* Формирую текст уведомления */
+                string notiffiMess = constant.StrValue.Replace("{user}", reqNotifi.Recipient.FirstName + ' ' + reqNotifi.Recipient.LastName)
+                                                      .Replace("{game}", game.Name);
+
+                /* Создаю новый объект уведомления */
+                Notification notification = new Notification(reqNotifi.FkSenderId, constant.Type, notiffiMess, (int)reqNotifi.EntityId, userIdSender);
+                _unitOfWork.NotificationRepository.AddElement(notification);
+                _unitOfWork.Save();
+
+                await Clients.User(Convert.ToString(reqNotifi.FkSenderId))?.SendAsync("displayNotifi", notiffiMess);
+
+                /* Формирую и отправляю уведомление пользователю, который принял запрос */
+                Constant successNotifi = _unitOfWork.ConstantRepository.GetConstantByName("acceptinvitegamesend");
+                if (successNotifi == null) { return; }
+                string successMess = successNotifi.StrValue.Replace("{game}", game.Name);
+
+                await Clients.User(Convert.ToString(reqNotifi.FkRecipient))?.SendAsync("displayNotifi", successMess);
 
             }
             catch (Exception ex)

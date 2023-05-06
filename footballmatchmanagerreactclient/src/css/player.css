@@ -7,7 +7,7 @@
     border-radius: 20px;
 }
 
-.player-container :hover
+.player-container:hover
 {
     cursor: pointer;
 }
@@ -41,6 +41,21 @@
     text-overflow: ellipsis;
     color: white;
 
+}
+
+.invite-button
+{
+    color: white;
+    background-color: green;
+    border: none;
+    border-radius: 0px 0px 15px 15px;
+}
+
+.invite-button:hover
+{
+    color: green;
+    font-weight: bold;
+    background-color: white;
 }
 
 .pl-danger-button
