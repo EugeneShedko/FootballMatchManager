@@ -52,6 +52,17 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         }
 
         // ------------------------------------------------------------------- //
+        /// <summary>
+        /// Возвращает список констант определенной группы
+        /// </summary>
+        /// <param name="group">Нименование группы</param>
+        /// <returns></returns>
+        public List<Constant> GetConstantsByGroup(string group)
+        {
+            return GetItems().Where(c => c.Group == group).ToList();
+        }
+
+        // ------------------------------------------------------------------- //
 
     }
 }

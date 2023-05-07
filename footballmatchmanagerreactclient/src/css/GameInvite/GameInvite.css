@@ -14,5 +14,108 @@
     background-color: rgba(0,0,0,0.6);
     border:4px white solid;
     border-radius: 20px;
+}
+
+.mi-top-cont
+{
+    margin: 0;
+    padding: 0.5% 1% 0% 2%;
+    height: 10%;
+    border-bottom: 4px white solid;
+}
+
+.filter-text
+{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.mi-top-col
+{
+    margin: 0;
+    padding: 0.5% 0.5% 0.5% 0.5%;
+    color: white
+}
+
+.mi-search-cont
+{
+    border-right: 3px solid white;
+}
+
+.search-player-element
+{
+    width: 100%;
+    height: 100%;
+    border: 2px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    font-style: italic;
+    font-size: 18px;
+}
+
+.filter-player-element
+{
+    width: 100%;
+    height: 100%;
+    border: 3px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    font-style: italic;  
+}
+
+.mi-user-container
+{
+    margin: 0;
+    padding: 0;
+    height: 83%;
     position: relative;
+}
+
+.mi-button-cont
+{
+    margin: 0;
+    padding: 0;
+    height: 7%;
+    display: flex;
+    justify-content: end;
+    border-top: 4px white solid;
+}
+
+.reset-button-cont
+{
+    display: flex;
+    justify-content: center;
+}
+
+.reset-button
+{
+    width: 80%;
+    border: 2px solid white;
+    border-radius: 10px;
+    background-color: black;
+    color: white;    
+}
+
+.reset-button:hover
+{
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+.cancel-button
+{
+    color: white;
+    background-color: darkred;
+    border: none;
+    font-size: 18px;
+    border-radius: 0px 0px 15px 15px;
+}
+
+.cancel-button:hover
+{
+    background-color: red;
 }

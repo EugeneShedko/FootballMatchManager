@@ -37,7 +37,6 @@ namespace FootballMatchManager.DataBase.DBClasses
                                                     new Constant() { PkId = 6, Group = "notification", Type = "requestforteam", Name = "requestforteam", StrValue = "Пользователь {user} отправил запрос на присоединение к команде {team}. Разршеить?" },
                                                     new Constant() { PkId = 7, Group = "notification", Type = "text", Name = "acceptregteam", StrValue = "Пользователь {user} принял ваш запрос на присоединение к команде {team}" },
                                                     new Constant() { PkId = 8, Group = "notification", Type = "text", Name = "dismissregteam", StrValue = "Пользователь {user} отклонил ваш запрос на присоединение к команде {team}" },
-                                                    /* Так себе наименование у данной константы, потом возможно поменять */
                                                     new Constant() { PkId = 9, Group = "notification", Type = "text", Name = "errorreqteam", StrValue = "Невозможно отпарвить запрос на присоединение к команде, так как вы уже являетесь участником 3 команд" },
                                                     new Constant() { PkId = 10, Group = "notification", Type = "text", Name = "teamreqsend", StrValue = "Ваш запрос на присоединение к команде {team} отправлен" },
                                                     new Constant() { PkId = 11, Group = "notification", Type = "requestforteamgame", Name = "requestforteamgame", StrValue = "{team} отправила запрос на присоединение к командному матчу {name}" },
@@ -54,7 +53,18 @@ namespace FootballMatchManager.DataBase.DBClasses
                                                     new Constant() { PkId = 22, Group = "notification", Type = "requesttoinvitegame", Name = "requesttoinvitegame", StrValue = "Пользователь {user} приглашает вас принять участие в игре {game}" },
                                                     new Constant() { PkId = 23, Group = "notification", Type = "text", Name = "dismissinvitegame", StrValue = "Пользователь {user} отклонил ваше приглашение на присоединение к матчу {game}." },
                                                     new Constant() { PkId = 24, Group = "notification", Type = "text", Name = "acceptinvitegame", StrValue = "Пользователь {user} принял ваше приглашение на присоединение к матчу {game}." },
-                                                    new Constant() { PkId = 25, Group = "notification", Type = "text", Name = "acceptinvitegamesend", StrValue = "Вы присоединились к матчу {game}!" }
+                                                    new Constant() { PkId = 25, Group = "notification", Type = "text", Name = "acceptinvitegamesend", StrValue = "Вы присоединились к матчу {game}!" },
+                                                    new Constant() { PkId = 26, Group = "position",     Type = "text", Name = "forward",         StrValue = "Нападающий" },
+                                                    new Constant() { PkId = 27, Group = "position",     Type = "text", Name = "left midfielder", StrValue = "Левый полузащитник" },
+                                                    new Constant() { PkId = 28, Group = "position",     Type = "text", Name = "right midfielder", StrValue = "Правый полузащитник" },
+                                                    new Constant() { PkId = 29, Group = "position",     Type = "text", Name = "attacking midfielder", StrValue = "Атакующий полузащитник" },
+                                                    new Constant() { PkId = 30, Group = "position",     Type = "text", Name = "central midfielder", StrValue = "Центральный полузащитник" },
+                                                    new Constant() { PkId = 31, Group = "position",     Type = "text", Name = "holding midfielder", StrValue = "Опорный полузащитник" },
+                                                    new Constant() { PkId = 32, Group = "position",     Type = "text", Name = "left defender", StrValue = "Левый защитник" },
+                                                    new Constant() { PkId = 33, Group = "position",     Type = "text", Name = "right defender", StrValue = "Правый защитник" },
+                                                    new Constant() { PkId = 34, Group = "position",     Type = "text", Name = "central defender", StrValue = "Центральный защитник" },
+                                                    new Constant() { PkId = 35, Group = "position",     Type = "text", Name = "Goalkeeper", StrValue = "Вратарь" }
+
                                                     );
 
             modelBuilder.Entity<Comment>().HasKey(c => c.PkId);

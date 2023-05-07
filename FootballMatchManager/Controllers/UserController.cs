@@ -15,11 +15,9 @@ namespace FootballMatchManager.Controllers
     public class UserController : ControllerBase
     {
         private UnitOfWork _unitOfWork;
-        private JwtService _jwtService;
-        public UserController(UnitOfWork unitOfWork, JwtService jwtService)
+        public UserController(UnitOfWork unitOfWork)
         {
             this._unitOfWork = unitOfWork;
-            this._jwtService = jwtService;
         }
 
         // ------------------------------------------------------------------------------------------------------------------- //
@@ -38,6 +36,17 @@ namespace FootballMatchManager.Controllers
             }
 
             return Ok(apUsers);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------- //
+
+        [HttpGet]
+        [Route("player-position")]
+        public ActionResult GetPlayerPosition()
+        {
+            List<Constant> positions = _unitOfWork.ConstantRepository.GetConstantsByGroup("position");
+            return Ok(positions);
+
         }
 
         // ------------------------------------------------------------------------------------------------------------------- //
@@ -93,6 +102,8 @@ namespace FootballMatchManager.Controllers
 
             return Ok(new { message = "Данные успешно сохранены", askdata = apUser });
         }
+
+        // ------------------------------------------------------------------------------- //
 
         [HttpPost]
         [Route("addcomment")]
