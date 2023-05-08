@@ -82,9 +82,37 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             return GetItems().FirstOrDefault(t => t.PkFkTeamId == teamId
                                                && t.PkUserType == (int)ApUserTeamEnum.CREATOR);
+
+        }
+
+        /// <summary>
+        /// Возвращает объект ApUser организатора команды
+        /// </summary>
+        /// <param name="teamId"></param>
+        /// <returns></returns>
+        public ApUser GetTeamCreatorObj(int teamId)
+        {
+            return GetItems().Where(t => t.PkFkTeamId == teamId
+                                               && t.PkUserType == (int)ApUserTeamEnum.CREATOR)
+                             .Select(aput => aput.ApUser)
+                             .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Возвращает список команд, по списку организаторов команд
+        /// </summary>
+        /// <param name="creatorsList">Список организаторов команд</param>
+        /// <returns></returns>
+        public List<Team> GetTeamsByCreators(List<ApUser> creatorsList)
+        {
+            return GetItems().Where(aput => aput.PkUserType == (int)ApUserTeamEnum.CREATOR
+                                         && creatorsList.Any(creator => creator.PkId == aput.PkFkUserId))
+                             .Select(aput => aput.Team)
+                             .ToList();
         }
 
         // ------------------------------------------------------------- //
+
         /* Возвращает запись организатора команды по айдикоманды и айди пользователя */
         public ApUserTeam GetTeamCreator(int teamId, int userId)
         {
@@ -104,7 +132,12 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------- //
 
-        /* Возвращает первую команду в которой пользователь является организатором */
+        /// <summary>
+        /// Возвращает объект TEAM(команду) по айди организатора
+        /// </summary>
+        /// <param name="userId"> Идентификатор организатора команды </param>
+        /// <returns></returns>
+
         public Team GetTeamByCreator(int userId)
         {
             return GetItems().Where(aput => aput.PkFkUserId == userId

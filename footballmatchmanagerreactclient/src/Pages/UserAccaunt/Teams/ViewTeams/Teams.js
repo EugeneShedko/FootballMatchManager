@@ -45,12 +45,10 @@ export default function Teams() {
         <div className="row teams-main-container">
             <div className="col-9 tems-container">
                 {
-
                     <TeamGenerator teams={teams}
                         setGames={setTeams}
                         searchString={searchString}
                     />
-
                 }
             </div>
             <div className="col-3 team-create-block">

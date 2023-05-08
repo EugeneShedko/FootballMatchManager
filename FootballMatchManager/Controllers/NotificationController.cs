@@ -39,14 +39,6 @@ namespace FootballMatchManager.Controllers
 
             List<Notification> notifLst = _unitOfWork.NotificationRepository.GetUserNotification(userId);
 
-            /*
-            List<Notification> notif = _unitOfWork.NotificationRepository.GetItems()
-                                                                         .Where(n => n.FkRecipient == userId)
-                                                                         .OrderByDescending(n => n.Status)
-                                                                         .OrderByDescending(n => n.Date)
-                                                                         .ToList();
-
-            */
 
             if (notifLst == null)
             {
@@ -56,6 +48,33 @@ namespace FootballMatchManager.Controllers
             {
                 return Ok(notifLst);
             }
+        }
+
+        // -------------------------------------------------------------------------------------------------- //
+
+        /* Нужно что-то придумать с типом, так как метод получается не универсальным */
+        /* Возможно вернуть все изменения назад */
+        [HttpGet]
+        [Route("sent-invit/{gameid}")]
+        public ActionResult GetSendInvitation(int gameid)
+        {
+            List<Notification> notifications = _unitOfWork.NotificationRepository.GetSendRequest(gameid, "requesttoinvitegame");
+
+            return Ok(notifications);
+        }
+
+        // -------------------------------------------------------------------------------------------------- //
+
+        [HttpGet]
+        [Route("sent-invit-team/{teamGameId}")]
+        public ActionResult GetSendInvitationTeams(int teamGameId)
+        {
+            /* Получаю список уведомлений определенного типа, связанных с командным матчем */
+            List<Notification> notifications = _unitOfWork.NotificationRepository.GetSendRequest(teamGameId, "requesttoinviteteamgame");
+
+            /* Получаю список команд, которым отправлено уведолмние по списку организаторов */
+            List<Team> notifiTeams = _unitOfWork.ApUserTeamRepository.GetTeamsByCreators(notifications.Select(n => n.Recipient).ToList());
+            return Ok(notifiTeams);
         }
 
         // -------------------------------------------------------------------------------------------------- //
@@ -90,13 +109,6 @@ namespace FootballMatchManager.Controllers
 
             List<Notification> notifLst = _unitOfWork.NotificationRepository.GetUserNotification(userId);
 
-            /*
-            List<Notification> notifLst = _unitOfWork.NotificationRepository.GetItems()
-                                                                         .Where(n => n.FkRecipient == userId)
-                                                                         .OrderByDescending(n => n.Status)
-                                                                         .OrderByDescending(n => n.Date)
-                                                                         .ToList();
-            */
 
             if (notifLst == null)
             {

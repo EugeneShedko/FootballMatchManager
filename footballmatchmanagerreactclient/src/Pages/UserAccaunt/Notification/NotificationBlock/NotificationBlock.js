@@ -224,6 +224,42 @@ export default function NotificationBlock(props) {
 
     // ---------------------------------------------------------------------------------------- //
 
+    // ------------------------- Приглшание на участие в командном матче ---------------------- //
+
+    function acceptInviteTeamGame()
+    {
+
+        const data = new FormData();
+        data.append("teamGameId", props.notify.entityId);
+        data.append("userId", props.notify.fkRecipient);
+
+        axios.post('http://localhost:5004/api/teamgame/add-to-teamgame', data, { withCredentials: true })
+        .then((response) => {
+            var conn = userContext.notificonn;
+            conn.invoke("AcceptInvitationToTeamGame", props.notify.pkId);
+            /* Можно было бы на сервере менять статус уведолмения */
+            readNotifi();
+        })
+        .catch(userError => {
+            if (userError.response) {
+                toast.error(userError.response.data.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            }
+        });
+    }
+
+    function dismissInviteTeamGame()
+    {
+        var conn = userContext.notificonn;
+        conn.invoke("DismissInvitationToTeamGame", props.notify.pkId);
+        readNotifi();
+    }
+    // ---------------------------------------------------------------------------------------- //    
+
     function getButtonBlock(notifi) {
         switch (notifi.type) {
             case "text": return <ReadBlock readNotifi={readNotifi} />;
@@ -237,6 +273,8 @@ export default function NotificationBlock(props) {
                                                              acceptRequest={acceptInviteTeam} />;
             case "requesttoinvitegame": return <RequestBlock dismissRequest={dismissInviteGame}
                                                              acceptRequest={acceptInviteGame} />;
+            case "requesttoinviteteamgame": return <RequestBlock dismissRequest={dismissInviteTeamGame}
+                                                                 acceptRequest={acceptInviteTeamGame} />;
             default: return;
         }
     }

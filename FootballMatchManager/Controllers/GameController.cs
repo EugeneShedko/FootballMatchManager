@@ -103,6 +103,25 @@ namespace FootballMatchManager.Controllers
 
         // --------------------------------------------------------------------------------------------- //
 
+        [HttpGet]
+        [Route("invit-users/{gameId}")]
+        public ActionResult GetGameInvitUser(int gameId)
+        {
+            /* Получаю список пользователь, которых можо пригласить в матч */
+            List<ApUser> gameInvitUsers = _unitOfWork.ApUserRepository.GetAllUsers();
+
+            /* Получаю список участнииков матча */
+            List<ApUser> gameParticipants = _unitOfWork.ApUserGameRepository.GetGameUsers(gameId);
+
+            gameInvitUsers.RemoveAll(invitUser => gameParticipants.Any(partUser => partUser.PkId == invitUser.PkId));
+
+            return Ok(gameInvitUsers);
+
+        }
+
+
+        // --------------------------------------------------------------------------------------------- //
+
         [Route("add-to-game")]
         [HttpPost]
         public IActionResult AddToMatch()

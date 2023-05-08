@@ -30,6 +30,7 @@ import CreateTeamGame from "../Pages/UserAccaunt/TeamGames/CreateTeamGame";
 import FinishTeamGame from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInfoCard/FinishTeamGame";
 import FinishGame from "../Pages/UserAccaunt/Games/ViewGameHistoryCard/FinishGame";
 import InviteCard from "../Pages/UserAccaunt/Games/ViewGameInviteCard/InviteCard";
+import TeamGameInviteCard from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInviteCard/TeamGameInviteCard";
 
 const AppRouter = observer(() => {
 
@@ -63,6 +64,7 @@ const AppRouter = observer(() => {
                         {/*<Route path="editgame" element={<EditGame show={true} />} /> */}
                     </Route>
                     <Route path="teamgamecard/:id/history" element = {<FinishTeamGame />} />
+                    <Route path="teamgamecard/:id/teamgameinvite" element = {<TeamGameInviteCard />}/>  
 
                     <Route path="teamgamecreate" element={<CreateTeamGame show={true}/>} />
 

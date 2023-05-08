@@ -26,9 +26,7 @@ namespace FootballMatchManager.Controllers
         [Route("all-players")]
         public ActionResult Get()
         {
-            List<ApUser> apUsers =  _unitOfWork.ApUserRepository.GetItems()
-                                                                .Where(u => u.Role != "system" && u.Status != "block")
-                                                                .ToList();
+            List<ApUser> apUsers =  _unitOfWork.ApUserRepository.GetAllUsers();
 
             if(apUsers == null)
             {

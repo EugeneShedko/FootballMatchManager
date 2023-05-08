@@ -1,5 +1,6 @@
 ﻿using FootballMatchManager.DataBase.DBClasses;
 using FootballMatchManager.DataBase.Models;
+using FootballMatchManager.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.RepositoryPattern
@@ -36,7 +37,9 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public IEnumerable<Notification> GetItems()
         {
-            return _dbcontext.Notifications.AsNoTracking().ToList();
+            return _dbcontext.Notifications.Include(n => n.Sender)
+                                           .Include(n => n.Recipient)
+                                           .ToList();
         }
 
         public void UpdateElement(Notification item)
@@ -53,6 +56,23 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
                              .ThenByDescending(n => n.Date)
                              .ToList();
 
+        }
+
+        // ------------------------------------------------------------ //
+
+        /// <summary>
+        /// Возвращает список записей которым отправлены определенные запросы связанные с определенной сущностью
+        /// Но ответ на данный запрос не был получен
+        /// </summary>
+        /// <param name="entityId"> Идентификатора сущности </param>
+        /// <param name="requestType"> Тип запрос </param>
+        /// <returns></returns>
+        public List<Notification> GetSendRequest(int entityId, string requestType)
+        {
+            return GetItems().Where(n => n.EntityId == entityId
+                                      && n.Type == requestType
+                                      && n.Status == (int)NotificationEnum.NotRead)
+                             .ToList();
         }
 
         // ------------------------------------------------------------ //

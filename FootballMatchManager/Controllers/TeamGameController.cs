@@ -298,12 +298,11 @@ namespace FootballMatchManager.Controllers
 
                 if (teamGame.Status != (int)TeamGameStatus.SEARCH)
                 {
-                    return BadRequest(new { message = "В мачтче уже учавствуют две команды" });
+                    return BadRequest(new { message = "В матче уже учавствуют две команды" });
                 }
 
                 /* Получаю команду пользователя */
                 Team teamCreator = _unitOfWork.ApUserTeamRepository.GetTeamByCreator(userId);
-
                 if (teamCreator == null) { return BadRequest(); }
 
                 /* Добавляю команду к матчу */

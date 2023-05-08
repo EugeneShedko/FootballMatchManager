@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Players from "../../Players/ViewPlayers/Players";
 import "./../../../../css/GameInvite/GameInvite.css";
 import axios from "axios";
 import PlayerGenerator from "../../Players/ViewPlayers/PlayerGenerator";
 import { useNavigate, useParams } from "react-router-dom";
 import { TO_GAME_CARD } from "../../../../Utilts/Consts";
+import { Context } from "../../../..";
 
 export default function InviteCard() {
 
+    const { userContext } = useContext(Context);
     const navigate = useNavigate();
     const [gameId, setGameId] = useState(parseInt(useParams().id));
     const [searchString, setSearchString] = useState("");
@@ -22,12 +24,14 @@ export default function InviteCard() {
         goals: 0,
         assists: 0
     });
+    /* Массив игроков, кому отправлены приглашения */
+    const [notifiUser, setNotifiUser] = useState([]);
 
     // ------------------------------------------------- //
 
     useEffect(() => {
 
-        axios.get('http://localhost:5004/api/profile/all-players', { withCredentials: true })
+        axios.get('http://localhost:5004/api/profile/invit-users/' + gameId, { withCredentials: true })
             .then((response) => {
                 setInitPlayers(response.data);
                 setPlayers(response.data);
@@ -39,12 +43,20 @@ export default function InviteCard() {
 
         axios.get('http://localhost:5004/api/profile/player-position', { withCredentials: true })
             .then((response) => {
-                //setInitPlayers(response.data);
                 setPositions(response.data);
             })
             .catch(userError => {
                 if (userError.response) { }
             });
+
+        axios.get('http://localhost:5004/api/notification/sent-invit/' + gameId, { withCredentials: true })
+            .then((response) => {
+                setNotifiUser(response.data);
+            })
+            .catch(userError => {
+                if (userError.response) { }
+            });
+
 
     }, []);
 
@@ -72,14 +84,26 @@ export default function InviteCard() {
 
     }, [filter])
 
+
     // -------------- Сброс фильтрации ---------------- //
 
     function resetFilter() {
+
         setFilter({
             position: '',
             goals: 0,
             assists: 0
         })
+    }
+
+    // ----------------- Приглашение к участию --------------- //
+
+    function sendInviteToAddGame(id) {
+
+        var conn = userContext.notificonn;
+        conn.invoke("InvitationToGame", parseInt(id), gameId);
+        setNotifiUser([...notifiUser, {fkRecipient: parseInt(id)}]);
+
     }
 
     // ------------------------------------------------- //
@@ -152,7 +176,10 @@ export default function InviteCard() {
                 </div>
                 <div className="row mi-user-container">
                     <PlayerGenerator players={players}
-                        searchString={searchString} />
+                                     searchString={searchString}
+                                     notifiUser={notifiUser}
+                                     sendInviteToAddGame={sendInviteToAddGame}
+                                     />
                 </div>
                 <div className="row mi-button-cont">
                     <input className="cancel-button"

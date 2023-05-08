@@ -1,25 +1,24 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import TeamInfoPage from "../ViewTeamCard/TeamInfoCard";
 
 import "./../../../../css/Teams/TeamBlock.css";
-import { TO_TEAM_CARD } from "../../../../Utilts/Consts";
+import { TO_TEAM_CARD, TO_TEAM_GAME_INVITE_CARD } from "../../../../Utilts/Consts";
+import { useState } from "react";
 
 export default function TeamBlock(props) {
 
     const navigate = useNavigate();
+    /* Находимся ли мы на странице приглашения матча */
+    const [isInvite, setIsInvite] = useState(useLocation().pathname.includes(TO_TEAM_GAME_INVITE_CARD) ? true : false);
 
     // ------------------------------------------------------------------- //
 
-    function setTeamInfoPage() {
-
-        navigate(TO_TEAM_CARD + '/' + props.info.pkId);
+    function setTeamInfoPage(event) {
+        if (event.target.name !== 'invitebutton')
+            navigate(TO_TEAM_CARD + '/' + props.info.pkId);
     }
 
     // ------------------------------------------------------------------- //
-
-    /* Изменить стиль команды */
-
-    /* Можно добавить полье в бд КОЛИЧЕСТВО УЧАСТНИКОВ для команды */
 
     return (
         <div className="team-container" onClick={setTeamInfoPage}>
@@ -28,8 +27,8 @@ export default function TeamBlock(props) {
                 <div className="col-5 team-block-column">
                     <div className="row m-0">
                         <img className="team-block-image"
-                             src={"http://localhost:5004/" + props.info.image}  
-                             alt="" />
+                            src={"http://localhost:5004/" + props.info.image}
+                            alt="" />
                     </div>
                 </div>
                 <div className="col-7 team-block-column">
@@ -41,9 +40,27 @@ export default function TeamBlock(props) {
                     </div>
                     <div className="row m-0">
                         Участников: {props.info.memberQnt}
-                    </div>                    
+                    </div>
                 </div>
             </div>
+            {
+                isInvite ?
+                    <div className="row invite-button-cont">
+                        {
+                            props.isVisable ?
+                                <input name="invitebutton"
+                                    className="invite-button"
+                                    type="button"
+                                    value="Пригласить"
+                                    onClick={() => props.sendInviteToAddTeamGame(props.info.pkId)}
+                                />
+                                :
+                                <> Приглашение отправлено </>
+                        }
+                    </div>
+                    :
+                    null
+            }
         </div>
     );
 }

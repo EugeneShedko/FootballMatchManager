@@ -63,8 +63,11 @@ namespace FootballMatchManager.DataBase.DBClasses
                                                     new Constant() { PkId = 32, Group = "position",     Type = "text", Name = "left defender", StrValue = "Левый защитник" },
                                                     new Constant() { PkId = 33, Group = "position",     Type = "text", Name = "right defender", StrValue = "Правый защитник" },
                                                     new Constant() { PkId = 34, Group = "position",     Type = "text", Name = "central defender", StrValue = "Центральный защитник" },
-                                                    new Constant() { PkId = 35, Group = "position",     Type = "text", Name = "Goalkeeper", StrValue = "Вратарь" }
-
+                                                    new Constant() { PkId = 35, Group = "position",     Type = "text", Name = "Goalkeeper", StrValue = "Вратарь" },
+                                                    new Constant() { PkId = 36, Group = "notification", Type = "requesttoinviteteamgame", Name = "requesttoinviteteamgame", StrValue = "Команда {team} приглашает вашу команду принять участие в командном матче {game}" },
+                                                    new Constant() { PkId = 37, Group = "notification", Type = "text", Name = "dismissinviteteamgame", StrValue = "Команда {team} отклонил ваше приглашение на присоединение к командному матчу {game}." },
+                                                    new Constant() { PkId = 38, Group = "notification", Type = "text", Name = "acceptinviteteamgame", StrValue = "Команда {team} приняла ваше приглашение на присоединение к командному матчу {game}." },
+                                                    new Constant() { PkId = 39, Group = "notification", Type = "text", Name = "acceptinviteteamgamesend", StrValue = "Ваша команда присоединилась к матчу {game}!" }
                                                     );
 
             modelBuilder.Entity<Comment>().HasKey(c => c.PkId);

@@ -10,9 +10,8 @@ export default function MatchBlock(props) {
 
     const navigate = useNavigate();
 
-    function setGameInfoCard()
-    {
-        navigate(TO_GAME_CARD + '/' + props.info.pkId);                              
+    function setGameInfoCard() {
+        navigate(TO_GAME_CARD + '/' + props.info.pkId);
     }
 
     // -------------------------------------------------------------------------------- //
@@ -25,11 +24,11 @@ export default function MatchBlock(props) {
                     <div className="row m-0">
                         {props.info.name}
                     </div>
-                    {props.info.type === 0 ?             
-                    <div className="row lock-game-icon-cont">
-                        <img className="lock-game-icon" src="http://localhost:5004/LockGameIcon.png" alt=""/>
-                    </div>
-                    : null}
+                    {props.info.type === 0 ?
+                        <div className="row lock-game-icon-cont">
+                            <img className="lock-game-icon" src="http://localhost:5004/LockGameIcon.png" alt="" />
+                        </div>
+                        : null}
                 </div>
                 <div className="col-7 match-block-column">
                     <div className="row m-0">

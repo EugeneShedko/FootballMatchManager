@@ -46,6 +46,14 @@
     cursor: pointer;
 }
 
+.mpinfo-block-no-hover
+{
+    margin: 0% 0% 2% 0%;
+    padding:0;
+    width: 24vw;
+    height: 20vh;
+}
+
 #search-team-element
 {
     border: 4px white solid;

@@ -11,23 +11,14 @@ export default function PlayerBlock(props) {
     /* Находимся ли мы на странице приглашения матча */
     const [isInvite, setIsInvite] = useState(useLocation().pathname.includes(TO_GAME_INVITE) ? true : false);
     const [gameId, setGameId] = useState(parseInt(useParams().id));
-    const {userContext} = useContext(Context);
+    const { userContext } = useContext(Context);
 
     // ----------------------------------------------------------------------------- //
 
     function setPlayerInfoPage(event) {
 
-        if(event.target.name !== 'invitebutton')
-           navigate(TO_PLAYER_CARD + '/' + props.info.pkId);
-    }
-
-    // ----------------------------------------------------------------------------- //
-
-    function sendInviteToAddGame(event)
-    {
-
-        var conn = userContext.notificonn;
-        conn.invoke("InvitationToGame", props.info.pkId, gameId);
+        if (event.target.name !== 'invitebutton')
+            navigate(TO_PLAYER_CARD + '/' + props.info.pkId);
     }
 
     // ----------------------------------------------------------------------------- //
@@ -58,13 +49,18 @@ export default function PlayerBlock(props) {
             </div>
             {
                 isInvite ?
-                    <div className="row m-0 p-0">
-                        <input name="invitebutton"
-                               className="invite-button"
-                               type="button"
-                               value="Пригласить"
-                               onClick={e => sendInviteToAddGame(e)}
-                        />
+                    <div className="row invite-button-cont">
+                        {
+                            props.isVisable ?
+                                <input name="invitebutton"
+                                    className="invite-button"
+                                    type="button"
+                                    value="Пригласить"
+                                    onClick={e => props.sendInviteToAddGame(props.info.pkId)}
+                                />
+                                :
+                                <> Приглашение отправлено </>
+                        }
                     </div>
                     :
                     null

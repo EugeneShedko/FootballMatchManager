@@ -45,6 +45,14 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------ //
 
+        public List<ApUser> GetAllUsers()
+        {
+            return GetItems().Where(u => u.Role != "system" && u.Status != "block")
+                             .ToList();
+        }
+
+        // ------------------------------------------------------------ //
+
         public ApUser GetUserByEmail(string email)
         {
             return GetItems().FirstOrDefault(u => u.Email == email);
