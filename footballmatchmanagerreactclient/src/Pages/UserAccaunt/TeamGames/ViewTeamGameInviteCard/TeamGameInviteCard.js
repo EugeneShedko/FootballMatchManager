@@ -23,7 +23,7 @@ export default function TeamGameInviteCard() {
 
     useEffect(
         () => {
-            axios.get('http://localhost:5004/api/team/get-all-tems', { withCredentials: true })
+            axios.get('http://localhost:5004/api/teamgame/invite-team/' + teamGameId, { withCredentials: true })
                 .then((response) => {
                     setInviteTeams(response.data);
                 })

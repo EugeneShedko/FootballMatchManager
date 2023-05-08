@@ -119,7 +119,6 @@ namespace FootballMatchManager.Controllers
 
         }
 
-
         // --------------------------------------------------------------------------------------------- //
 
         [Route("add-to-game")]

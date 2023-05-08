@@ -44,9 +44,16 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // --------------------------------------------------------------- //
 
+        /// <summary>
+        /// Возвращает список всех команд
+        /// </summary>
+        /// <returns></returns>
         public List<Team> GetAllTeams()
         {
-            return GetItems().OrderByDescending(t => t.CrtDate).ToList();
+            List<Team> teams = GetItems().ToList();
+            /* Очень хреново, что здесь удаляю по айди, пока что так */
+            teams?.RemoveAll(team => team.PkId == 1);
+            return teams;
         }
 
         // -------------------------------------------------------------- //
@@ -55,5 +62,19 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         {
             return GetItems().FirstOrDefault(t => t.Name == name);
         }
+
+        // -------------------------------------------------------------- //
+
+        /// <summary>
+        /// Возвращает список команд у которых количество участников больше определенного значени
+        /// </summary>
+        /// <param name="playerCount">Количество участников</param>
+        /// <returns></returns>
+        public List<Team> GetTeamsByPlayerCount(int playerCount)
+        {
+            return GetItems().Where(t => t.MemberQnt >= playerCount).ToList();
+        }
+        /* Вернуть список команд, у которых количество участников больше нужного */
+
     }
 }

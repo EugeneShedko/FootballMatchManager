@@ -178,6 +178,41 @@ namespace FootballMatchManager.Controllers
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
+        [Route("invite-team/{teamgameid}")]
+        [HttpGet]
+        public ActionResult GetInvitTeams(int teamgameid)
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                /* Получаю командный матч*/
+                TeamGame teamGame = _unitOfWork.TeamGameRepasitory.GetItem(teamgameid);
+
+                int minMembers = int.Parse(teamGame.Format.Substring(0, 1));
+
+                /* Получаю список команд, у которых пользователей достаточное количество для участия в матче */
+                List<Team> inviteTeams = _unitOfWork.TeamRepository.GetTeamsByPlayerCount(minMembers);
+                
+                inviteTeams.RemoveAll(team => team.PkId == teamGame.FkFirstTeamId);
+
+                /* Удаляю команду организатора матча из списка команд на приглашение */
+                return Ok(inviteTeams);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            /* В матче хранится айди первой команды, можно удалить и вернуть коллекцию  */
+            /* Вернуть список команд, у которых достаточное количество участников */
+            /* Нужно еще как-то удалить команду организатора(где мне ее взять?) */
+            return Ok();
+        }
+
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
+
         [Route("game-event-type")]
         [HttpGet]
         public IActionResult GetGameEventTypes()
@@ -229,13 +264,10 @@ namespace FootballMatchManager.Controllers
                 int minMembers = int.Parse(shortGame.GameFormat.Substring(0, 1));
 
                 /* Проверяю достаточно ли участников в команде */
-                /*
                 if (teamCreator.Team.MemberQnt < minMembers)
                 {
                     return BadRequest(new {message = "Вы не можете создать командный матч, так как в вашей команде не достаточно участников" });
                 }
-                */
-                /* Проверка на количетсво участников в команде */
 
 
                 /* Создаю командный матч */
@@ -253,23 +285,6 @@ namespace FootballMatchManager.Controllers
                 ApUserTeamGame gameCreator = new ApUserTeamGame(teamGame.PkId, userId, (int)ApUserGameTypeEnum.CREATOR);
                 _unitOfWork.ApUserTeamGameRepasitory.AddElement(gameCreator);
                 _unitOfWork.Save();
-
-                /* Получаю записаь организатора команды */
-                ApUserTeam teamCreat = _unitOfWork.ApUserTeamRepository.GetTeamCreatorByUserId(userId);
-
-                if (teamCreat != null)
-                {
-                    /* Получаю участников команды организатора матча */
-                    List<ApUser> teamUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamCreat.PkFkTeamId);
-
-                    /* Добавляю участников команды к матчу */
-                    for (int i = 0; i < teamUsers.Count; i++)
-                    {
-                        ApUserTeamGame participant = new ApUserTeamGame(teamGame.PkId, teamUsers[i].PkId, (int)ApUserTeamEnum.PARTICIPANT);
-                        _unitOfWork.ApUserTeamGameRepasitory.AddElement(participant);
-                    }
-                    _unitOfWork.Save();
-                }
 
                 return Ok(new { message = "Матч успешно создан!" });
             }
@@ -301,20 +316,37 @@ namespace FootballMatchManager.Controllers
                     return BadRequest(new { message = "В матче уже учавствуют две команды" });
                 }
 
+                /* Получаю минимальное количество участников в матче */
+                int minMembers = int.Parse(teamGame.Format.Substring(0, 1));
+
                 /* Получаю команду пользователя */
                 Team teamCreator = _unitOfWork.ApUserTeamRepository.GetTeamByCreator(userId);
                 if (teamCreator == null) { return BadRequest(); }
+
+                if (teamCreator.MemberQnt < minMembers)
+                {
+                    return BadRequest(new { message = "Недостаточное количество участников в команде для присоединения к матче" });
+                }
 
                 /* Добавляю команду к матчу */
                 teamGame.FkSecondTeamId = teamCreator.PkId;
                 teamGame.Status = (int)TeamGameStatus.WAIT;
 
-                /* Получаю учатников команды, организатор которой присоединяется к матчу */
-                List<ApUser> teamUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamCreator.PkId);
+                /* Получаю участников первой команды */
+                List<ApUser> firstTeamMembers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamGame.FkFirstTeamId);
+                /* Получаю участников второй команды */
+                List<ApUser> secondTeamMembers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamGame.FkSecondTeamId);
 
-                for (int i = 0; i < teamUsers.Count; i++)
+                /* Формирую список участников матча из списка участников команд */
+                /* С удаление повторяющихся(один и тот же пользователь может быть в двух командах) */
+                List<ApUser> teamGameMembers = new List<ApUser>(firstTeamMembers);
+                secondTeamMembers.RemoveAll(member2 => firstTeamMembers.Any(member1 => member1.PkId == member2.PkId));
+                teamGameMembers.AddRange(secondTeamMembers);
+
+
+                for (int i = 0; i < teamGameMembers.Count; i++)
                 {
-                    ApUserTeamGame participant = new ApUserTeamGame(teamGame.PkId, teamUsers[i].PkId, (int)ApUserTeamEnum.PARTICIPANT);
+                    ApUserTeamGame participant = new ApUserTeamGame(teamGame.PkId, teamGameMembers[i].PkId, (int)ApUserTeamEnum.PARTICIPANT);
                     _unitOfWork.ApUserTeamGameRepasitory.AddElement(participant);
                 }
 
