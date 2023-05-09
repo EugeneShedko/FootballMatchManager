@@ -240,7 +240,11 @@ export default function TeamGameCard() {
                             </div>
                         </div>
                         <div className="col-3 h-100 p-0">
-                            {isPart ? <MessagesBlock gameId={gameId} /> : null}
+                            {
+                                isPart ? <MessagesBlock entityId={gameId}
+                                    entityType="teamgame" />
+                                    : null
+                            }
                         </div>
                     </div>
                 </div>

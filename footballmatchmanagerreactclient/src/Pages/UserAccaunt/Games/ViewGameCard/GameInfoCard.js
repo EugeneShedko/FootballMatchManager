@@ -307,7 +307,9 @@ export default function GameInfoCard(props) {
                             }
                         </div>
                         <div className="col-4 h-100 p-0">
-                            {isPart ? <MessagesBlock gameId={gameId} /> : null}
+                            {isPart ? <MessagesBlock entityId   ={gameId}
+                                                     entityType ="game" /> 
+                            : null}
                         </div>
                     </div>
                 </div>

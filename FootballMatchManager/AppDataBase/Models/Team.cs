@@ -12,10 +12,24 @@ namespace FootballMatchManager.DataBase.Models
         public string Name { get; set; }
         [Column("crtDate")]
         public DateTime CrtDate {get;set;}
-        [Column("MemberQnt")]
-        public int MemberQnt { get; set; }
+
         [Column("description")]
         public string? Description { get; set; }
+        [Column("MemberQnt")]
+        public int MemberQnt { get; set; }
+        [Column("GamesQnt")]
+        public int GamesQnt { get; set; }
+        [Column("WinsQnt")]
+        public int WinsQnt { get; set; }
+        [Column("LosesQnt")]
+        public int LosesQnt { get; set; }
+        [Column("DrawsQnt")]
+        public int DrawsQnt { get; set; }
+        [Column("ScoredGoalsQnt")]
+        public int ScoredGoalsQnt { get; set; }
+        [Column("ConsededGoalsQnt")]
+        public int ConsededGoalsQnt { get; set; }
+
         [Column("Image")]
         public string? Image { get; set; }
    

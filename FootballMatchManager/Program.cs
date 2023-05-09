@@ -64,6 +64,8 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<CommentHub>("/commentchat");
     endpoints.MapHub<MessageHub>("/gamechat");
+    endpoints.MapHub<TeamGameMessageHub>("/teamgamechat");
+    endpoints.MapHub<TeamMessageHub>("/teamchat");
     endpoints.MapHub<NotificationHub>("/notification");
 });
 

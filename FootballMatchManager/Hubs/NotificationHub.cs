@@ -337,7 +337,7 @@ namespace FootballMatchManager.Hubs
                 if (senderTeamCreat == null)
                 {
                     /* !!!!! Потом добавить данную константу в таблицу Constant */
-                    await Clients.User(Convert.ToString(userIdSender))?.SendAsync("displayNotifi", "Вы не может отправить запрос на присоединение к командной игре, так как не являетесь организатором команды");
+                    await Clients.User(Convert.ToString(userIdSender))?.SendAsync("displayNotifiError", "Вы не может отправить запрос на присоединение к командной игре, так как не являетесь организатором команды");
                     return;
                 }
 
@@ -346,7 +346,7 @@ namespace FootballMatchManager.Hubs
 
                 if(senderTeamCreat.Team.MemberQnt < minMembers)
                 {
-                    await Clients.User(Convert.ToString(userIdSender))?.SendAsync("displayNotifi", "Вы не может отправить запрос на присоединение к командной игре, так как в вашей команде не достаточно участников");
+                    await Clients.User(Convert.ToString(userIdSender))?.SendAsync("displayNotifiError", "Вы не может отправить запрос на присоединение к командной игре, так как в вашей команде не достаточно участников");
                     return;
                 }
 

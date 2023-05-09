@@ -1,27 +1,27 @@
 ﻿using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.DataBase.Models;
 using FootballMatchManager.IncompleteModels;
-using FootballMatchManager.Utilts;
 using Microsoft.AspNetCore.SignalR;
 
 namespace FootballMatchManager.Hubs
 {
-    public class MessageHub : Hub
+    public class TeamGameMessageHub : Hub
     {
         UnitOfWork _unitOfWork;
 
-        public MessageHub(UnitOfWork unitOfWork)
+        public TeamGameMessageHub(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Connect(string gameRecipient)
+        public async Task Connect(string teamGameRecipient)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, gameRecipient);
+            await Groups.AddToGroupAsync(Context.ConnectionId, teamGameRecipient);
+
         }
 
         /* Добавить тип сущности, в которую отправляют сообщение */
-        public async Task SendMess(string text, int gameId)
+        public async Task SendMess(string text, int teamGameId)
         {
             try
             {
@@ -30,19 +30,20 @@ namespace FootballMatchManager.Hubs
                 int userIdSender = int.Parse(Context.User.Identity.Name);
 
                 /* !!!! Плохо, что константой задаю */
-                Message message = new Message(text, "game", gameId, userIdSender);
+                Message message = new Message(text, "teamgame", teamGameId, userIdSender);
                 _unitOfWork.MessageRepository.AddElement(message);
                 _unitOfWork.Save();
 
                 Message loadMessage = _unitOfWork.MessageRepository.GetItem(message.PkId);
                 ShortMessage shortMessage = new ShortMessage(loadMessage);
 
-                await Clients.Group(Convert.ToString(gameId)).SendAsync("displayMess", shortMessage);
+                await Clients.Group(Convert.ToString(teamGameId)).SendAsync("displayMess", shortMessage);
             }
             catch (Exception ex)
             {
                 return;
             }
         }
+
     }
 }

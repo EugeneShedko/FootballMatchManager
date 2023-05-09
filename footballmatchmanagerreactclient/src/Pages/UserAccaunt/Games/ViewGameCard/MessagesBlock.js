@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import MessageBlock from "./GameCardButton/MessageBlock";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
@@ -11,43 +11,80 @@ export default function MessagesBlock(props) {
     const connection = useRef(null);
     const messagesContainer = useRef(null);
 
+    /* Добавить пропсы в запросы */
 
     useEffect(() => {
-        axios.get('http://localhost:5004/api/message/game-messages/' + props.gameId, { withCredentials: true })
-        .then((response) => {
-            setMessages(response.data);
-        })
-        .catch(userError => {
-            if (userError.response) {
-                console.log('Не удалось получить сообщения матча');
-            }
-        });
+        axios.get('http://localhost:5004/api/message/entity-messages/' + props.entityType + '/' + props.entityId, { withCredentials: true })
+            .then((response) => {
+                setMessages(response.data);
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    console.log('Не удалось получить сообщения матча');
+                }
+            });
 
-        connectMessage();
-        console.log('RENDER' + props.gameId);
+        switch(props.entityType)
+        {
+            case "game":     connectMessage();break;
+            case "teamgame": connectMessageTeamGame();break;
+            case "team":     connectMessageTeam();break;
+            default: break;
+        }    
 
         return () => {
             if (connection.current) {
-              console.log('MESSAGE STOP');
-              connection.current.stop();
+                connection.current.stop();
             }
-          };
-    }, [props.gameId]); 
+        };
+    }, [props.entityId]);
 
-    // ---------------------------------------------------------------------------------------------------------- //
+    // -------------------------------- Подключение к чату индивидуальных игр ---------------------------------------- //
 
     const connectMessage = async () => {
         const hubConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/gamechat").build();
 
         hubConnection.on("displayMess", function (message) {
-           setMessages(gameMessage => [...gameMessage, message]);
+            setMessages(gameMessage => [...gameMessage, message]);
         });
 
         await hubConnection.start();
 
         connection.current = hubConnection;
 
-        await hubConnection.invoke("Connect", String(props.gameId));
+        await hubConnection.invoke("Connect", String(props.entityId));
+    }
+
+    // -------------------------------- Подключение к чату командных игр ---------------------------------------- //
+
+    const connectMessageTeamGame = async () => {
+        const hubConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/teamgamechat").build();
+
+        hubConnection.on("displayMess", function (message) {
+            setMessages(gameMessage => [...gameMessage, message]);
+        });
+
+        await hubConnection.start();
+
+        connection.current = hubConnection;
+
+        await hubConnection.invoke("Connect", String(props.entityId));
+    }
+
+    // -------------------------------- Подключение к чату команд ---------------------------------------- //
+
+    const connectMessageTeam = async () => {
+        const hubConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/teamchat").build();
+
+        hubConnection.on("displayMess", function (message) {
+            setMessages(gameMessage => [...gameMessage, message]);
+        });
+
+        await hubConnection.start();
+
+        connection.current = hubConnection;
+
+        await hubConnection.invoke("Connect", String(props.entityId));
     }
 
     // ---------------------------------- Скролл сообщений -------------------------------------- //
@@ -64,13 +101,10 @@ export default function MessagesBlock(props) {
             return;
         }
 
-        console.log('GAMEID');
-        console.log(props.gameId, curMessage);
+        /* При отправке что-ли передавать тип сообщения */
 
-        /* Посмотреть этот метод на сервере */
-        /* Посмотреть, как сделаны эти методы */
-        connection.current.invoke("SendMess", curMessage, parseInt(props.gameId, 10));
-        
+        connection.current.invoke("SendMess", curMessage, parseInt(props.entityId, 10));
+
         setCurMessage("");
     }
 
@@ -93,15 +127,15 @@ export default function MessagesBlock(props) {
                         type="text"
                         placeholder="Сообщение..."
                         value={curMessage}
-                        onChange={(e) => setCurMessage(e.target.value)} 
-                        />
+                        onChange={(e) => setCurMessage(e.target.value)}
+                    />
                 </div>
                 <div className="col-3 p-0">
                     <input className="message-send-button"
                         value="Отправить"
                         type="button"
-                        onClick={sendMessage} 
-                        />
+                        onClick={sendMessage}
+                    />
                 </div>
             </div>
         </>

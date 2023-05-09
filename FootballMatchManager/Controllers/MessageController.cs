@@ -19,12 +19,13 @@ namespace FootballMatchManager.Controllers
         }
 
         [HttpGet]
-        [Route("game-messages/{gameId}")]
-        public ActionResult GetAllComments(int gameId)
+        [Route("entity-messages/{entityType}/{entityId}")]
+        public ActionResult GetAllComments(string entityType, int entityId)
         {
 
             List<Message> messages = _unitOfWork.MessageRepository.GetItems()
-                                                                  .Where(m => m.EntityId == gameId)
+                                                                  .Where(m => m.EntityType == entityType
+                                                                           && m.EntityId == entityId)
                                                                   .ToList();
 
             if (messages == null)

@@ -55,7 +55,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             teams?.RemoveAll(team => team.PkId == 1);
             return teams;
         }
-
+         
         // -------------------------------------------------------------- //
 
         public Team GetTeamByName(string name)

@@ -140,6 +140,7 @@ namespace FootballMatchManager.Controllers
         [HttpPost]
         public IActionResult FinishTeamGame([FromBody] FinishTeamGameModel finishTeamGame)
         {
+
             try
             {
                 if (HttpContext.User == null) { return BadRequest(); }
@@ -195,12 +196,39 @@ namespace FootballMatchManager.Controllers
                     teamGameParticipants[i].GamesQnt += 1; 
                 }
 
+                /* Получаю командну игру, меняю ее параметры */
                 TeamGame teamGame = _unitOfWork.TeamGameRepasitory.GetItem(finishTeamGame.GameId);
                 if(teamGame== null) { return BadRequest(); }
 
                 teamGame.Status = (int)TeamGameStatus.COMPLETED;
-                teamGame.FirstTeamGoals = finishTeamGame.FirstTeamGoals;
-                teamGame.SecondTeamGoals = finishTeamGame.SecondTeamGoals;
+                teamGame.FirstTeamGoals = Convert.ToString(finishTeamGame.FirstTeamGoals);
+                teamGame.SecondTeamGoals = Convert.ToString(finishTeamGame.SecondTeamGoals);
+
+                /* Победа первой команды */
+                if(finishTeamGame.FirstTeamGoals > finishTeamGame.SecondTeamGoals)
+                {
+                    teamGame.FirstTeam.WinsQnt += 1;
+                    teamGame.SecondTeam.LosesQnt += 1;
+                }
+                /* Победа второй команды */
+                if (finishTeamGame.FirstTeamGoals < finishTeamGame.SecondTeamGoals)
+                {
+                    teamGame.FirstTeam.LosesQnt += 1;
+                    teamGame.SecondTeam.WinsQnt += 1;
+                }
+                /* Ничья */
+                if (finishTeamGame.FirstTeamGoals == finishTeamGame.SecondTeamGoals)
+                {
+                    teamGame.FirstTeam.DrawsQnt += 1;
+                    teamGame.SecondTeam.DrawsQnt += 1;
+                }
+
+                teamGame.FirstTeam.GamesQnt += 1;
+                teamGame.SecondTeam.GamesQnt += 1;
+                teamGame.FirstTeam.ScoredGoalsQnt += finishTeamGame.FirstTeamGoals;
+                teamGame.FirstTeam.ConsededGoalsQnt += finishTeamGame.SecondTeamGoals;
+                teamGame.SecondTeam.ScoredGoalsQnt += finishTeamGame.SecondTeamGoals;
+                teamGame.SecondTeam.ConsededGoalsQnt += finishTeamGame.FirstTeamGoals;
 
                 _unitOfWork.Save();
 

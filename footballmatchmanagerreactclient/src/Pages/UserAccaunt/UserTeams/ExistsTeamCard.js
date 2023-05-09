@@ -6,10 +6,9 @@ import "./../../../css/Teams/TeamInfoCard.css";
 import PlayerBlock from "../Players/ViewPlayers/PlayerBlock";
 import MessagesBlock from "./../Games/ViewGameCard/MessagesBlock";
 
-export default function ExistsTeamCard(props)
-{
-    const [team, setTeam] = useState({}); 
-    const [teamUsers, setTeamUsers] = useState([]);   
+export default function ExistsTeamCard(props) {
+    const [team, setTeam] = useState({});
+    const [teamUsers, setTeamUsers] = useState([]);
     // ----------------------------------------------------------------------------------- //
 
     useEffect(() => {
@@ -79,21 +78,21 @@ export default function ExistsTeamCard(props)
                         });
                 }
             });
-        }        
+    }
 
     // ------------------------------------------------------------------------------------ //
 
-    return(
-            <div className="row justify-content-center team-info-main-container">
+    return (
+        <div className="row justify-content-center team-info-main-container">
             <div className="col-12 team-info-container">
                 <div className="row m-0 h-100">
                     <div className="col-5 team-info-text-container">
                         <div className="row team-info-title">
                             {team.name}
                         </div>
-                        <div className="row m-0 p-0">
-                            <div className="col-6 m-0 p-0">
-                                <div className="row m-0 p-0">
+                        <div className="row team-info-text-container2">
+                            <div className="col-6 team-info-column">
+                                <div className="row team-image-cont">
                                     <img className="team-image"
                                         src={"http://localhost:5004/" + team.image}
                                         alt=""
@@ -103,28 +102,44 @@ export default function ExistsTeamCard(props)
                                     <input className="match-join-button"
                                         type="button"
                                         value="Покинуть"
-                                        onClick={leaveTeam} 
-                                        />
+                                        onClick={leaveTeam}
+                                    />
                                 </div>
                             </div>
-                            <div className="col-6 m-0 p-0">
-                                <div className="row team-info-header">
-                                    Дата создания команды
+                            <div className="col-6 team-info-column">
+                                <div className="row team-desc-row">
+                                    <div className="team-info-header">
+                                        Дата создания команды
+                                    </div>
+                                    <div className="row team-info-text">
+                                        {(new Date(team.crtDate)).toLocaleString().substring(0, (new Date(team.crtDate)).toLocaleString().length - 3)}
+                                    </div>
+                                    <div className="team-info-header">
+                                        Участников: <span className="team-info-text">{team.memberQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Матчей: <span className="team-info-text">{team.gamesQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Побед: <span className="team-info-text">{team.winsQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Поражений: <span className="team-info-text">{team.losesQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Ничьих: <span className="team-info-text">{team.drawsQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Голов забито: <span className="team-info-text">{team.scoredGoalsQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Голов пропущено: <span className="team-info-text">{team.consededGoalsQnt}</span>
+                                    </div>
                                 </div>
-                                <div className="row team-info-text">
-                                    {(new Date(team.crtDate)).toLocaleString().substring(0, (new Date(team.crtDate)).toLocaleString().length - 3)}
-                                </div>
-                                <div className="row team-info-header">
-                                    Количество участников
-                                </div>
-                                <div className="row team-info-text">
-                                    {team.memberQnt}
-                                </div>
-                                <div className="row team-info-header">
-                                    Описание команды
-                                </div>
-                                <div className="row team-info-text team-desc">
-                                    {team.description}
+                                <div className="row team-desc-row">
+                                    <div className="row team-info-text team-desc">
+                                        {team.description}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -145,20 +160,20 @@ export default function ExistsTeamCard(props)
                     <div className="col-3 p-0 h-100">
                         <div className="row team-switch-cont">
                             <select className="form-select form-select-sm team-switch"
-                                     onChange={e => getTeamInfo(e.target.value)}>
-                                    {
-                                        props.userTeams?.map((team) => (
-                                            team.pkId === props.teamId ?                                     
+                                onChange={e => getTeamInfo(e.target.value)}>
+                                {
+                                    props.userTeams?.map((team) => (
+                                        team.pkId === props.teamId ?
                                             <option selected value={team.pkId} >{team.name}</option>
                                             :
                                             <option value={team.pkId} >{team.name}</option>
-                                        ))
-                                    }    
+                                    ))
+                                }
                             </select>
                         </div>
                         <div className="row team-mess-cont">
-                            {/* Проблема блока, что везде ему передается айди игры */}
-                            <MessagesBlock gameId={team.pkId} />
+                            <MessagesBlock entityId={team.pkId}
+                                entityType="team" />
                         </div>
                     </div>
                 </div>

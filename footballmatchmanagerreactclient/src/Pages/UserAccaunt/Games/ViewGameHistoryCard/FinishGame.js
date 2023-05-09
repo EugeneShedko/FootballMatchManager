@@ -389,8 +389,8 @@ export default function FinishGame() {
         /* Не убираю счет матча, так как хочу передать значение через одну модель на сервере */
         const data = {
             GameId: gameId,
-            FirstTeamGoals: "5",
-            SecondTeamGoals: "5",
+            FirstTeamGoals: 0,
+            SecondTeamGoals: 0,
             GameEvents: gameEvents
         }
 

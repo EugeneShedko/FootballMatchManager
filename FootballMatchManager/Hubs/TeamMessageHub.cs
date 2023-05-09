@@ -1,27 +1,25 @@
 ﻿using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.DataBase.Models;
 using FootballMatchManager.IncompleteModels;
-using FootballMatchManager.Utilts;
 using Microsoft.AspNetCore.SignalR;
 
 namespace FootballMatchManager.Hubs
 {
-    public class MessageHub : Hub
+    public class TeamMessageHub : Hub
     {
         UnitOfWork _unitOfWork;
-
-        public MessageHub(UnitOfWork unitOfWork)
+        public TeamMessageHub(UnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Connect(string gameRecipient)
+        public async Task Connect(string teamRecipient)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, gameRecipient);
+            await Groups.AddToGroupAsync(Context.ConnectionId, teamRecipient);
         }
 
         /* Добавить тип сущности, в которую отправляют сообщение */
-        public async Task SendMess(string text, int gameId)
+        public async Task SendMess(string text, int teamId)
         {
             try
             {
@@ -30,19 +28,20 @@ namespace FootballMatchManager.Hubs
                 int userIdSender = int.Parse(Context.User.Identity.Name);
 
                 /* !!!! Плохо, что константой задаю */
-                Message message = new Message(text, "game", gameId, userIdSender);
+                Message message = new Message(text, "team", teamId, userIdSender);
                 _unitOfWork.MessageRepository.AddElement(message);
                 _unitOfWork.Save();
 
                 Message loadMessage = _unitOfWork.MessageRepository.GetItem(message.PkId);
                 ShortMessage shortMessage = new ShortMessage(loadMessage);
 
-                await Clients.Group(Convert.ToString(gameId)).SendAsync("displayMess", shortMessage);
+                await Clients.Group(Convert.ToString(teamId)).SendAsync("displayMess", shortMessage);
             }
             catch (Exception ex)
             {
                 return;
             }
         }
+
     }
 }

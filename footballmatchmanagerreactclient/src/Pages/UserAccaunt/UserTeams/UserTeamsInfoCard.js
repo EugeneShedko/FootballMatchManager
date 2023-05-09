@@ -3,9 +3,6 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../../../index"
-import { HubConnectionBuilder } from "@microsoft/signalr";
-
-import MessagesBlock from "./../Games/ViewGameCard/MessagesBlock";
 import ExistsTeamCard from "./ExistsTeamCard";
 import NoExistTeamCard from "./NoExistTeamCard";
 

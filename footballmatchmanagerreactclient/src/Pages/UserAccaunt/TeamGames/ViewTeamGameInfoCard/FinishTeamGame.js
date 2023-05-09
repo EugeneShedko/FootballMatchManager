@@ -537,13 +537,10 @@ export default function FinishTeamGame() {
 
         const data = {
             GameId: gameId,
-            FirstTeamGoals: teamGameScore.firstTeamGoals,
-            SecondTeamGoals: teamGameScore.secodnTeamGoals,
+            FirstTeamGoals: parseInt(teamGameScore.firstTeamGoals),
+            SecondTeamGoals: parseInt(teamGameScore.secodnTeamGoals),
             GameEvents: gameEvents
         }
-
-        console.log('TEAMGAMEEVENT');
-        console.log(data);
 
         axios.post('http://localhost:5004/api/gameevent/finish-team-game', data, { withCredentials: true })
             .then((response) => {

@@ -3,7 +3,6 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../../../../index"
-import { HubConnectionBuilder } from "@microsoft/signalr";
 
 import PlayerBlock from "../../Players/ViewPlayers/PlayerBlock";
 import MessagesBlock from "./../../Games/ViewGameCard/MessagesBlock";
@@ -104,15 +103,14 @@ export default function TeamInfoCard() {
                         <div className="row team-info-title">
                             {team.name}
                         </div>
-                        <div className="row m-0 p-0">
-                            <div className="col-6 m-0 p-0">
-                                <div className="row m-0 p-0">
+                        <div className="row team-info-text-container2">
+                            <div className="col-6 team-info-column">
+                                <div className="row team-image-cont">
                                     <img className="team-image"
                                         src={"http://localhost:5004/" + team.image}
                                         alt=""
                                     />
                                 </div>
-                                {/* Может кнопки поместить в какой-нибудь контейнер */}
                                 <div className="row team-join-button-container">
                                     {isPart ? null : <input className="team-join-button"
                                         type="button"
@@ -124,18 +122,40 @@ export default function TeamInfoCard() {
                                         onClick={leaveTeam} /> : null}
                                 </div>
                             </div>
-                            <div className="col-6 m-0 p-0">
-                                <div className="row team-info-header">
-                                    Дата создания команды
+                            <div className="col-6 team-info-column">
+                                <div className="row team-desc-row">
+                                    <div className="team-info-header">
+                                        Дата создания команды
+                                    </div>
+                                    <div className="row team-info-text">
+                                        {(new Date(team.crtDate)).toLocaleString().substring(0, (new Date(team.crtDate)).toLocaleString().length - 3)}
+                                    </div>
+                                    <div className="team-info-header">
+                                        Участников: <span className="team-info-text">{team.memberQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Матчей: <span className="team-info-text">{team.gamesQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Побед: <span className="team-info-text">{team.winsQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Поражений: <span className="team-info-text">{team.losesQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Ничьих: <span className="team-info-text">{team.drawsQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Голов забито: <span className="team-info-text">{team.scoredGoalsQnt}</span>
+                                    </div>
+                                    <div className="team-info-header">
+                                        Голов пропущено: <span className="team-info-text">{team.consededGoalsQnt}</span>
+                                    </div>
                                 </div>
-                                <div className="row team-info-text">
-                                    {(new Date(team.crtDate)).toLocaleString().substring(0, (new Date(team.crtDate)).toLocaleString().length - 3)}
-                                </div>
-                                <div className="row team-info-header">
-                                    Описание команды
-                                </div>
-                                <div className="row team-info-text team-desc">
-                                    {team.description}
+                                <div className="row team-desc-row">
+                                    <div className="row team-info-text team-desc">
+                                        {team.description}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -154,7 +174,9 @@ export default function TeamInfoCard() {
                         </div>
                     }
                     <div className="col-3 h-100 p-0">
-                        {isPart ? <MessagesBlock gameId={teamId} /> : null }
+                        {isPart ? <MessagesBlock entityId={teamId}
+                            entityType="team" />
+                            : null}
                     </div>
                 </div>
             </div>

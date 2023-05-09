@@ -13,11 +13,19 @@ export default function TeamGameInviteCard() {
     const navigate = useNavigate();
     /* Айди игры */
     const [teamGameId, setTeamGameId] = useState(parseInt(useParams().id));
+    /* Первоначальный список команд */
+    const [initialTeams, setInitialTeams] = useState([]);
     /* Список команд, для приглашения */
     const [inviteTeams, setInviteTeams] = useState([]);
     /* Список команд, которым отправлены приглашения */
     const [notifiTeams, setNotifiTeams] = useState([]);
     const [searchString, setSearchString] = useState("");
+    /* Объект фильтрации */
+    const [filter, setFilter] = useState({
+        gamesQnt: 0,
+        winsGamesQnt: 0,
+        goalsQnt: 0
+    });
 
     // ----------------------------------------------------------------------------------------- //
 
@@ -25,6 +33,7 @@ export default function TeamGameInviteCard() {
         () => {
             axios.get('http://localhost:5004/api/teamgame/invite-team/' + teamGameId, { withCredentials: true })
                 .then((response) => {
+                    setInitialTeams(response.data);
                     setInviteTeams(response.data);
                 })
                 .catch(userError => {
@@ -64,18 +73,30 @@ export default function TeamGameInviteCard() {
 
     }
 
+    // -------------- Фильтрация команд ---------------- //
+
+    useEffect(() => {
+
+        var filterTeams = [];
+        filterTeams = initialTeams.filter(team => team.gamesQnt >= filter.gamesQnt);
+
+        filterTeams = filterTeams.filter(team => team.winsQnt >= filter.winsGamesQnt);
+
+        filterTeams = filterTeams.filter(team => team.scoredGoalsQnt >= filter.goalsQnt);
+
+        setInviteTeams(filterTeams);
+
+    }, [filter]);
 
     // -------------- Сброс фильтрации ---------------- //
 
     function resetFilter() {
 
-        /*
         setFilter({
-            position: '',
-            goals: 0,
-            assists: 0
+            gamesQnt: 0,
+            winsGamesQnt: 0,
+            goalsQnt: 0
         })
-        */
     }
 
     // ------------------------------------------------- //
@@ -92,57 +113,55 @@ export default function TeamGameInviteCard() {
                             onChange={e => setSearchString(e.target.value)}
                         />
                     </div>
-                    <div className="col-3 mi-top-col">
-                        {/*
-                        <select className="filter-player-element"
-                        onChange={(e) => {
-                            setFilter({ ...filter, position: e.target.value })
-                        }}
-                        >
-                            <option selected value=""> Позиция </option>
-                                positions?.map((position) => (
-                                    <option>{position.strValue}</option>
-                                ))
-                        </select>
-                        */}
-                    </div>
                     <div className="col-2 mi-top-col">
-                        {/*
                         <div className="row filter-text">
-                            Мин. голов {filter.goals}
+                            Мин. матчей {filter.gamesQnt}
                         </div>
                         <div className="row m-0 p-0">
                             <input type="range"
                                 min={0}
                                 max={1000}
                                 step={5}
-                            value={filter.goals}
-                            onChange={(e) => {
-                                setFilter({ ...filter, goals: e.target.value })
-                            }}
+                                value={filter.gamesQnt}
+                                onChange={(e) => {
+                                    setFilter({ ...filter, gamesQnt: e.target.value })
+                                }}
                             />
                         </div>
-                        */}
                     </div>
                     <div className="col-2 mi-top-col">
-                        {/*
                         <div className="row filter-text">
-                            Мин. передач {filter.assists}
+                            Мин. побед {filter.winsGamesQnt}
                         </div>
                         <div className="row m-0 p-0">
                             <input type="range"
                                 min={0}
                                 max={1000}
                                 step={5}
-                            //value={filter.assists}
-                            onChange={(e) => {
-                                setFilter({ ...filter, assists: e.target.value })
-                            }}
+                                value={filter.winsGamesQnt}
+                                onChange={(e) => {
+                                    setFilter({ ...filter, winsGamesQnt: e.target.value })
+                                }}
                             />
                         </div>
-                    */}
                     </div>
-                    <div className="col-2 mi-top-col reset-button-cont">
+                    <div className="col-2 mi-top-col">
+                        <div className="row filter-text">
+                            Мин. голов {filter.goalsQnt}
+                        </div>
+                        <div className="row m-0 p-0">
+                            <input type="range"
+                                min={0}
+                                max={1000}
+                                step={5}
+                                value={filter.goalsQnt}
+                                onChange={(e) => {
+                                    setFilter({ ...filter, goalsQnt: e.target.value })
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="col-3 mi-top-col reset-button-cont">
                         <input className="reset-button"
                             type="button"
                             value="Сбросить"

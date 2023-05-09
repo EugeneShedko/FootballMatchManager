@@ -286,6 +286,15 @@ namespace FootballMatchManager.Controllers
                 _unitOfWork.ApUserTeamGameRepasitory.AddElement(gameCreator);
                 _unitOfWork.Save();
 
+
+                /* Получаю список участников команды организатора матча */
+                List<ApUser> teamMembers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamCreator.PkFkTeamId);
+                for (int i = 0; i < teamMembers.Count; i++)
+                {
+                    ApUserTeamGame participant = new ApUserTeamGame(teamGame.PkId, teamMembers[i].PkId, (int)ApUserTeamEnum.PARTICIPANT);
+                    _unitOfWork.ApUserTeamGameRepasitory.AddElement(participant);
+                }
+
                 return Ok(new { message = "Матч успешно создан!" });
             }
             catch (Exception ex)
@@ -336,17 +345,13 @@ namespace FootballMatchManager.Controllers
                 List<ApUser> firstTeamMembers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamGame.FkFirstTeamId);
                 /* Получаю участников второй команды */
                 List<ApUser> secondTeamMembers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamGame.FkSecondTeamId);
-
-                /* Формирую список участников матча из списка участников команд */
-                /* С удаление повторяющихся(один и тот же пользователь может быть в двух командах) */
-                List<ApUser> teamGameMembers = new List<ApUser>(firstTeamMembers);
+                /* Удаляю повторяюшихся игроков, так как они уже добавлены на командный матч */
                 secondTeamMembers.RemoveAll(member2 => firstTeamMembers.Any(member1 => member1.PkId == member2.PkId));
-                teamGameMembers.AddRange(secondTeamMembers);
 
-
-                for (int i = 0; i < teamGameMembers.Count; i++)
+                /* Добавляю участников второй команды к мат */
+                for (int i = 0; i < secondTeamMembers.Count; i++)
                 {
-                    ApUserTeamGame participant = new ApUserTeamGame(teamGame.PkId, teamGameMembers[i].PkId, (int)ApUserTeamEnum.PARTICIPANT);
+                    ApUserTeamGame participant = new ApUserTeamGame(teamGame.PkId, secondTeamMembers[i].PkId, (int)ApUserTeamEnum.PARTICIPANT);
                     _unitOfWork.ApUserTeamGameRepasitory.AddElement(participant);
                 }
 
