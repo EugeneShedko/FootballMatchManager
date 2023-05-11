@@ -67,6 +67,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<TeamGameMessageHub>("/teamgamechat");
     endpoints.MapHub<TeamMessageHub>("/teamchat");
     endpoints.MapHub<NotificationHub>("/notification");
+    endpoints.MapHub<DeleteHub>("/delete");
 });
 
 app.MapControllers();

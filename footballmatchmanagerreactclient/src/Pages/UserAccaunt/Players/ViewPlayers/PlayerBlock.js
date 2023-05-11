@@ -1,17 +1,24 @@
 import "./../../../../css/Player.css"
-import Profile from "../ViewPlayerCard/PlayerCard";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { TO_GAME_INVITE, TO_PLAYER_CARD } from "../../../../Utilts/Consts";
 import { useContext, useState } from "react";
+import { TO_GAME_CARD } from "../../../../Utilts/Consts";
 import { Context } from "../../../..";
 
 export default function PlayerBlock(props) {
 
+    const {userContext} = useContext(Context);
     const navigate = useNavigate();
     /* Находимся ли мы на странице приглашения матча */
     const [isInvite, setIsInvite] = useState(useLocation().pathname.includes(TO_GAME_INVITE) ? true : false);
-    const [gameId, setGameId] = useState(parseInt(useParams().id));
-    const { userContext } = useContext(Context);
+    /* Отображаени кнопки удаления пользователя из матча */
+    const [isDisplayDelButton, setIsDisplayDelButton] = useState(useLocation().pathname.includes(TO_GAME_CARD) 
+                                                                 /* Не карточка приглашения */
+                                                                 && isInvite === false
+                                                                 /* Является организатором матча */
+                                                                 && props.isCreat === true 
+                                                                 /* Блок пользователя не блок организатора матча */
+                                                                 && userContext.userId !== props.info.pkId ? true : false);
 
     // ----------------------------------------------------------------------------- //
 
@@ -47,6 +54,7 @@ export default function PlayerBlock(props) {
                     </div>
                 </div>
             </div>
+            {/* Кнопка приглашения пользователя в индивидуальный матч */}
             {
                 isInvite ?
                     <div className="row invite-button-cont">
@@ -65,6 +73,20 @@ export default function PlayerBlock(props) {
                     :
                     null
             }
+            {/* Кнопка удаления пользователя из индивидуального матча */}
+            {/* Должна отображаться только у организатора матча и только в карточке матча*/}
+            {/* Не должна отображаться у организатора матча */}
+            {
+                isDisplayDelButton ?
+                    <div className="row m-0 p-0">
+                        <input name="invitebutton"
+                            className="delete-user-button"
+                            type="button"
+                            value="Удалить"
+                            onClick={() => props.deleteUser(props.info.pkId)}
+                        />
+                    </div>
+                    : null}
         </div>
     );
 }

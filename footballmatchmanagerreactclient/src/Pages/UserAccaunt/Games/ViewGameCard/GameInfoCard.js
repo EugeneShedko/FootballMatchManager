@@ -1,16 +1,15 @@
 
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import PlayerBlock from "./../../Players/ViewPlayers/PlayerBlock";
 import { Context } from "../../../../index";
 import CreatorButton from "./GameCardButton/CreatorButtons";
 import MessagesBlock from "./MessagesBlock";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 import "./../../../../css/GameInfoCard.css";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { TO_EDIT_GAME, TO_GAMES } from "../../../../Utilts/Consts";
-import ParticipanButtons from "../../TeamGames/ViewTeamGameInfoCard/ParticipantButtons";
 import ParticipantButton from "./GameCardButton/ParticipantButtons";
 import GameParticipantPlayers from "./GameCardButton/GameParticipantPlayers";
 import GameEventsContainer from "../../TeamGames/ViewTeamGameInfoCard/GameEventsContainer";
@@ -22,16 +21,18 @@ export default function GameInfoCard(props) {
     const location = useLocation()
     const [gameId, setGameId] = useState(useParams().id);
     const [game, setGame] = useState({});
-    /* ЗДЕСЬ ПРОБЛЕМА С ПОЛЬЗОВАТЕЛЯМИ */
-    /* ТО ЧТО Я ВЫНЕС ИХ В ОТДЕЛЬНЫЙ КОМПОНЕНТ*/
-    const [gameUsers, setGameUsers] = useState([]);
     const [isPart, setIsPart] = useState(false);
     const [isCreat, setIsCreat] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     /* События матча */
     const [gameEvents, setGameEvents] = useState([]);
+    /* Обновление участников матча */
     const [refreshGameUser, setRefreshGameUsers] = useState(false);
-
+    /* Обновление матча */
+    const [refreshGame, setRefreshGame] = useState(false);
+    /* Соединение с хабом удаления */
+    const deleteHubConnection = useRef(null);
+    
     // ---------------------------------------------------------------------------------------- //
 
     useEffect(() => {
@@ -43,9 +44,13 @@ export default function GameInfoCard(props) {
                 setIsPart(response.data.isPart);
                 setIsCreat(response.data.isCreat);
 
-                if (response.data.currgame.status === 3)
-                {
+                if (response.data.currgame.status === 3) {
                     getGameEvents();
+                }
+
+                if(response.data.isPart)
+                {
+                    connectToDelete();
                 }
 
                 setIsLoading(true);
@@ -61,7 +66,13 @@ export default function GameInfoCard(props) {
                 }
             });
 
-    }, []);
+            return () => {
+                if (deleteHubConnection.current) {
+                    deleteHubConnection.current.stop();
+                }
+            };
+
+    }, [refreshGame]);
 
     // ------------------------------ Перечитывает данные при обновлении матча ----------------------------------- //
     /* Тупой метод, все равно компонент обновляется */
@@ -74,8 +85,7 @@ export default function GameInfoCard(props) {
                 setIsPart(response.data.isPart);
                 setIsCreat(response.data.isCreat);
 
-                if (response.data.currgame.status === 3)
-                {
+                if (response.data.currgame.status === 3) {
                     getGameEvents();
                 }
 
@@ -93,6 +103,21 @@ export default function GameInfoCard(props) {
             });
     }, [location.state && location.state.refresh]);
 
+    // ---------------------  Подключение к хабу удаления -------------------------- //
+
+    const connectToDelete = async () => {
+
+        const hubDeleteConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/delete").build();
+
+        hubDeleteConnection.on("refreshgame", () => {
+            setRefreshGame(!refreshGame);
+        });
+
+        await hubDeleteConnection.start();
+
+        deleteHubConnection.current = hubDeleteConnection;
+    }
+
     // ---------------------------------------------------------------------------------------- //
 
     function addToMatch() {
@@ -104,12 +129,11 @@ export default function GameInfoCard(props) {
         axios.post('http://localhost:5004/api/profile/add-to-game', data, { withCredentials: true })
             .then((response) => {
 
-                setRefreshGameUsers(!refreshGameUser);
+                setRefreshGame(!refreshGame);
+
                 //Убрать вычитывание пользователей на стороне сервера
                 //setGameUsers(response.data.users);
-                
-                setGame(response.data.currgame);
-                setIsPart(true);
+
                 toast.success(response.data.message, {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
@@ -160,13 +184,13 @@ export default function GameInfoCard(props) {
                         autoClose: 2000,
                         pauseOnFocusLoss: false
                     });
-                setGame(response.data.currgame);
+                
+                setRefreshGame(!refreshGame);
 
-                setRefreshGameUsers(!refreshGameUser);
                 //Убрать вычитывание пользователей на стороне сервера
                 //setGameUsers(response.data.users);
-                
-                setIsPart(false);
+
+                //setIsPart(false);
             })
             .catch((error) => {
                 if (error.response) {
@@ -227,24 +251,56 @@ export default function GameInfoCard(props) {
 
     // ---------------------------------------------------------------------------------------- //
 
-    function getGameEvents()
-    {
+    function getGameEvents() {
         axios.get('http://localhost:5004/api/gameevent/game-events/' + gameId, { withCredentials: true })
-        .then((response) => {
-            console.log('RESDATA');
-            console.log(response.data);
-            setGameEvents(response.data);
-        })
-        .catch(userError => {
-            if (userError.response) {
-                toast.error(userError.response.message,
+            .then((response) => {
+                setGameEvents(response.data);
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+    }
+
+    // ---------------------------------------------------------------------------------------- //
+
+    function deleteUser(userId) {
+
+        axios.delete('http://localhost:5004/api/profile/delete-game-user/' + gameId + '/' + userId, { withCredentials: true })
+            .then((response) => {
+
+                game.currPlayers = game.currPlayers - 1;
+                setRefreshGameUsers(!refreshGameUser);
+
+                var conn = userContext.notificonn;
+                conn?.invoke("DeleteUserFromGame", parseInt(gameId), userId);
+
+                deleteHubConnection.current.invoke("DeleteUserFromGame", userId);
+
+                toast.success(response.data.message,
                     {
                         position: toast.POSITION.TOP_CENTER,
                         autoClose: 2000,
                         pauseOnFocusLoss: false
                     });
-            }
-        });
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+
     }
 
     // ---------------------------------------------------------------------------------------- //
@@ -279,7 +335,6 @@ export default function GameInfoCard(props) {
                             <div className="row match-info-header">
                                 Текущее количество игроков
                             </div>
-                            {/*можно вывести еше максимальное*/}
                             <div className="row match-info-text">
                                 {game.currPlayers}/{game.maxPlayers}
                             </div>
@@ -300,16 +355,20 @@ export default function GameInfoCard(props) {
                         <div className="col-4 match-info-user-container">
                             {
                                 game.status === 3 ? <GameEventsContainer mode="view"
-                                                    events={gameEvents}
+                                    events={gameEvents}
                                 />
                                     : <GameParticipantPlayers gameId={gameId}
-                                                              refresh={refreshGameUser} />
+                                        refresh={refreshGameUser}
+                                        refreshGame={refreshGame}
+                                        isCreat={isCreat}
+                                        deleteUser={deleteUser}
+                                    />
                             }
                         </div>
                         <div className="col-4 h-100 p-0">
-                            {isPart ? <MessagesBlock entityId   ={gameId}
-                                                     entityType ="game" /> 
-                            : null}
+                            {isPart ? <MessagesBlock entityId={gameId}
+                                entityType="game" />
+                                : null}
                         </div>
                     </div>
                 </div>

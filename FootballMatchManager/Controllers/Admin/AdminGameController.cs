@@ -13,12 +13,10 @@ namespace FootballMatchManager.Controllers.Admin
     {
 
         UnitOfWork _unitOfWork;
-        JwtService _jwtService;
 
-        public AdminGameController(UnitOfWork unitOfWork, JwtService jwtService)
+        public AdminGameController(UnitOfWork unitOfWork)
         {
             this._unitOfWork = unitOfWork;
-            this._jwtService = jwtService;
         }
 
 

@@ -11,6 +11,7 @@ export default function GameParticipantPlayers(props) {
     // --------------------------------------------------- //
 
     useEffect(() => {
+
         axios.get('http://localhost:5004/api/profile/game-users/' + props.gameId, { withCredentials: true })
             .then((response) => {
                 setGameUsers(response.data);
@@ -26,7 +27,7 @@ export default function GameParticipantPlayers(props) {
                         });
                 }
             });
-    }, [props.refresh])
+    }, [props.refresh, props.refreshGame])
 
     // ------------------------------------------------------------------ //
 
@@ -37,7 +38,11 @@ export default function GameParticipantPlayers(props) {
                     {
                         gameUsers?.map((player) => (
                             <div className="row m-0">
-                                <PlayerBlock info={player} />
+                                <PlayerBlock info={player}
+                                             isGameCard={true}
+                                             isCreat={props.isCreat}
+                                             deleteUser={props.deleteUser}
+                                             />
                             </div>
                         ))
                     }

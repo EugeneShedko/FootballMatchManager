@@ -70,6 +70,21 @@
     background-color: white;
 }
 
+.delete-user-button
+{
+    color: white;
+    background-color: darkred;
+    border: none;
+    border-radius: 0px 0px 15px 15px;
+}
+
+.delete-user-button:hover
+{
+    background-color: red;
+}
+
+/* --------------------------- Не понятно, что за кнопки ------------------ */
+
 .pl-danger-button
 {
     color: white;

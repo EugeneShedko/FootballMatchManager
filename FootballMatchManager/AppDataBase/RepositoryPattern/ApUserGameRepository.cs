@@ -66,8 +66,14 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------ //
 
-        /* Переименовать получается участник игры, а не просто пользователь */
-        public ApUserGame GetUserFromGame(int gameId, int userId)
+        /// <summary>
+        /// Возвращает запись участника матча
+        /// </summary>
+        /// <param name="gameId">Айди матча</param>
+        /// <param name="userId">Айди пользователя</param>
+        /// <returns></returns>
+
+        public ApUserGame GetGameParticipant(int gameId, int userId)
         {
             return GetItems().FirstOrDefault(apug => apug.PkFkGameId == gameId
                                                   && apug.PkFkUserId == userId

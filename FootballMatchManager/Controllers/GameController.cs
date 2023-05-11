@@ -155,7 +155,7 @@ namespace FootballMatchManager.Controllers
             }
 
             /* Получаем участника матча */
-            ApUserGame apUserGameEx = _unitOfWork.ApUserGameRepository.GetUserFromGame(gameId, userId);
+            ApUserGame apUserGameEx = _unitOfWork.ApUserGameRepository.GetGameParticipant(gameId, userId);
 
             if (apUserGameEx != null)
             {
@@ -336,6 +336,7 @@ namespace FootballMatchManager.Controllers
 
         // ------------------------------------------------------------------------------- //
 
+        /* Не понятно, чтот это за метод */
         [HttpPost]
         [Route("addmessage")]
         public ActionResult PostAddMessage()
@@ -378,7 +379,7 @@ namespace FootballMatchManager.Controllers
                 return BadRequest(new {message = "Ошибка количества пользователей не матче"});
             }
 
-            ApUserGame apUserGame = _unitOfWork.ApUserGameRepository.GetUserFromGame(gameId, userId);
+            ApUserGame apUserGame = _unitOfWork.ApUserGameRepository.GetGameParticipant(gameId, userId);
 
             if (apUserGame == null)
             {
@@ -430,5 +431,39 @@ namespace FootballMatchManager.Controllers
         }
 
         // ------------------------------------------------------------------------------- //
+
+        [HttpDelete]
+        [Route("delete-game-user/{gameId}/{userId}")]
+        public ActionResult DeleteUserFromGame(int gameId, int userId)
+        {
+            try
+            {
+
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                /* Получаю матч, с которой хотят удалить пользователя */
+                Game game = _unitOfWork.GameRepository.GetItem(gameId);
+                if(game == null) { return BadRequest(); }
+
+                /* Получаю записть участника матча */
+                ApUserGame gameUser = _unitOfWork.ApUserGameRepository.GetGameParticipant(gameId, userId);
+                if (gameUser == null) { return BadRequest(); }
+
+                _unitOfWork.ApUserGameRepository.DeleteElement(gameUser);
+
+                if (game.CurrPlayers > 0)
+                    game.CurrPlayers -= 1;
+                
+                _unitOfWork.Save();
+
+                return Ok(new {message = "Пользователь удален из матча!"});
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
     }
 }
