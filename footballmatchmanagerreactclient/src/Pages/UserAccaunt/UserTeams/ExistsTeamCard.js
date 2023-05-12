@@ -1,43 +1,67 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 import "./../../../css/Teams/TeamInfoCard.css";
-import PlayerBlock from "../Players/ViewPlayers/PlayerBlock";
 import MessagesBlock from "./../Games/ViewGameCard/MessagesBlock";
+import TeamParticipants from "./TeamParticipants";
+import { Context } from "../../..";
 
 export default function ExistsTeamCard(props) {
+
+    const { userContext } = useContext(Context);
     const [team, setTeam] = useState({});
-    const [teamUsers, setTeamUsers] = useState([]);
+    //const [teamUsers, setTeamUsers] = useState([]);
+    /* Является ли пользователь организатором команды */
+    const [isCreat, setIsCreat] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    /* Обновление участников команды */
+    const [refreshTeamUsers, setRefreshTeamUsers] = useState(false);
+    /* Соединение с хабом удаления */
+    const deleteHubConnection = useRef(null);
+
     // ----------------------------------------------------------------------------------- //
 
     useEffect(() => {
         getTeamInfo(props.teamId)
+        connectToDelete();
+
+        return () => {
+            if (deleteHubConnection.current) {
+                deleteHubConnection.current.stop();
+            }
+        };
+        
     }, [props.userTeams]);
 
     // ----------------------------------------------------------------------------------- //
+
+    const connectToDelete = async () => {
+
+        const hubDeleteConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/delete").build();
+
+        hubDeleteConnection.on("refreshteam", () => {
+            props.update();
+        });
+
+        await hubDeleteConnection.start();
+
+        deleteHubConnection.current = hubDeleteConnection;
+
+
+    }
+
+    // ----------------------------------------------------------------------------------- //
+
 
     function getTeamInfo(teamId) {
 
         axios.get('http://localhost:5004/api/team/team/' + teamId, { withCredentials: true })
             .then((response) => {
                 setTeam(response.data.currteam);
-            })
-            .then(() => {
-                axios.get('http://localhost:5004/api/team/team-users/' + teamId, { withCredentials: true })
-                    .then((response) => {
-                        setTeamUsers(response.data);
-                    })
-                    .catch(userError => {
-                        if (userError.response) {
-                            toast.error(userError.response.message,
-                                {
-                                    position: toast.POSITION.TOP_CENTER,
-                                    autoClose: 2000,
-                                    pauseOnFocusLoss: false
-                                });
-                        }
-                    });
+                setIsCreat(response.data.isCreat);
+                setIsLoading(true);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -52,8 +76,6 @@ export default function ExistsTeamCard(props) {
     }
 
     // ----------------------------------------------------------------------------------- //
-
-    /* Нужно как-то сменить игру при уходе из команды */
 
     function leaveTeam() {
 
@@ -80,104 +102,137 @@ export default function ExistsTeamCard(props) {
             });
     }
 
-    // ------------------------------------------------------------------------------------ //
+    // ----------------------- Удаление пользователя из команды ------------------------ //
 
-    return (
-        <div className="row justify-content-center team-info-main-container">
-            <div className="col-12 team-info-container">
-                <div className="row m-0 h-100">
-                    <div className="col-5 team-info-text-container">
-                        <div className="row team-info-title">
-                            {team.name}
-                        </div>
-                        <div className="row team-info-text-container2">
-                            <div className="col-6 team-info-column">
-                                <div className="row team-image-cont">
-                                    <img className="team-image"
-                                        src={"http://localhost:5004/" + team.image}
-                                        alt=""
-                                    />
-                                </div>
-                                <div className="row team-join-button-container">
-                                    <input className="match-join-button"
-                                        type="button"
-                                        value="Покинуть"
-                                        onClick={leaveTeam}
-                                    />
-                                </div>
-                            </div>
-                            <div className="col-6 team-info-column">
-                                <div className="row team-desc-row">
-                                    <div className="team-info-header">
-                                        Дата создания команды
-                                    </div>
-                                    <div className="row team-info-text">
-                                        {(new Date(team.crtDate)).toLocaleString().substring(0, (new Date(team.crtDate)).toLocaleString().length - 3)}
-                                    </div>
-                                    <div className="team-info-header">
-                                        Участников: <span className="team-info-text">{team.memberQnt}</span>
-                                    </div>
-                                    <div className="team-info-header">
-                                        Матчей: <span className="team-info-text">{team.gamesQnt}</span>
-                                    </div>
-                                    <div className="team-info-header">
-                                        Побед: <span className="team-info-text">{team.winsQnt}</span>
-                                    </div>
-                                    <div className="team-info-header">
-                                        Поражений: <span className="team-info-text">{team.losesQnt}</span>
-                                    </div>
-                                    <div className="team-info-header">
-                                        Ничьих: <span className="team-info-text">{team.drawsQnt}</span>
-                                    </div>
-                                    <div className="team-info-header">
-                                        Голов забито: <span className="team-info-text">{team.scoredGoalsQnt}</span>
-                                    </div>
-                                    <div className="team-info-header">
-                                        Голов пропущено: <span className="team-info-text">{team.consededGoalsQnt}</span>
-                                    </div>
-                                </div>
-                                <div className="row team-desc-row">
-                                    <div className="row team-info-text team-desc">
-                                        {team.description}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    function deleteUserTeam(userId) {
+
+        axios.delete('http://localhost:5004/api/team/delete-team-user/' + team.pkId + '/' + userId, { withCredentials: true })
+            .then((response) => {
+
+                setRefreshTeamUsers(!refreshTeamUsers);
+                team.memberQnt = team.memberQnt - 1;
+
+                var conn = userContext.notificonn;
+                conn?.invoke("DeleteUserFromTeam", team.pkId, userId);
+
+                deleteHubConnection.current.invoke("DeleteUserFromTeam", userId);
+
+                toast.success(response.data.message,
                     {
-                        <div className="col-4 team-info-user-container">
-                            <div className="team-info-user-absolute-container">
-                                {
-                                    teamUsers.map((player) => (
-                                        <div className="row m-0 p-0">
-                                            <PlayerBlock info={player} />
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+
+    }
+
+    // ------------------------------------------------------------------------------------ //
+    if (isLoading) {
+        return (
+            <div className="row justify-content-center team-info-main-container">
+                <div className="col-12 team-info-container">
+                    <div className="row m-0 h-100">
+                        <div className="col-5 team-info-text-container">
+                            <div className="row team-info-title">
+                                {team.name}
+                            </div>
+                            <div className="row team-info-text-container2">
+                                <div className="col-6 team-info-column">
+                                    <div className="row team-image-cont">
+                                        <img className="team-image"
+                                            src={"http://localhost:5004/" + team.image}
+                                            alt=""
+                                        />
+                                    </div>
+                                    <div className="row team-join-button-container">
+                                        <input className="match-join-button"
+                                            type="button"
+                                            value="Покинуть"
+                                            onClick={leaveTeam}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="col-6 team-info-column">
+                                    <div className="row team-desc-row">
+                                        <div className="team-info-header">
+                                            Дата создания команды
                                         </div>
-                                    ))
-                                }
+                                        <div className="row team-info-text">
+                                            {(new Date(team.crtDate)).toLocaleString().substring(0, (new Date(team.crtDate)).toLocaleString().length - 3)}
+                                        </div>
+                                        <div className="team-info-header">
+                                            Участников: <span className="team-info-text">{team.memberQnt}</span>
+                                        </div>
+                                        <div className="team-info-header">
+                                            Матчей: <span className="team-info-text">{team.gamesQnt}</span>
+                                        </div>
+                                        <div className="team-info-header">
+                                            Побед: <span className="team-info-text">{team.winsQnt}</span>
+                                        </div>
+                                        <div className="team-info-header">
+                                            Поражений: <span className="team-info-text">{team.losesQnt}</span>
+                                        </div>
+                                        <div className="team-info-header">
+                                            Ничьих: <span className="team-info-text">{team.drawsQnt}</span>
+                                        </div>
+                                        <div className="team-info-header">
+                                            Голов забито: <span className="team-info-text">{team.scoredGoalsQnt}</span>
+                                        </div>
+                                        <div className="team-info-header">
+                                            Голов пропущено: <span className="team-info-text">{team.consededGoalsQnt}</span>
+                                        </div>
+                                    </div>
+                                    <div className="row team-desc-row">
+                                        <div className="row team-info-text team-desc">
+                                            {team.description}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    }
-                    <div className="col-3 p-0 h-100">
-                        <div className="row team-switch-cont">
-                            <select className="form-select form-select-sm team-switch"
-                                onChange={e => getTeamInfo(e.target.value)}>
-                                {
-                                    props.userTeams?.map((team) => (
-                                        team.pkId === props.teamId ?
-                                            <option selected value={team.pkId} >{team.name}</option>
-                                            :
-                                            <option value={team.pkId} >{team.name}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                        <div className="row team-mess-cont">
-                            <MessagesBlock entityId={team.pkId}
-                                entityType="team" />
+                        {
+                            /* Вынести в отдельный компонент */
+                            <div className="col-4 team-info-user-container">
+                                <TeamParticipants teamId={team.pkId}
+                                    isCreat={isCreat}
+                                    refresh={refreshTeamUsers}
+                                    deleteUserTeam={deleteUserTeam}
+                                />
+                            </div>
+                        }
+                        <div className="col-3 p-0 h-100">
+                            <div className="row team-switch-cont">
+                                <select className="form-select form-select-sm team-switch"
+                                    onChange={e => getTeamInfo(e.target.value)}>
+                                    {
+                                        props.userTeams?.map((team) => (
+                                            team.pkId === props.teamId ?
+                                                <option selected value={team.pkId} >{team.name}</option>
+                                                :
+                                                <option value={team.pkId} >{team.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            <div className="row team-mess-cont">
+                                <MessagesBlock entityId={team.pkId}
+                                    entityType="team" />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    );
+        );
+    }
 }

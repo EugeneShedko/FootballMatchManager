@@ -17,5 +17,11 @@ namespace FootballMatchManager.Hubs
             await Clients.User(Convert.ToString(userID))?.SendAsync("refreshgame");
             return;
         }
+
+        public async Task DeleteUserFromTeam(int userID)
+        {
+            await Clients.User(Convert.ToString(userID))?.SendAsync("refreshteam");
+            return;
+        }
     }
 }

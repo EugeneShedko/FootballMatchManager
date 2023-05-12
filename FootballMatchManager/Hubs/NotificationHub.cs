@@ -977,5 +977,28 @@ namespace FootballMatchManager.Hubs
                 return;
             }
         }
+        public async Task DeleteUserFromTeam(int teamId, int userID)
+        {
+            try
+            {
+                if (Context.User == null) { return; }
+
+                /* Получаю команду, с которой удалили пользователя */
+                Team team = _unitOfWork.TeamRepository.GetItem(teamId);
+                if (team == null) { return; }
+
+                /* Получаю константу уведомлени */
+                Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("deleteuserfromteam");
+
+                string notiffiMess = constant.StrValue.Replace("{team}", team.Name);
+                
+                await Clients.User(Convert.ToString(userID))?.SendAsync("displayNotifiError", notiffiMess);
+
+            }
+            catch (Exception ex)
+            {
+                return;
+            }
+        }
     }
 }

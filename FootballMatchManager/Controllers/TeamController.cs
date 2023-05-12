@@ -117,6 +117,7 @@ namespace FootballMatchManager.Controllers
                 int userId = int.Parse(HttpContext.User.Identity.Name);
 
                 bool isParticipant = false;
+                bool isCreator     = false;
 
                 Team team = _unitOfWork.TeamRepository.GetItem(teamId);
 
@@ -132,7 +133,14 @@ namespace FootballMatchManager.Controllers
                     isParticipant = true;
                 }
 
-                return Ok(new { currteam = team, isPart = isParticipant });
+                ApUserTeam apUserTeamCreator = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId, userId);
+
+                if (apUserTeamCreator != null)
+                {
+                    isCreator = true;
+                }
+
+                return Ok(new { currteam = team, isPart = isParticipant, isCreat = isCreator});
             }
             catch (Exception ex)
             {
@@ -279,7 +287,7 @@ namespace FootballMatchManager.Controllers
 
                 if(userCreat != null)
                 {
-                    return BadRequest(new {message = "Не возможно покинуть команду, так как вы являетесь ее организатором. Назначьте другого пользователя"});
+                    return BadRequest(new {message = "Не возможно покинуть команду, так как вы являетесь организатором."});
                 }
 
                 /* Получаем запись пользователя участника команды */
@@ -314,5 +322,51 @@ namespace FootballMatchManager.Controllers
                 return BadRequest();
             }
         }
+
+        // ------------------------------------------------------------------------------------------------------ //
+
+        /* Нужно удалять пользователя из участников всех матчей, в которых учавствует команда */
+        [HttpDelete]
+        [Route("delete-team-user/{teamId}/{deleteUserId}")]
+        public ActionResult DeleteUserFromTeam(int teamId, int deleteUserId)
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                //int userId = int.Parse(HttpContext.User.Identity.Name);
+
+                Team team = _unitOfWork.TeamRepository.GetItem(teamId);
+                if (team == null) { return BadRequest(); }
+
+                /* Проверка на организатора */
+                ApUserTeam userCreat = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId, deleteUserId);
+                if (userCreat != null)
+                {
+                    return BadRequest(new { message = "Не возможно покинуть команду, так как вы являетесь организатором." });
+                }
+
+                /* Получаем запись пользователя участника команды */
+                ApUserTeam userPart = _unitOfWork.ApUserTeamRepository.GetTeamParticipant(teamId, deleteUserId);
+                if (userPart == null) { return BadRequest(); }
+
+                /* Удаляем пользователя из команды */
+                _unitOfWork.ApUserTeamRepository.DeleteElement(userPart);
+                /* Уменьшаю количество участников в комнде */
+                if (team.MemberQnt > 0)
+                {
+                    team.MemberQnt = team.MemberQnt - 1;
+                }
+
+                _unitOfWork.Save();
+
+                return Ok(new { message = "Пользователь удален из команды!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
     }
 }

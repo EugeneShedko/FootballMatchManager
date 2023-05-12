@@ -19,14 +19,11 @@ export default function UserTeamsInfoCard() {
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 
-    /* Может просто перечитать тогда? */
     useEffect(() => {
 
         axios.get('http://localhost:5004/api/team/user-team', { withCredentials: true })
             .then((response) => {
 
-                /* Пока что не понятно, что будет если приедт null */
-                /* Состояние для хранения листа айдишников */
                 if(response.data.firstTeamId !== -1)
                 {
                     setTeamId(response.data.firstTeamId);
@@ -37,7 +34,6 @@ export default function UserTeamsInfoCard() {
                 setTeamId(response.data.firstTeamId);
                 setIsLoading(true); 
                 //setReloadTeams(false);
-                console.log('EFFECT');
             })
             .catch(userError => {
                 if (userError.response) {
@@ -56,15 +52,12 @@ export default function UserTeamsInfoCard() {
     function updateCard()
     {
         setReloadTeams(true);
-        console.log('UPDATE!');
     }
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 
     return (
         <>
-        {console.log('teamId')}
-        {console.log(teamId)}
         {
             isLoading ?
              teamId === -1 ? <NoExistTeamCard /> :<ExistsTeamCard  teamId={teamId}
