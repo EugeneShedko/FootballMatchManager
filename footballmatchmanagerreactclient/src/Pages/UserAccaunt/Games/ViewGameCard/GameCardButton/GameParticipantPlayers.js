@@ -37,11 +37,12 @@ export default function GameParticipantPlayers(props) {
                 <div className="match-info-user-absolute-container">
                     {
                         gameUsers?.map((player) => (
-                            <div className="row m-0">
+                            <div key={player.pkId} className="row m-0">
                                 <PlayerBlock info={player}
                                              isGameCard={true}
                                              isCreat={props.isCreat}
                                              deleteUser={props.deleteUser}
+                                             gameCreatroId={props.gameCreatroId}
                                              />
                             </div>
                         ))

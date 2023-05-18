@@ -68,8 +68,17 @@ namespace FootballMatchManager.DataBase.DBClasses
                                                     new Constant() { PkId = 37, Group = "notification", Type = "text", Name = "dismissinviteteamgame", StrValue = "Команда {team} отклонил ваше приглашение на присоединение к командному матчу {game}." },
                                                     new Constant() { PkId = 38, Group = "notification", Type = "text", Name = "acceptinviteteamgame", StrValue = "Команда {team} приняла ваше приглашение на присоединение к командному матчу {game}." },
                                                     new Constant() { PkId = 39, Group = "notification", Type = "text", Name = "acceptinviteteamgamesend", StrValue = "Ваша команда присоединилась к матчу {game}!" },
-                                                    new Constant() { PkId = 40, Group = "notification", Type = "text", Name = "deleteuserfromgame", StrValue = "Вы были удалены из матча {game} администратором матча" },
-                                                    new Constant() { PkId = 41, Group = "notification", Type = "text", Name = "deleteuserfromteam", StrValue = "Вы были удалены из команды {team} администратором команды" }
+                                                    new Constant() { PkId = 40, Group = "notification", Type = "text", Name = "deleteuserfromgame", StrValue = "Вы были удалены из матча {game} организатором матча" },
+                                                    new Constant() { PkId = 41, Group = "notification", Type = "text", Name = "deleteuserfromteam", StrValue = "Вы были удалены из команды {team} организатором команды" },
+                                                    new Constant() { PkId = 42, Group = "notification", Type = "text", Name = "deletegame", StrValue = "Матч {game} был удален организатором матча" },
+                                                    new Constant() { PkId = 43, Group = "notification", Type = "text", Name = "editgame", StrValue = "В матче {game} была изменена информацию организатором матча" },
+                                                    new Constant() { PkId = 44, Group = "notification", Type = "text", Name = "deleteteam", StrValue = "Команда {team} была удалена организатором команды" },
+                                                    new Constant() { PkId = 45, Group = "notification", Type = "text", Name = "DeleteUserFromGameAdmin", StrValue = "Вы были удалены из матча {game} администратором приложения" },
+                                                    new Constant() { PkId = 46, Group = "notification", Type = "text", Name = "DeleteGameAdmin", StrValue = "Матч {game} был удален администратором приложения" },
+                                                    new Constant() { PkId = 47, Group = "notification", Type = "text", Name = "LeavTeamGameAdmin", StrValue = "Команда {team} была удалена из матча {game} администратором приложения" },
+                                                    new Constant() { PkId = 48, Group = "notification", Type = "text", Name = "DeleteTeamGameAdmin", StrValue = "Матч {game} был удален администратором приложения" },
+                                                    new Constant() { PkId = 49, Group = "notification", Type = "text", Name = "DeleteTeamUserAdmin", StrValue = "Вы были удалены из команды {team} администратором приложения" },
+                                                    new Constant() { PkId = 50, Group = "notification", Type = "text", Name = "DeleteTeamAdmin", StrValue = "Команда {team} была удалена администратором приложения" }
                                                     );
 
             modelBuilder.Entity<Comment>().HasKey(c => c.PkId);
@@ -107,7 +116,7 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<ApUserGame>().HasOne(apug => apug.Game).WithMany(g => g.ApUsersGames).HasForeignKey(apug => apug.PkFkGameId).OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<Message>().HasOne(m => m.Sender).WithMany(apu => apu.Messages).HasForeignKey(m => m.FkSenderId).OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<ApUserTeam>().HasOne(aput => aput.ApUser).WithMany(apu => apu.Teams).HasForeignKey(aput => aput.PkFkUserId).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<ApUserTeam>().HasOne(aput => aput.Team).WithMany(t => t.ApUserTeam).HasForeignKey(aput => aput.PkFkTeamId).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<ApUserTeam>().HasOne(aput => aput.Team).WithMany(t => t.ApUserTeam).HasForeignKey(aput => aput.PkFkTeamId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Notification>().HasOne(n => n.Recipient).WithMany(apu => apu.NotificationsRecipients).HasForeignKey(n => n.FkRecipient).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Notification>().HasOne(n => n.Sender).WithMany(apu => apu.NotificationsSenders).HasForeignKey(n => n.FkSenderId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<TeamGame>().HasOne(tg => tg.FirstTeam).WithMany(t => t.FirstTeamsList).HasForeignKey(tg => tg.FkFirstTeamId).OnDelete(DeleteBehavior.NoAction);

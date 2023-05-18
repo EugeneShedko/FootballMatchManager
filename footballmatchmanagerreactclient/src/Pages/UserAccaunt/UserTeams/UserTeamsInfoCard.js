@@ -5,6 +5,8 @@ import { toast } from "react-toastify";
 import { Context } from "../../../index"
 import ExistsTeamCard from "./ExistsTeamCard";
 import NoExistTeamCard from "./NoExistTeamCard";
+import { useLocalObservable } from "mobx-react-lite";
+import { useLocation } from "react-router-dom";
 
 /* Можно было бы функции вынести просто в отдельный файл, вид карточки один */
 /* А у меня получилось два компонента для этого */
@@ -12,6 +14,7 @@ import NoExistTeamCard from "./NoExistTeamCard";
 export default function UserTeamsInfoCard() {
 
     const { userContext } = useContext(Context);
+    const location = useLocation();
     const [teamId, setTeamId] = useState(null);
     const [userTeams, setUserTeams] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +36,6 @@ export default function UserTeamsInfoCard() {
                 }
                 setTeamId(response.data.firstTeamId);
                 setIsLoading(true); 
-                //setReloadTeams(false);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -45,7 +47,7 @@ export default function UserTeamsInfoCard() {
                         });
                 }
             });
-    }, [reloadTeam]);
+    }, [reloadTeam, location.state]);
 
     // -------------------------------------------------------------------------------------------------------------------------- //
 

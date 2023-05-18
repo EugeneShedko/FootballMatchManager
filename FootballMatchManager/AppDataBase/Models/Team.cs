@@ -1,4 +1,5 @@
 ﻿using FootballMatchManager.AppDataBase.Models;
+using FootballMatchManager.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FootballMatchManager.DataBase.Models
@@ -29,10 +30,11 @@ namespace FootballMatchManager.DataBase.Models
         public int ScoredGoalsQnt { get; set; }
         [Column("ConsededGoalsQnt")]
         public int ConsededGoalsQnt { get; set; }
-
         [Column("Image")]
         public string? Image { get; set; }
-   
+        [Column("Status")]
+        public int Status { get; set; }
+
         public List<ApUserTeam> ApUserTeam { get; set; }
 
         public List<TeamGame> FirstTeamsList { get; set; }
@@ -49,6 +51,7 @@ namespace FootballMatchManager.DataBase.Models
             this.Image = "teams/default-team-logo.png";
             /* По умолчанию создатель команды ее участник */
             this.MemberQnt = 1;
+            this.Status = (int)TeamStatus.ACTIVE;
         }
 
     }

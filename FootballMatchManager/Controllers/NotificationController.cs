@@ -24,29 +24,48 @@ namespace FootballMatchManager.Controllers
         public ActionResult GetAllUserNotif()
         {
 
-            if (HttpContext.User == null) { return BadRequest(); }
-
-            int userId;
-
             try
             {
+                if (HttpContext.User == null) { return BadRequest(); }
+                int userId;
+
                 userId = int.Parse(HttpContext.User.Identity.Name);
 
-            }catch(Exception ex) 
+                List<Notification> notifLst = _unitOfWork.NotificationRepository.GetUserNotification(userId);
+
+                if (notifLst == null)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return Ok(notifLst);
+                }
+
+            }
+            catch (Exception ex) 
             {
                 return BadRequest();
             }
+        }
 
-            List<Notification> notifLst = _unitOfWork.NotificationRepository.GetUserNotification(userId);
+        // -------------------------------------------------------------------------------------------------- /
 
-
-            if (notifLst == null)
+        [HttpGet]
+        [Route("user-notif-count")]
+        public ActionResult GetNotifiCount(int userID)
+        {
+            try
             {
-                return Ok();
-            }
-            else
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                int userId = int.Parse(HttpContext.User.Identity.Name);
+
+                return Ok(_unitOfWork.NotificationRepository.GetUserNotReamNotifiCount(userId));
+
+            }catch(Exception ex)
             {
-                return Ok(notifLst);
+                return BadRequest();
             }
         }
 
@@ -94,33 +113,31 @@ namespace FootballMatchManager.Controllers
                 userId = int.Parse(HttpContext.User.Identity.Name);
                 notifId = int.Parse(Request.Form["notifId"]);
 
+                Notification notif = _unitOfWork.NotificationRepository.GetItem(notifId);
+
+                if (notif == null) { return BadRequest(); }
+
+                notif.Status = (int)NotificationEnum.Read;
+                _unitOfWork.Save();
+
+                List<Notification> notifLst = _unitOfWork.NotificationRepository.GetUserNotification(userId);
+
+
+                if (notifLst == null)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return Ok(new {list = notifLst, count = notifLst.Where(n => n.Status == (int)NotificationEnum.NotRead).Count()});
+                }
+
             }
             catch (Exception ex)
             {
                 return BadRequest();
             }
-
-            Notification notif = _unitOfWork.NotificationRepository.GetItem(notifId);
-
-            if(notif == null) { return BadRequest(); }
-
-            notif.Status = (int)NotificationEnum.Read;
-            _unitOfWork.Save();
-
-            List<Notification> notifLst = _unitOfWork.NotificationRepository.GetUserNotification(userId);
-
-
-            if (notifLst == null)
-            {
-                return Ok();
-            }
-            else
-            {
-                return Ok(notifLst);
-            }
         }
-
-
 
         // -------------------------------------------------------------------------------------------------- //
 

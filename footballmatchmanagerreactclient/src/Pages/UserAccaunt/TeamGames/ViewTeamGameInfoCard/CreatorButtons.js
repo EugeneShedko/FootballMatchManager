@@ -9,39 +9,69 @@ export default function CreatorButtons(props) {
     // -------------------------------------------------------------- //
 
     function selectButtons(gameStatus) {
-        
-        switch (gameStatus) 
-        {
-            case 0: return <InviteTeam />;
+
+        switch (gameStatus) {
+            case 0: return <>
+                <InviteTeam />
+                <EditTeamGame />
+                <DeleteTeamGame />
+            </>;
+            case 1: return <>
+                <EditTeamGame />
+                <DeleteTeamGame />
+            </>;
             case 2: return <FinishGame />;
-            /* Пока что такие кнопки возвращаются у органиазатора матча */
             case 3: return <></>;
             default: return <></>;
         }
     }
 
+    // -------------------- Кнопка удаления матча ---------------------- //
+
+    function DeleteTeamGame() {
+        return (
+            <input className="team-delete-button"
+                type="button"
+                value="Удалить"
+                onClick={props.deleteTeamGame}
+            />
+        );
+
+    }
+
+    // -------------------- Кнопка редактирования матча ---------------------- //
+
+    function EditTeamGame() {
+        return (
+            <input className="team-join-button"
+                type="button"
+                value="Редактировать"
+            onClick={props.editTeamGame}
+            />
+        );
+    }
+
     // -------------------------------------------------------------- //
 
     function FinishGame() {
-        
+
         return (
             <input className="team-join-button"
-                   type="button"
-                   value="Завершить матч"
-                   onClick={() => navigate(location.pathname + TO_TEAM_GAME_HISTORY)}
+                type="button"
+                value="Завершить матч"
+                onClick={() => navigate(location.pathname + TO_TEAM_GAME_HISTORY)}
             />
         );
     }
 
     // --------------- Кнопка приглашения команд на матч ------------------ //
 
-    function InviteTeam()
-    {
+    function InviteTeam() {
         return (
             <input className="team-join-button"
-                   type="button"
-                   value="Пригласить команду"
-                   onClick={() => navigate(location.pathname + TO_TEAM_GAME_INVITE_CARD)}
+                type="button"
+                value="Пригласить команду"
+                onClick={() => navigate(location.pathname + TO_TEAM_GAME_INVITE_CARD)}
             />
         );
     }

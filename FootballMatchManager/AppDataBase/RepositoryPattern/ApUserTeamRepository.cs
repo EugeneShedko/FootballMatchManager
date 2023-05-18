@@ -106,6 +106,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         public List<Team> GetTeamsByCreators(List<ApUser> creatorsList)
         {
             return GetItems().Where(aput => aput.PkUserType == (int)ApUserTeamEnum.CREATOR
+                                         && aput.Team.Status == (int)TeamStatus.ACTIVE
                                          && creatorsList.Any(creator => creator.PkId == aput.PkFkUserId))
                              .Select(aput => aput.Team)
                              .ToList();
@@ -123,15 +124,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------- //
 
-        /* Возврашает запись ApUserTeam организтора команды по идентификтору пользователя */
-        public ApUserTeam GetTeamCreatorByUserId(int userId)
-        {
-            return GetItems().FirstOrDefault(aput => aput.PkFkUserId == userId
-                                                  && aput.PkUserType == (int)ApUserTeamEnum.CREATOR);
-        }
-
-        // ------------------------------------------------------------- //
-
         /// <summary>
         /// Возвращает объект TEAM(команду) по айди организатора
         /// </summary>
@@ -141,7 +133,8 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         public Team GetTeamByCreator(int userId)
         {
             return GetItems().Where(aput => aput.PkFkUserId == userId
-                                                  && aput.PkUserType == (int)ApUserTeamEnum.CREATOR)
+                                                  && aput.PkUserType == (int)ApUserTeamEnum.CREATOR
+                                                  && aput.Team.Status == (int)TeamStatus.ACTIVE)
                              .Select(aput => aput.Team)
                              .FirstOrDefault();
 
@@ -154,7 +147,8 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         public Team GetTeamByParticipant(int userId)
         {
             return GetItems().Where(aput => aput.PkFkUserId == userId
-                                         && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT)
+                                         && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT
+                                         && aput.Team.Status == (int)TeamStatus.ACTIVE)
                              .Select(aput => aput.Team)
                              .FirstOrDefault();
                               
@@ -162,11 +156,16 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------- //
 
-        /* Возвращает команды в которых пользователь является участником */
+        /// <summary>
+        /// Возвращает список команд, в который пользователь явялется участниоком
+        /// </summary>
+        /// <param name="userId">Айди пользователя</param>
+        /// <returns></returns>
         public List<Team> GetTeamsByParticipant(int userId)
         {
             return GetItems().Where(aput => aput.PkFkUserId == userId
-                                         && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT)
+                                         && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT
+                                         && aput.Team.Status == (int)TeamStatus.ACTIVE)
                               .Select(aput => aput.Team)
                               .ToList();
         }

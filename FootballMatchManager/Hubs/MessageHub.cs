@@ -20,7 +20,6 @@ namespace FootballMatchManager.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, gameRecipient);
         }
 
-        /* Добавить тип сущности, в которую отправляют сообщение */
         public async Task SendMess(string text, int gameId)
         {
             try

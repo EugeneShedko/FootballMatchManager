@@ -1,9 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import React, { createContext, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
-import { Router } from 'react-router-dom';
 import App from './App';
-import UserStore from "./addtionalcomponents/UserStore"
 
 export const Context = createContext(null);
 
@@ -15,12 +13,14 @@ const MyProvider = (props) => {
         isAuth: false,
         isAdmin: false,
         userId: 0,
-        userName: ''        
+        userName: '',        
     };
 
     const[userContext, setUserContext] = useState(deserializedObject);
 
     useEffect(() => {
+        console.log('UPDATE');
+        console.log(userContext);
         sessionStorage.setItem('currentUser', JSON.stringify(userContext));
     }, [userContext])
 

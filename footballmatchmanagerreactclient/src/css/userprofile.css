@@ -2,7 +2,6 @@
     padding: 9% 0% 0% 0%;
 }
 
-/*Сделать данный блок фиксированым*/
 .upnav-container
 {
     height: 100%;
@@ -37,4 +36,19 @@
 
 h1{
     color:white;
+}
+
+.notifi-count
+{
+    margin: 0;
+    padding: 0;
+    color: black;
+    background-color: white;
+    text-align: center;
+    border-radius: 50px 50px 50px 50px;
+}
+.upnav-item:hover .notifi-count
+{
+    color: white;
+    background-color: black;
 }

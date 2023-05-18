@@ -21,6 +21,7 @@ export const TO_GAME_HISTORY = "/history";
 export const TO_TEAM_GAMES = "/accaunt/teamgames";
 export const TO_TEAM_GAME_CARD = "/accaunt/teamgamecard";
 export const TO_CREATE_TEAM_GAME = "/accaunt/teamgamecreate";
+export const TO_EDIT_TEAM_GAME   = "/editteamgame";
 export const TO_TEAM_GAME_HISTORY = "/history";
 export const TO_TEAM_GAME_INVITE_CARD = "/teamgameinvite";
 
@@ -40,4 +41,6 @@ export const TO_USER_GAMES = "/accaunt/usergames";
 export const TO_USER_GAMES_CREATOR = "/accaunt/usergames/creatgames";
 export const TO_USER_GAMES_PARTICIPANT = "/accaunt/usergames/partgames";
 export const TO_USER_TEAM_GAMES = "/accaunt/usergames/teamgames";
+
 export const TO_USER_TEAMS = "/accaunt/userteams";
+export const TO_EDIT_TEAM  = "/editteam";

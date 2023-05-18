@@ -1,21 +1,24 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import MessagesBlock from "../../Games/ViewGameCard/MessagesBlock";
 import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../../../..";
 import CreatorButtons from "./CreatorButtons";
 import ParticipanButtons from "./ParticipantButtons";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 
 import "./../../../../css/TeamsGames/TeamGameInfoCard.css";
 import ParticipantPlayers from "./ParticipantPayers";
 import GameEventsContainer from "./GameEventsContainer";
+import { TO_EDIT_TEAM_GAME, TO_TEAM_GAMES } from "../../../../Utilts/Consts";
 
 export default function TeamGameCard() {
 
     /* Можно было много чего в какой-то один объект запихнуть */
     const { userContext } = useContext(Context);
-
+    const navigate = useNavigate();
+    const location = useLocation();
     const [gameId, setGameId] = useState(parseInt(useParams().id));
     const [game, setGame] = useState({});
     const [creatorId, setCreatorId] = useState();
@@ -27,6 +30,8 @@ export default function TeamGameCard() {
     const [isReload, setIsReload] = useState(false);
     /* События матча */
     const [gameEvents, setGameEvents] = useState([]);
+    /* Соединение с хабом удаления */
+    const deleteHubConnection = useRef(null);
 
     // ---------------------------------------------------------------------------------------- //
 
@@ -43,6 +48,8 @@ export default function TeamGameCard() {
                 else {
                     getTeamGameEvents();
                 }
+
+                connectToDelete();
 
                 setCreatorId(response.data.creatorId);
                 setSecTeamCreator(response.data.secTeamCreatorId)
@@ -61,7 +68,36 @@ export default function TeamGameCard() {
                 }
             });
 
-    }, [isReload]);
+        return () => {
+
+            if (deleteHubConnection.current) {
+                deleteHubConnection.current.stop();
+            }
+        };
+
+    }, [isReload, location.state]);
+
+    // ------------------------------ Подключение к хабу удаления ----------------------------------------- //    
+
+    const connectToDelete = async () => {
+        const hubDeleteConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/teamgame").build();
+
+        hubDeleteConnection.on("deleteGame", () => {
+            navigate(TO_TEAM_GAMES);
+        });
+
+        hubDeleteConnection.on("refresh", () => {
+            setIsReload(!isReload);
+        });
+
+
+        await hubDeleteConnection.start();
+
+        await hubDeleteConnection.invoke("Connect", String(gameId));
+
+        deleteHubConnection.current = hubDeleteConnection;
+
+    }
 
     // ----------------------------------------------------------------------------------------------------------- //    
 
@@ -122,9 +158,50 @@ export default function TeamGameCard() {
                         pauseOnFocusLoss: false
                     });
 
-                var conn = userContext.notificonn;
-                conn.invoke("LeavFromTeamGame", gameId);
                 setIsReload(true);
+            })
+            .catch((error) => {
+                if (error.response) {
+                    toast.error(error.response.data.message,
+                        {
+                            position: toast.POSITION.BOTTOM_RIGHT,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+    }
+
+    // --------------------------------- Редактирование матча ----------------------------- //    
+
+    function editTeamGame() {
+        navigate(location.pathname + TO_EDIT_TEAM_GAME, {
+            state: {
+                gameId: game.pkId,
+                gameName: game.name,
+                gameDate: new Date(game.dateTime),
+                gameFormat: game.format,
+                gameAdress: game.adress,
+            }
+        });
+    }
+
+    // ---------------------------------- Удаление матча --------------------------------------------------------- //    
+
+
+    function deleteTeamGame() {
+        axios.delete('http://localhost:5004/api/teamgame/delete-team-game/' + gameId, { withCredentials: true })
+            .then((response) => {
+                toast.success(response.data.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+
+                deleteHubConnection.current.invoke("DeleteGame", parseInt(gameId));
+                navigate(TO_TEAM_GAMES);
+
             })
             .catch((error) => {
                 if (error.response) {
@@ -178,7 +255,10 @@ export default function TeamGameCard() {
                                 <div className="col tg-button-cont-2">
                                     {
                                         userContext.userId === creatorId ?
-                                            <CreatorButtons game={game} />
+                                            <CreatorButtons game={game}
+                                                editTeamGame={editTeamGame}
+                                                deleteTeamGame={deleteTeamGame}
+                                            />
                                             :
                                             <ParticipanButtons game={game}
                                                 sendReqForTeamGamePart={sendReqForTeamGamePart}
@@ -248,6 +328,7 @@ export default function TeamGameCard() {
                         </div>
                     </div>
                 </div>
+                <Outlet />
             </div>
         );
     }

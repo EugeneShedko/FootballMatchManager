@@ -504,7 +504,6 @@ export default function FinishTeamGame() {
             entityId2: '-1'
         });
 
-        /* Проблема при заполнении, как обрабатывать данные поля? */
 
         /* Скидываю валидность */
         setIsValid({

@@ -70,19 +70,16 @@ export default function CreateTeamGame(props) {
 
     // ------------------------------------------------------------------------------------------ //
 
-    function gameNameHandler(e)
-   {
+    function gameNameHandler(e) {
         setMatchState({ ...matchState, gameName: e.target.value })
-        if(e.target.value !== '')
-        {
-            setInputError({...inputError, gameNameError:""});
+        if (e.target.value !== '') {
+            setInputError({ ...inputError, gameNameError: "" });
         }
-        else
-        {
-            setInputError({...inputError, gameNameError: "Наименованием матча не может быть пустым"});
+        else {
+            setInputError({ ...inputError, gameNameError: "Наименованием матча не может быть пустым" });
         }
     }
-    
+
     // ------------------------------------------------------------------------------------------ //
 
     function gameFormatHandler(e) {
@@ -150,63 +147,66 @@ export default function CreateTeamGame(props) {
         <Modal show={props.show}
             onHide={() => navigate(TO_TEAM_GAMES)}
             centered>
-
             <Modal.Header closeButton>
                 <Modal.Title>
                     Создать командный матч
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Row className="input-container">
-                    {(inputDirty.gameNameDirty && inputError.gameNameError) && <div style={{ color: 'red', marginTop: '-5%' }}>{inputError.gameNameError}</div>}
-                    <input name="gameName"
-                        className="input-style"
-                        type="text"
-                        placeholder="Введите название матча"
-                        onBlur={e => blurHandler(e)}
-                        onChange={e => gameNameHandler(e)}
-                    />
-                </Row>
-
-                <Row className="input-container">
-                    <ReactDatePicker
-                        className="input-style"
-                        type="text"
-                        selected={matchState.gameDate}
-                        placeholder="Введите дату матча"
-                        onChange={(date: Date) => { setMatchState({ ...matchState, gameDate: date }) }}
-                    />
-                </Row>
-                <Row className="input-container">
-                    {(inputDirty.gameFormatDirty && inputError.gameFormatError) && <div style={{ color: 'red', marginTop: '-5%' }}>{inputError.gameFormatError}</div>}
-                    <select name="gameFormat"
-                        className="input-style"
-                        onBlur={e => blurHandler(e)}
-                        onChange={e => gameFormatHandler(e)}
-                    >
-                        <option selected>Укажите формат матча</option>
-                        <option>5x5</option>
-                        <option>9x9</option>
-                        <option>11x11</option>
-                    </select>
-                </Row>
-                <Row className="input-container w-100">
-                    {(inputDirty.gameAdressDirty && inputError.gameAdressError) && <div style={{ color: 'red', marginTop: '-5%' }}>{inputError.gameAdressError}</div>}
-                    <input name="gameAdress"
-                        className="input-style"
-                        type="text"
-                        placeholder="Введите адрес матча"
-                        onBlur={e => blurHandler(e)}
-                        onChange={e => gameAdressHandler(e)}
-                    />
-                </Row>
-                <Row className="w-100">
-                    <input className="input-button-style"
-                        type="button"
-                        value="Создать"
-                        disabled={!isValid}
-                        onClick={createMatch} />
-                </Row>
+                <div className="row m-0 p-0">
+                    <div className="col input-elem-cont">
+                        <div className="row input-containerr">
+                            {(inputDirty.gameNameDirty && inputError.gameNameError) && <div style={{ color: 'red', marginTop: '-5%' }}>{inputError.gameNameError}</div>}
+                            <input name="gameName"
+                                className="input-stylee"
+                                type="text"
+                                placeholder="Введите название матча"
+                                onBlur={e => blurHandler(e)}
+                                onChange={e => gameNameHandler(e)}
+                            />
+                        </div>
+                        <div className="row input-containerr">
+                            <div className="row m-0 p-0">Дата матча</div>
+                            <ReactDatePicker
+                                className="input-stylee"
+                                type="text"
+                                selected={matchState.gameDate}
+                                placeholder="Введите дату матча"
+                                onChange={(date: Date) => { setMatchState({ ...matchState, gameDate: date }) }}
+                            />
+                        </div>
+                        <div className="row input-containerr">
+                            {(inputDirty.gameFormatDirty && inputError.gameFormatError) && <div style={{ color: 'red', marginTop: '-5%' }}>{inputError.gameFormatError}</div>}
+                            <select name="gameFormat"
+                                className="input-stylee"
+                                onBlur={e => blurHandler(e)}
+                                onChange={e => gameFormatHandler(e)}
+                            >
+                                <option selected>Укажите формат матча</option>
+                                <option>5x5</option>
+                                <option>9x9</option>
+                                <option>11x11</option>
+                            </select>
+                        </div>
+                        <div className="row input-containerr">
+                            {(inputDirty.gameAdressDirty && inputError.gameAdressError) && <div style={{ color: 'red', marginTop: '-5%' }}>{inputError.gameAdressError}</div>}
+                            <input name="gameAdress"
+                                className="input-stylee"
+                                type="text"
+                                placeholder="Введите адрес матча"
+                                onBlur={e => blurHandler(e)}
+                                onChange={e => gameAdressHandler(e)}
+                            />
+                        </div>
+                        <div className="row input-containerr">
+                            <input className="input-button-style"
+                                type="button"
+                                value="Создать"
+                                disabled={!isValid}
+                                onClick={createMatch} />
+                        </div>
+                    </div>
+                </div>
             </Modal.Body>
         </Modal>
     );

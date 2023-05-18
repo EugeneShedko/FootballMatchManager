@@ -1,4 +1,4 @@
-import { Modal, Row } from "react-bootstrap";
+import { Modal, div } from "react-bootstrap";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -23,24 +23,23 @@ export default function CreateTeam(props) {
     // ---------------------------------------------------------------------------------------------------- //
 
     function createTeam() {
-        
+
         const data = new FormData();
-        data.append("teamName",  teamState.teamName);
-        data.append("teamDesk",  teamState.teamDesk);
+        data.append("teamName", teamState.teamName);
+        data.append("teamDesk", teamState.teamDesk);
         data.append("teamImage", teamState.teamImage);
 
         axios.post('http://localhost:5004/api/team/create-team', data, { withCredentials: true })
-            .then((response) => {              
+            .then((response) => {
                 toast.success(response.data, {
                     position: toast.POSITION.TOP_CENTER,
                     autoClose: 2000,
                     pauseOnFocusLoss: false
                 })
-                /* Передать рефреш, как с играми */
-                navigate(TO_TEAMS, {state:{refresh:true}});
-                /* Убрать вычет всех команд на сервере */
+
+                navigate(TO_TEAMS, { state: { refresh: true } });
+                //Убрать вычет всех команд на сервере 
                 //props.setAllTeams(response.data);  
-                //props.onHide(false);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -58,7 +57,7 @@ export default function CreateTeam(props) {
 
     const handleChangeFile = (event) => {
         var file = event.target.files[0];
-        setTeamState({...teamState, teamImage: file});
+        setTeamState({ ...teamState, teamImage: file });
         convertFileToImage(file);
     }
 
@@ -68,8 +67,7 @@ export default function CreateTeam(props) {
 
         var reader = new FileReader();
 
-        reader.onload = function(event)
-        {
+        reader.onload = function (event) {
             setImage(event.target.result);
         }
 
@@ -89,43 +87,47 @@ export default function CreateTeam(props) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Row className="input-container">
-                    <input className="input-style"
-                        type="text"
-                        placeholder="Введите название команды"
-                        onChange={(name) => { setTeamState({ ...teamState, teamName: name.target.value }) }}
-                    />
-                </Row>
-                <Row className="input-container">
-                    <textarea className="input-style text-area-style"
-                        type="text"
-                        placeholder="Добавьте описание команды..."
-                        onChange={(desk) => { setTeamState({ ...teamState, teamDesk: desk.target.value }) }}
-                    />
-                </Row>
-                <Row className="input-container">
-                    <div className="col team-logo-container">
-                        <div>
-                            <img className="team-logo-style"
-                                src={image}
-                                alt=""
+                <div className="div m-0 p-0">
+                    <div className="col crt-matin-cont">
+                        <div className="input-container">
+                            <input className="crt-input-style"
+                                type="text"
+                                placeholder="Введите название команды"
+                                onChange={(name) => { setTeamState({ ...teamState, teamName: name.target.value }) }}
                             />
                         </div>
-                        <div>
-                            <input type="file"
-                                aria-describedby="basic-addon1"
-                                onChange={handleChangeFile} 
-                                />
+                        <div className="input-container">
+                            <textarea className="crt-input-style text-area-style"
+                                type="text"
+                                placeholder="Добавьте описание команды..."
+                                onChange={(desk) => { setTeamState({ ...teamState, teamDesk: desk.target.value }) }}
+                            />
+                        </div>
+                        <div className="input-container">
+                            <div className="col team-logo-container">
+                                <div>
+                                    <img className="team-logo-style"
+                                        src={image}
+                                        alt=""
+                                    />
+                                </div>
+                                <div>
+                                    <input type="file"
+                                        aria-describedby="basic-addon1"
+                                        onChange={handleChangeFile}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="w-100">
+                            <input className="input-button-style"
+                                type="button"
+                                value="Создать"
+                                onClick={createTeam} />
                         </div>
                     </div>
-                </Row>
-
-                <Row className="w-100">
-                    <input className="input-button-style"
-                        type="button"
-                        value="Создать"
-                        onClick={createTeam} />
-                </Row>
+                </div>
             </Modal.Body>
         </Modal>
     );

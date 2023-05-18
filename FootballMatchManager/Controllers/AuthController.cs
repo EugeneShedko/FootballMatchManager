@@ -81,7 +81,6 @@ namespace FootballMatchManager.Controllers
 
             MD5 md5 = MD5.Create();
 
-            string temp = Convert.ToBase64String(md5.ComputeHash(Encoding.UTF8.GetBytes(userPassword)));
 
             if (!string.Equals(loginUser.Password, Convert.ToBase64String(md5.ComputeHash(Encoding.UTF8.GetBytes(userPassword)))))
             {

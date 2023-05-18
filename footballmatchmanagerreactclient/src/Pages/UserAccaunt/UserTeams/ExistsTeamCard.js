@@ -7,9 +7,15 @@ import "./../../../css/Teams/TeamInfoCard.css";
 import MessagesBlock from "./../Games/ViewGameCard/MessagesBlock";
 import TeamParticipants from "./TeamParticipants";
 import { Context } from "../../..";
+import TeamCreatorButtons from "./TeamCreatorButtons";
+import TeamParticipantButtons from "./TeamParticipantButtons";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { TO_EDIT_TEAM } from "../../../Utilts/Consts";
 
 export default function ExistsTeamCard(props) {
 
+    const navigate = useNavigate();
+    const location = useLocation();
     const { userContext } = useContext(Context);
     const [team, setTeam] = useState({});
     //const [teamUsers, setTeamUsers] = useState([]);
@@ -20,6 +26,8 @@ export default function ExistsTeamCard(props) {
     const [refreshTeamUsers, setRefreshTeamUsers] = useState(false);
     /* Соединение с хабом удаления */
     const deleteHubConnection = useRef(null);
+    /*Айди организатора команды*/
+    const [teamCreatorId, setTeamCreatorId] = useState();
 
     // ----------------------------------------------------------------------------------- //
 
@@ -32,20 +40,29 @@ export default function ExistsTeamCard(props) {
                 deleteHubConnection.current.stop();
             }
         };
-        
+
     }, [props.userTeams]);
 
     // ----------------------------------------------------------------------------------- //
 
     const connectToDelete = async () => {
 
-        const hubDeleteConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/delete").build();
+        const hubDeleteConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/team").build();
 
         hubDeleteConnection.on("refreshteam", () => {
             props.update();
         });
 
+        hubDeleteConnection.on("refreshteamcard", () => {
+            props.update();
+        });
+
         await hubDeleteConnection.start();
+
+        console.log('TEAMID');
+        console.log(props.teamId);
+
+        hubDeleteConnection.invoke("Connect", String(props.teamId));
 
         deleteHubConnection.current = hubDeleteConnection;
 
@@ -61,6 +78,7 @@ export default function ExistsTeamCard(props) {
             .then((response) => {
                 setTeam(response.data.currteam);
                 setIsCreat(response.data.isCreat);
+                setTeamCreatorId(response.data.creatorId);
                 setIsLoading(true);
             })
             .catch(userError => {
@@ -112,10 +130,10 @@ export default function ExistsTeamCard(props) {
                 setRefreshTeamUsers(!refreshTeamUsers);
                 team.memberQnt = team.memberQnt - 1;
 
+                /*
                 var conn = userContext.notificonn;
                 conn?.invoke("DeleteUserFromTeam", team.pkId, userId);
-
-                deleteHubConnection.current.invoke("DeleteUserFromTeam", userId);
+                */
 
                 toast.success(response.data.message,
                     {
@@ -137,7 +155,47 @@ export default function ExistsTeamCard(props) {
 
     }
 
+    // ----------------------- Редактирование команды -------------------------- //
+
+    function editTeam() {
+        navigate(location.pathname + TO_EDIT_TEAM, {
+            state: {
+                teamId: team.pkId,
+                teamName: team.name,
+                teamDesc: team.description,
+                teamImage: team.image
+            }
+        });
+    }
+
+    // ----------------------- Удаление команды -------------------------------------- //
+
+    function deleteTeam() {
+        axios.delete('http://localhost:5004/api/team/delete-team/' + team.pkId, { withCredentials: true })
+            .then((response) => {
+
+                toast.success(response.data.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+    }
+
     // ------------------------------------------------------------------------------------ //
+
     if (isLoading) {
         return (
             <div className="row justify-content-center team-info-main-container">
@@ -150,17 +208,21 @@ export default function ExistsTeamCard(props) {
                             <div className="row team-info-text-container2">
                                 <div className="col-6 team-info-column">
                                     <div className="row team-image-cont">
-                                        <img className="team-image"
+                                        <img className="team-imagee"
                                             src={"http://localhost:5004/" + team.image}
                                             alt=""
                                         />
                                     </div>
+
                                     <div className="row team-join-button-container">
-                                        <input className="match-join-button"
-                                            type="button"
-                                            value="Покинуть"
-                                            onClick={leaveTeam}
+                                        {isCreat ? <TeamCreatorButtons
+                                            editTeam={editTeam}
+                                            deleteTeam={deleteTeam}
                                         />
+                                            : <TeamParticipantButtons
+                                                isPart={true}
+                                                leaveTeam={leaveTeam}
+                                            />}
                                     </div>
                                 </div>
                                 <div className="col-6 team-info-column">
@@ -201,16 +263,14 @@ export default function ExistsTeamCard(props) {
                                 </div>
                             </div>
                         </div>
-                        {
-                            /* Вынести в отдельный компонент */
-                            <div className="col-4 team-info-user-container">
-                                <TeamParticipants teamId={team.pkId}
-                                    isCreat={isCreat}
-                                    refresh={refreshTeamUsers}
-                                    deleteUserTeam={deleteUserTeam}
-                                />
-                            </div>
-                        }
+                        <div className="col-4 team-info-user-container">
+                            <TeamParticipants teamId={team.pkId}
+                                isCreat={isCreat}
+                                teamCreatorId={teamCreatorId}
+                                refresh={refreshTeamUsers}
+                                deleteUserTeam={deleteUserTeam}
+                            />
+                        </div>
                         <div className="col-3 p-0 h-100">
                             <div className="row team-switch-cont">
                                 <select className="form-select form-select-sm team-switch"
@@ -232,6 +292,7 @@ export default function ExistsTeamCard(props) {
                         </div>
                     </div>
                 </div>
+                <Outlet />
             </div>
         );
     }

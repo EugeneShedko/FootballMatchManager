@@ -77,7 +77,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         // ------------------------------------------------------------ //
 
         /* Возвращает запись участника командного матча по его айди и айди матча */
-
         public ApUserTeamGame GetTeamGameParticiapnt(int teamGameId, int userId)
         {
             return GetItems().FirstOrDefault(aputg => aputg.PkFkTeamGameId == teamGameId
@@ -112,5 +111,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         }
 
         // ------------------------------------------------------------ //
+
     }
 }

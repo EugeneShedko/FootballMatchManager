@@ -12,7 +12,7 @@ import { TO_GAME_CARD } from "../../../../Utilts/Consts";
 
 export default function EditGame(props) {
 
-    const {userContext} = useContext(Context);
+    const { userContext } = useContext(Context);
     const location = useLocation();
     const navigate = useNavigate();
     const [gameInfo, setGameInfo] = useState({
@@ -23,8 +23,9 @@ export default function EditGame(props) {
         gameAdress: location.state.gameAdress
     });
 
-    function saveChanges()
-    {
+    // ----------------------------------------------------------- //
+
+    function saveChanges() {
 
         const match = {
             UserId: userContext.userId,
@@ -37,27 +38,26 @@ export default function EditGame(props) {
         }
 
         axios.post('http://localhost:5004/api/profile/edit-game', match, { withCredentials: true })
-        .then((response) => {
-            toast.success(response.data.message,
-                {
-                    position: toast.POSITION.TOP_CENTER,
-                    autoClose: 2000,
-                    pauseOnFocusLoss: false
-                });
-
-            /* Убрать запрос на сервере для получения инфы матча!!!! */ 
-            navigate(TO_GAME_CARD + '/' + gameInfo.gameId);    
-        })
-        .catch(userError => {
-            if (userError.response) {
-                toast.error(userError.response.message,
+            .then((response) => {
+                toast.success(response.data.message,
                     {
                         position: toast.POSITION.TOP_CENTER,
                         autoClose: 2000,
                         pauseOnFocusLoss: false
-                    });  
-            }
-        });
+                    });
+
+                navigate(TO_GAME_CARD + '/' + gameInfo.gameId);
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
     }
 
     // ------------------------------------------------------------------------------------------ //
@@ -73,45 +73,38 @@ export default function EditGame(props) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Row className="input-container">
-                    <input className="input-style"
-                        type="text"
-                        placeholder="Нименование матча"
-                        value={gameInfo.gameName}
-                        onChange={(e) => {setGameInfo({ ...gameInfo, gameName: e.target.value }) }}
-                    />
-                </Row>
-                <Row className="input-container">
-                    <ReactDatePicker className="input-style"
-                        selected={gameInfo.gameDate}
-                        onChange={(date: Date) => {setGameInfo({ ...gameInfo, gameDate: date }) }}
-                    />
-                </Row>
-                {/*Здесь должен быть выбор, задать пока что статически*/}
-                <Row className="input-container">
-                    <select className="input-style"
-                        value={gameInfo.gameFormat}
-                        onChange={(e) => {setGameInfo({ ...gameInfo, gameFormat: e.target.value }) }}
-                    >
-                        <option>5x5</option>
-                        <option>9x9</option>
-                        <option>11x11</option>
-                    </select>
-                </Row>
-                <Row className="input-container w-100">
-                    <input className="input-style"
-                        type="text"
-                        placeholder="email"
-                        value={gameInfo.gameAdress}
-                        onChange={(e) => {setGameInfo({...gameInfo, gameAdress: e.target.value }) }}
-                    />
-                </Row>
-                <Row className="w-100">
-                    <input className="input-button-style" 
-                           type="button" 
-                           value="Сохранить" 
-                           onClick={saveChanges} />
-                </Row>
+                <div className="row m-0 p-0">
+                    <div className="col input-elem-cont">
+                        <div className="row input-containerr">
+                            <input className="input-stylee"
+                                type="text"
+                                placeholder="Нименование матча"
+                                value={gameInfo.gameName}
+                                disabled={true}
+                            />
+                        </div>
+                        <div className="row input-containerr">
+                            <div className="m-0 p-0">Дата матча</div>
+                            <ReactDatePicker className="input-stylee"
+                                selected={gameInfo.gameDate}
+                                onChange={(date: Date) => { setGameInfo({ ...gameInfo, gameDate: date }) }}
+                            />
+                        </div>
+                        <div className="row input-containerr">
+                            <input className="input-stylee"
+                                type="text"
+                                value={gameInfo.gameAdress}
+                                onChange={(e) => { setGameInfo({ ...gameInfo, gameAdress: e.target.value }) }}
+                            />
+                        </div>
+                        <div className="row input-containerr">
+                            <input className="input-button-style"
+                                type="button"
+                                value="Сохранить"
+                                onClick={saveChanges} />
+                        </div>
+                    </div>
+                </div>
             </Modal.Body>
         </Modal>
     );

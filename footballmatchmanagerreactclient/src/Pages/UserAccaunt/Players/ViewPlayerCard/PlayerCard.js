@@ -48,12 +48,6 @@ export default function Profile() {
                     })
                     .catch(userError => {
                         if (userError.response) {
-                            toast.error("Не удалось получить комментарии профиля",
-                                {
-                                    position: toast.POSITION.TOP_CENTER,
-                                    autoClose: 2000,
-                                    pauseOnFocusLoss: false
-                                });
                         }
                     });
             })

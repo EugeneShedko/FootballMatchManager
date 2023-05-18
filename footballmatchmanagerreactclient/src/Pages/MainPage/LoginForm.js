@@ -2,8 +2,6 @@ import React, { useContext, useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom";
 import { TO_ACCAUNT, TO_MAIN, TO_REGISTRATION } from "../../Utilts/Consts";
 import { Context } from "../../index";
-import { HubConnectionBuilder } from "@microsoft/signalr";
-import {displayNotifMess, displayNotifiError} from "./../../addtionalcomponents/AuxiliaryFunctions";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -25,71 +23,62 @@ export default function Loginform(props) {
     const [inputDirty, setInputDirty] = useState({
         emailDirty: false,
         passwordDirty: false,
-     });
-  
-     const [inputError, setInputError] = useState({
+    });
+
+    const [inputError, setInputError] = useState({
         emailError: "Email не может быть пустым",
         passwordError: 'Пароль не может быть пустым',
-     });
+    });
 
-     // ------------------------------------------------------- //
+    // ------------------------------------------------------- //
 
-     const blurHandler = (e) => {
-        switch(e.target.name)
-        {
-           case "userEmail": 
-              setInputDirty({...inputDirty, emailDirty:true});
-              break;
-           case "userPassword": 
-              setInputDirty({...inputDirty, passwordDirty:true}); 
-              break;
+    const blurHandler = (e) => {
+        switch (e.target.name) {
+            case "userEmail":
+                setInputDirty({ ...inputDirty, emailDirty: true });
+                break;
+            case "userPassword":
+                setInputDirty({ ...inputDirty, passwordDirty: true });
+                break;
         }
-     }
+    }
 
-     // -------------------------------------------------------- //
+    // -------------------------------------------------------- //
 
-     useEffect(() => {
-        if(inputError.emailError || inputError.passwordError)
-        {
+    useEffect(() => {
+        if (inputError.emailError || inputError.passwordError) {
             setIsValid(false);
         }
-        else
-        {
+        else {
             setIsValid(true);
         }
-     }, [inputError])
+    }, [inputError])
 
-     // ------------------------------------------------------- //
+    // ------------------------------------------------------- //
 
-     function emailHandler(e)
-     {
-        setLogInState({ ...logInState, userEmail:e.target.value })
+    function emailHandler(e) {
+        setLogInState({ ...logInState, userEmail: e.target.value })
         const re = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-        if(!re.test(String(e.target.value).toLowerCase()))
-        {
-            setInputError({...inputError, emailError: "Email не корректен"});
+        if (!re.test(String(e.target.value).toLowerCase())) {
+            setInputError({ ...inputError, emailError: "Email не корректен" });
         }
-        else
-        {
-            setInputError({...inputError, emailError: ""});         
+        else {
+            setInputError({ ...inputError, emailError: "" });
         }
-     }
+    }
 
-     // ---------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------- //
 
-     function passwordHandler(e)
-     {
-        setLogInState({ ...logInState, userPassword:e.target.value })
-        if(e.target.value.length < 5)
-        {
-            setInputError({...inputError, passwordError: 'Длинна пароля менее 5 символов'});     
+    function passwordHandler(e) {
+        setLogInState({ ...logInState, userPassword: e.target.value })
+        if (e.target.value.length < 5) {
+            setInputError({ ...inputError, passwordError: 'Длинна пароля менее 5 символов' });
         }
-        else
-        {
-            setInputError({...inputError, passwordError: ""});    
+        else {
+            setInputError({ ...inputError, passwordError: "" });
         }
-     }
-  
+    }
+
     function closeLoginForm() {
         setLoginContainerStyle("col-3 logincontainerout");
         setTimeout(() => navigate(TO_MAIN), 500);
@@ -113,29 +102,29 @@ export default function Loginform(props) {
                     pauseOnFocusLoss: false
                 });
 
-                if(response.data.user.role === "user")
+                if (response.data.user.role === "user") 
                 {
-
-                    const conn = connectGame();
-
-                    setUserContext({...useContext, 
-                        notificonn: conn,
+                    setUserContext({
+                        ...userContext,
                         isAuth: true,
                         isAdmin: false,
                         userId: response.data.user.pkId,
-                        userName: response.data.user.firstName + ' ' + response.data.user.lastName});
+                        userName: response.data.user.firstName + ' ' + response.data.user.lastName
+                    });
 
                     navigate(TO_ACCAUNT);
                 }
-                else
-                {
-                    /*
-                    user.setAdmin(true);
-                    user.setAuth(false);
-                    user.setUserId(response.data.user.apUserId);
-                    user.setUserName('Администратор');
-                    navigate(ADMIN_PROFILE_ROUTE);
-                    */
+                else {
+                    setUserContext({
+                        ...userContext,
+                        isAuth: false,
+                        isAdmin: true,
+                        userId: response.data.user.pkId,
+                        /* Можно добавить наименование администратору в БД */
+                        userName: 'Администратор'
+                    });
+
+                    navigate(TO_ACCAUNT);
                 }
 
             })
@@ -153,21 +142,6 @@ export default function Loginform(props) {
 
     // ---------------------------------------------------------------------------------------------- //
 
-    /* Не асинхронно, наверное это хреново, подругому не получалось */
-    const connectGame = () => {
-        const nothubconn = new HubConnectionBuilder().withUrl("http://localhost:5004/notification")
-                                                     .build();
-        
-
-        nothubconn.on("displayNotifi", displayNotifMess);
-        nothubconn.on("displayNotifiError", displayNotifiError);
-
-        nothubconn.start();
-        return nothubconn;
-    }
-
-    // ---------------------------------------------------------------------------------------------- //
-
     return (
         <div className="row justify-content-center m-0">
             <div className={loginContainerStyle}>
@@ -180,40 +154,44 @@ export default function Loginform(props) {
                             <div className="loginheadtext">
                                 Войти
                             </div>
-                            <div className="row justify-content-center input-container">
-                            {(inputDirty.emailDirty && inputError.emailError ) && <div style={{color:'red', marginTop: '-5%'}}>{inputError.emailError}</div>}
-                                <input name="userEmail" 
-                                    className="input-style"
-                                    type="text"
-                                    placeholder="Введите email"
-                                    onBlur={e => blurHandler(e)}
-                                    onChange = {(event) => emailHandler(event)}
-                                />
-                            </div>
-                            <div className="row justify-content-center input-container">
-                            {(inputDirty.passwordDirty && inputError.passwordError ) && <div style={{color:'red', marginTop: '-5%'}}>{inputError.passwordError}</div>}
-                                <input name="userPassword" 
-                                    className="input-style"
-                                    type="password"
-                                    placeholder="Введите пароль"
-                                    onBlur={e => blurHandler(e)}
-                                    onChange = {(event) => passwordHandler(event)}
-                                />
-                            </div>
-                            <div className="row form-text">
-                                <div className="col">
-                                    Нет аккаунта? <Link to={TO_REGISTRATION}>Зарегистрируйтесь!</Link>
+                            <div className="col registration-container">
+                                <div className="row l-input-container">
+                                    {(inputDirty.emailDirty && inputError.emailError) && <div style={{ color: 'red', marginTop: '-5%' }}>{inputError.emailError}</div>}
+                                    <input name="userEmail"
+                                        className="l-input-style"
+                                        type="text"
+                                        placeholder="Введите email"
+                                        onBlur={e => blurHandler(e)}
+                                        onChange={(event) => emailHandler(event)}
+                                    />
                                 </div>
-                            </div>
-                            <div className="row justify-content-center button-container">
-                                <input className="button-element" 
-                                       type="submit" 
-                                       value="Войти"
-                                       disabled={!isValid} 
-                                       />
-                            </div>
-                            <div className="row justify-content-center logo-container">
-                                <img className="logo" src="/image/logohuman.png" alt="" />
+                                <div className="row l-input-container">
+                                    {(inputDirty.passwordDirty && inputError.passwordError) && <div style={{ color: 'red', marginTop: '-5%' }}>{inputError.passwordError}</div>}
+                                    <input name="userPassword"
+                                        className="l-input-style"
+                                        type="password"
+                                        placeholder="Введите пароль"
+                                        onBlur={e => blurHandler(e)}
+                                        onChange={(event) => passwordHandler(event)}
+                                    />
+                                </div>
+                                <div className="row form-text">
+                                    <div className="col m-0 p-0">
+                                        Нет аккаунта? <Link to={TO_REGISTRATION}>Зарегистрируйтесь!</Link>
+                                    </div>
+                                </div>
+                                <div className="row l-button-container">
+                                    <div className="l-input-container">
+                                        <input className="button-element"
+                                            type="submit"
+                                            value="Войти"
+                                            disabled={!isValid}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="row justify-content-center logo-container">
+                                    <img className="logo" src="/image/logohuman.png" alt="" />
+                                </div>
                             </div>
                         </form>
                     </div>

@@ -5,6 +5,9 @@ using FootballMatchManager.Utilts;
 using FootballMatchManager.DataBase.Models;
 using FootballMatchManager.Enums;
 using FootballMatchManager.AppDataBase.Models;
+using Microsoft.AspNetCore.SignalR;
+using FootballMatchManager.Hubs;
+using System.Reflection.Metadata;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,9 +18,16 @@ namespace FootballMatchManager.Controllers
     public class GameController : ControllerBase
     {
         private UnitOfWork _unitOfWork;
-        public GameController(UnitOfWork unitOfWork)
+        private IHubContext<NotificationHub> _notifications;
+        private IHubContext<GameHub> _gameHub;
+
+        public GameController(UnitOfWork unitOfWork, 
+                              IHubContext<NotificationHub> notofocation,
+                              IHubContext<GameHub> gameHub)
         {
-            this._unitOfWork = unitOfWork;
+            this._unitOfWork    = unitOfWork;
+            this._notifications = notofocation;
+            this._gameHub       = gameHub;
         }
 
         // --------------------------------------------------------------------------------------------- //
@@ -46,6 +56,8 @@ namespace FootballMatchManager.Controllers
         {
             bool isParticipant = false;
             bool isCreator = false;
+            /* Пока что нужен только идентификатор организатора */
+            int gameCreatorId = -1;
 
             Game game = _unitOfWork.GameRepository.GetItem(gameId);
 
@@ -61,24 +73,32 @@ namespace FootballMatchManager.Controllers
                 _unitOfWork.Save();
             }
 
+            /* Проверка, является ли пользователь участником матча */
             ApUserGame apUserGamePt = _unitOfWork.ApUserGameRepository.GetItems()
-                                                                      .FirstOrDefault(apug => apug.PkFkGameId == gameId && apug.PkFkUserId == userid && apug.PkUserType == "participant");
+                                                                      .FirstOrDefault(apug => apug.PkFkGameId == gameId
+                                                                       && apug.PkFkUserId == userid
+                                                                       && apug.PkUserType == "participant");
 
-            ApUserGame apUserGameCr = _unitOfWork.ApUserGameRepository.GetItems()
-                                              .FirstOrDefault(apug => apug.PkFkGameId == gameId && apug.PkFkUserId == userid && apug.PkUserType == "creator");
+            /* Получаем организатора матча и проверяем является ли пользователь организатором матча */
+            ApUserGame gameCreator = _unitOfWork.ApUserGameRepository.GetGameCreator(gameId);
+            if(gameCreator != null)
+            {
+                gameCreatorId = gameCreator.PkFkUserId;
 
+                if (userid == gameCreator.PkFkUserId)
+                    isCreator = true;
+            }
+            
             if (apUserGamePt != null) 
             {
                 isParticipant = true;
             }
 
-            if (apUserGameCr != null)
-            {
-                isCreator = true;
-            }
 
-
-            return Ok(new { currgame = game, isPart = isParticipant, isCreat = isCreator } );
+            return Ok(new { currgame = game, 
+                            isPart = isParticipant, 
+                            isCreat = isCreator,
+                            creatorID = gameCreatorId });
         }
 
         // --------------------------------------------------------------------------------------------- //
@@ -315,13 +335,17 @@ namespace FootballMatchManager.Controllers
 
         [HttpPost]
         [Route("edit-game")]
-        public ActionResult PostEditGame([FromBody] ShortGame shortGame)
+        public async Task<ActionResult> PostEditGame([FromBody] ShortGame shortGame)
         {
+            if (HttpContext.User == null) { return BadRequest(); }
+
+            int userId = int.Parse(HttpContext.User.Identity.Name);
+
             Game game = _unitOfWork.GameRepository.GetItem(shortGame.GameId);
 
             if (game == null)
             {
-                return BadRequest(new { message = "Данной игры не существует" });
+                return BadRequest();
             }
 
             game.Name = shortGame.GameName;
@@ -329,9 +353,28 @@ namespace FootballMatchManager.Controllers
             game.Format = shortGame.GameFormat;
             game.Adress = shortGame.GameAdress;
 
+            DataBase.Models.Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("editgame");
+            if (constant != null) 
+            {
+                string notiffiMess = constant.StrValue.Replace("{game}", game.Name);
+
+                /* Отправляю уведомление пользователям участникам матча */
+                List<ApUser> gameUsers = _unitOfWork.ApUserGameRepository.GetGameUsers(shortGame.GameId);
+                for (int i = 0; i < gameUsers.Count; i++)
+                {
+                    if (gameUsers[i].PkId == userId) { continue; }
+                    await _notifications.Clients.User(Convert.ToString(gameUsers[i].PkId)).SendAsync("displayNotifi", notiffiMess);
+
+                    Notification notification = new Notification(gameUsers[i].PkId, constant.Type, notiffiMess, game.PkId, userId);
+
+                    _unitOfWork.NotificationRepository.AddElement(notification);
+                }
+
+            }
+
             _unitOfWork.Save();
 
-            return Ok(new { message = "Данные успешно сохранены", askdata = game });
+            return Ok(new { message = "Данные успешно сохранены"});
         }
 
         // ------------------------------------------------------------------------------- //
@@ -406,27 +449,56 @@ namespace FootballMatchManager.Controllers
 
         [HttpDelete]
         [Route("delete-game/{id}")]
-        public ActionResult DeleteGame(int id)
+        public async Task<ActionResult> DeleteGame(int id)
         {
-            Game game = _unitOfWork.GameRepository.GetItem(id);
-
-            if (game == null)
+            try
             {
-                return BadRequest(new { message = "Данного матча не существует" });
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                DataBase.Models.Constant constant = null;
+                string notiffiMess = null;
+                int userId = int.Parse(HttpContext.User.Identity.Name);
+
+                /* Получаю пользователя, который удаляет матч */
+                ApUser deletingUser = _unitOfWork.ApUserRepository.GetItem(userId);
+                if (deletingUser == null) { return BadRequest(); }
+
+                Game game = _unitOfWork.GameRepository.GetItem(id);
+                if (game == null) { return BadRequest(new { message = "Данного матча не существует" });}
+
+                List<ApUser> gameUsers = _unitOfWork.ApUserGameRepository.GetGameUsers(id);
+
+                _unitOfWork.GameRepository.DeleteElement(id);
+                _unitOfWork.Save();
+
+
+                if (deletingUser.Role == "system")
+                    constant = _unitOfWork.ConstantRepository.GetConstantByName("DeleteGameAdmin");
+                else
+                    constant = _unitOfWork.ConstantRepository.GetConstantByName("deletegame");
+
+                if(constant != null)
+                    notiffiMess = constant.StrValue.Replace("{game}", game.Name);
+
+                /* Отправляю уведомление пользователям участникам матча */
+                for (int i = 0; i < gameUsers.Count; i++)
+                {
+                    if(constant != null && gameUsers[i].PkId != userId)
+                    {
+                        await _notifications.Clients.User(Convert.ToString(gameUsers[i].PkId)).SendAsync("displayNotifiError", notiffiMess);
+                        _gameHub.Clients.Group(Convert.ToString(game.PkId)).SendAsync("deleteGame");
+                        Notification notification = new Notification(gameUsers[i].PkId, constant.Type, notiffiMess, id, userId);
+                        _unitOfWork.NotificationRepository.AddElement(notification);
+                    }
+                }
+
+                _unitOfWork.Save();
+                return Ok();
+
             }
-
-            _unitOfWork.GameRepository.DeleteElement(id);
-            _unitOfWork.Save();
-
-            List<Game> games = _unitOfWork.GameRepository.GetItems().ToList();
-
-            if (games == null)
+            catch (Exception ex)
             {
-                return BadRequest(new { message = "Нет созданных матчей" });
-            }
-            else
-            {
-                return Ok(new { message = "Матч удален", rgames = games });
+                return BadRequest();
             }
         }
 
@@ -438,8 +510,16 @@ namespace FootballMatchManager.Controllers
         {
             try
             {
-
                 if (HttpContext.User == null) { return BadRequest(); }
+
+                DataBase.Models.Constant notifiConstant = null;
+            
+                int deletingUserId = int.Parse(HttpContext.User.Identity.Name);
+                int deleteUserId   = 0;
+
+                /* Получаю пользователя, который удаляет пользователя из матча */
+                ApUser deletingUser = _unitOfWork.ApUserRepository.GetItem(deletingUserId);
+                if(deletingUser == null) { return BadRequest(); }
 
                 /* Получаю матч, с которой хотят удалить пользователя */
                 Game game = _unitOfWork.GameRepository.GetItem(gameId);
@@ -449,6 +529,8 @@ namespace FootballMatchManager.Controllers
                 ApUserGame gameUser = _unitOfWork.ApUserGameRepository.GetGameParticipant(gameId, userId);
                 if (gameUser == null) { return BadRequest(); }
 
+                deleteUserId = gameUser.PkFkUserId;
+
                 _unitOfWork.ApUserGameRepository.DeleteElement(gameUser);
 
                 if (game.CurrPlayers > 0)
@@ -456,6 +538,23 @@ namespace FootballMatchManager.Controllers
                 
                 _unitOfWork.Save();
 
+                if (deletingUser.Role == "system")
+                    notifiConstant = _unitOfWork.ConstantRepository.GetConstantByName("DeleteUserFromGameAdmin");
+                else
+                    notifiConstant = _unitOfWork.ConstantRepository.GetConstantByName("deleteuserfromgame");
+
+
+                if(notifiConstant != null)
+                {
+                    string notiffiMess = notifiConstant.StrValue.Replace("{game}", game.Name);
+                    _notifications.Clients.User(Convert.ToString(deleteUserId)).SendAsync("displayNotifiError", notiffiMess);
+                    _gameHub.Clients.User(Convert.ToString(deleteUserId)).SendAsync("refreshgame");
+                    
+                    Notification notification = new Notification(deleteUserId, notifiConstant.Type, notiffiMess, game.PkId, deletingUserId);
+                    _unitOfWork.NotificationRepository.AddElement(notification);
+                }
+
+                _unitOfWork.Save();
                 return Ok(new {message = "Пользователь удален из матча!"});
             }
             catch (Exception ex)

@@ -76,5 +76,16 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         }
 
         // ------------------------------------------------------------ //
+
+        /// <summary>
+        /// Возвращает количество непрочитанных уведомлений пользователя
+        /// </summary>
+        /// <param name="userID">Айди пользователя</param>
+        /// <returns></returns>
+        public int GetUserNotReamNotifiCount(int userID)
+        {
+            return GetItems().Where(n => n.FkRecipient == userID
+                                      && n.Status == (int)NotificationEnum.NotRead).Count();  
+        }
     }
 }

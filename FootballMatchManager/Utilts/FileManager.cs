@@ -42,7 +42,7 @@ namespace FootballMatchManager.Utilts
         public static string GetImagePath(string email, string fileName) 
         {
             MD5 md5 = MD5.Create();
-            var userDirectory = Convert.ToBase64String(md5.ComputeHash(Encoding.UTF8.GetBytes(email)));
+            var userDirectory = Convert.ToBase64String(md5.ComputeHash(Encoding.UTF8.GetBytes(email))).Replace("/", "");
 
             return userDirectory + "/" + fileName;
         }

@@ -1,6 +1,6 @@
 import "./../../../../css/Player.css"
 import { useLocation, useNavigate } from "react-router-dom";
-import { TO_GAME_INVITE, TO_PLAYER_CARD, TO_USER_TEAMS } from "../../../../Utilts/Consts";
+import { TO_GAME_INVITE, TO_PLAYER_CARD, TO_TEAM_CARD, TO_USER_TEAMS } from "../../../../Utilts/Consts";
 import { useContext, useState } from "react";
 import { TO_GAME_CARD } from "../../../../Utilts/Consts";
 import { Context } from "../../../..";
@@ -12,18 +12,24 @@ export default function PlayerBlock(props) {
     /* Находимся ли мы на странице приглашения матча */
     const [isInvite, setIsInvite] = useState(useLocation().pathname.includes(TO_GAME_INVITE) ? true : false);
     /* Отображаени кнопки удаления пользователя из матча */
-    const [isDisplayDelButton, setIsDisplayDelButton] = useState(useLocation().pathname.includes(TO_GAME_CARD)
+    const [isDisplayDelButton, setIsDisplayDelButton] = useState(
+        useLocation().pathname.includes(TO_GAME_CARD)
         /* Не карточка приглашения */
         && isInvite === false
         /* Является организатором матча */
-        && props.isCreat === true
+        &&
+        (props.isCreat === true || userContext.isAdmin === true)
         /* Блок пользователя не блок организатора матча */
-        && userContext.userId !== props.info.pkId ? true : false);
+        && props.gameCreatroId !== props.info.pkId
+        ? true : false);
     /* Отображение кнопки удаления пользователя из команды */
     /* Пока что такое отображение */
-    const [isDisplayDelTeamButton, setIsDisplayDelTeamButton] = useState(useLocation().pathname.includes(TO_USER_TEAMS)
-        && props.isCreat === true
-        && userContext.userId !== props.info.pkId ? true : false);
+    const [locatinPath, setLocationPath] = useState(useLocation().pathname);
+    const [isDisplayDelTeamButton, setIsDisplayDelTeamButton] = useState(
+        (locatinPath.includes(TO_USER_TEAMS) || locatinPath.includes(TO_TEAM_CARD))
+            && (props.isCreat === true || userContext.isAdmin === true)
+            /* Здесь нужно айди организатора команды !!! */
+            && props.teamCreatorId !== props.info.pkId ? true : false);
 
     // ----------------------------------------------------------------------------- //
 

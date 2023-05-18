@@ -25,7 +25,7 @@ export default function TeamParticipants(props) {
                 }
             });
 
-    }, [props.teamId, props.refresh])
+    }, [props.teamId, props.refresh, props.refreshTeam])
 
     // ----------------------------------------------------- //
 
@@ -35,8 +35,9 @@ export default function TeamParticipants(props) {
                 teamUsers.map((player) => (
                     <div key={player.pkId} className="row m-0 p-0">
                         <PlayerBlock info={player}
-                        isCreat={props.isCreat}
-                        deleteUserTeam={props.deleteUserTeam}
+                            teamCreatorId={props.teamCreatorId}
+                            isCreat={props.isCreat}
+                            deleteUserTeam={props.deleteUserTeam}
                         />
                     </div>
                 ))

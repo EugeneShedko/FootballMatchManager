@@ -142,7 +142,6 @@ namespace FootballMatchManager.Hubs
                 if(apUserSender == null) { return; }
 
                 /* Получаем сообщение для уведомления */
-
                 Constant constant = _unitOfWork.ConstantRepository.GetConstantByName(constname);
 
 
@@ -185,7 +184,7 @@ namespace FootballMatchManager.Hubs
 
                     if (errorReq != null)
                     {
-                        await Clients.User(Context.User.Identity.Name)?.SendAsync("displayNotifi", errorReq.StrValue);
+                        await Clients.User(Context.User.Identity.Name)?.SendAsync("displayNotifiError", errorReq.StrValue);
                         return;
                     }
                 }
@@ -332,7 +331,7 @@ namespace FootballMatchManager.Hubs
                 if (apUserSender == null) { return; }
 
                 /* Проверяем является ли пользователь организатором команды */
-                ApUserTeam senderTeamCreat = _unitOfWork.ApUserTeamRepository.GetTeamCreatorByUserId(userIdSender);
+                Team senderTeamCreat = _unitOfWork.ApUserTeamRepository.GetTeamByCreator(userIdSender);
 
                 if (senderTeamCreat == null)
                 {
@@ -344,7 +343,7 @@ namespace FootballMatchManager.Hubs
                 /* Получаю минимальное количество участников в матче */
                 int minMembers = int.Parse(userCreatRec.TeamGame.Format.Substring(0, 1));
 
-                if(senderTeamCreat.Team.MemberQnt < minMembers)
+                if(senderTeamCreat.MemberQnt < minMembers)
                 {
                     await Clients.User(Convert.ToString(userIdSender))?.SendAsync("displayNotifiError", "Вы не может отправить запрос на присоединение к командной игре, так как в вашей команде не достаточно участников");
                     return;
@@ -352,13 +351,12 @@ namespace FootballMatchManager.Hubs
 
                 /* Получаем сообщение уведомления */
                 Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("requestforteamgame");
-
                 if (constant == null) { return; }
 
                 /* Формируем текст уведомления */
                 /* Нужно получить еще наименование команды */
                 /* Потом нужно еще добавить наименование матча */
-                string notifiMess = constant.StrValue.Replace("{team}", senderTeamCreat.Team.Name);
+                string notifiMess = constant.StrValue.Replace("{team}", senderTeamCreat.Name);
 
                 /* Создаем новое уведомление */
                 Notification notifi = new Notification(userCreatRec.PkFkUserId, constant.Type, notifiMess, teamGameId, apUserSender.PkId);
@@ -959,15 +957,21 @@ namespace FootballMatchManager.Hubs
 
                 if (Context.User == null) { return; }
 
+                int userIdSender = int.Parse(Context.User.Identity.Name);
+
                 /* Получаю матча, с которого удалили пользователя */
                 Game game = _unitOfWork.GameRepository.GetItem(gameId);
                 if(game == null) { return; }
 
-                /* Добавить новую */
                 /* Получаю константу уведомлени */
                 Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("deleteuserfromgame");
 
                 string notiffiMess = constant.StrValue.Replace("{game}", game.Name);
+
+                Notification notification = new Notification(userID, constant.Type, notiffiMess, gameId, userIdSender);
+
+                _unitOfWork.NotificationRepository.AddElement(notification);
+                _unitOfWork.Save();
 
                 await Clients.User(Convert.ToString(userID))?.SendAsync("displayNotifiError", notiffiMess);
 
@@ -983,6 +987,8 @@ namespace FootballMatchManager.Hubs
             {
                 if (Context.User == null) { return; }
 
+                int userIdSender = int.Parse(Context.User.Identity.Name);
+
                 /* Получаю команду, с которой удалили пользователя */
                 Team team = _unitOfWork.TeamRepository.GetItem(teamId);
                 if (team == null) { return; }
@@ -991,7 +997,13 @@ namespace FootballMatchManager.Hubs
                 Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("deleteuserfromteam");
 
                 string notiffiMess = constant.StrValue.Replace("{team}", team.Name);
-                
+
+                /* Создаю новый объект уведомления */
+                Notification notification = new Notification(userID, constant.Type, notiffiMess, teamId, userIdSender);
+
+                _unitOfWork.NotificationRepository.AddElement(notification);
+                _unitOfWork.Save();
+
                 await Clients.User(Convert.ToString(userID))?.SendAsync("displayNotifiError", notiffiMess);
 
             }

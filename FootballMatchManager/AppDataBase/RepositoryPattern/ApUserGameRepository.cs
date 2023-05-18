@@ -1,5 +1,6 @@
 ﻿using FootballMatchManager.DataBase.DBClasses;
 using FootballMatchManager.DataBase.Models;
+using FootballMatchManager.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.RepositoryPattern
@@ -52,9 +53,11 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             _dbcontext.Entry(item).State= EntityState.Modified;
         }
 
-        // ------------------------------------------------------------ //
-
-        /* Возвращает список участников матча */
+        /// <summary>
+        /// Возвращает список участников матча
+        /// </summary>
+        /// <param name="gameid">Айди матча</param>
+        /// <returns></returns>
         public List<ApUser> GetGameUsers(int gameid)
         {
             return GetItems().Where(apug => apug.PkFkGameId == gameid
@@ -81,6 +84,16 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         }
 
         // ------------------------------------------------------------ //
+        /// <summary>
+        /// Возвращает запись организатора матча
+        /// </summary>
+        /// <param name="gameId">Айди матча</param>
+        /// <returns></returns>
+        public ApUserGame GetGameCreator(int gameId)
+        {
+            return GetItems().FirstOrDefault(apug => apug.PkFkGameId == gameId
+                                                  && apug.PkUserType == ApUserGameType.Creator);
+        }
 
     }
 }

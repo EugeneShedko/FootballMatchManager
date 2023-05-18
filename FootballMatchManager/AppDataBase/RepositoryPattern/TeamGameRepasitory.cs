@@ -57,5 +57,33 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ---------------------------------------------------------- //
 
+        /* Пока что удаляю не со всех матчей */
+
+        /// <summary>
+        /// Возвращает список командных матчей в определенном статусе(и менее), в которых команда является организатором
+        /// </summary>
+        /// <param name="teamId">Айди команды</param>
+        /// <param name="teamGameStatus">Статус матча</param>
+        /// <returns></returns>
+        public List<TeamGame> GetMatchesByCreatorTeam(int teamId, int teamGameStatus)
+        {
+            return GetItems().Where(tg => tg.FkFirstTeamId == teamId
+                                       && tg.Status <= teamGameStatus)
+                             .ToList();
+        }
+
+        /// <summary>
+        /// Возвращает список командных матчей в определенном статусе(и менее), в которых команда является участницей
+        /// </summary>
+        /// <param name="teamId">Айди команды</param>
+        /// <param name="teamGameStatus">Статус матча</param>
+        /// <returns></returns>
+        public List<TeamGame> GetMatchesByParticipantTeam(int teamId, int teamGameStatus)
+        {
+            return GetItems().Where(tg => tg.FkSecondTeamId == teamId
+                                       && tg.Status <= teamGameStatus)
+                             .ToList();
+        }
+
     }
 }

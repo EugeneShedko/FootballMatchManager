@@ -20,7 +20,7 @@ namespace FootballMatchManager.Controllers
 
         [HttpGet]
         [Route("entity-messages/{entityType}/{entityId}")]
-        public ActionResult GetAllComments(string entityType, int entityId)
+        public ActionResult GetAllMessage(string entityType, int entityId)
         {
 
             List<Message> messages = _unitOfWork.MessageRepository.GetItems()
@@ -38,5 +38,23 @@ namespace FootballMatchManager.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("delete-message/{messageId}")]
+        public ActionResult DeleteMessage(int messageId)
+        {
+            try
+            {
+                Message deleteMessage = _unitOfWork.MessageRepository.GetItem(messageId);
+                if(deleteMessage == null) { return BadRequest(new { message = "Сообщение не найдено" }); }
+
+                _unitOfWork.MessageRepository.DeleteElement(messageId);
+                _unitOfWork.Save();
+
+                return Ok();
+            }catch(Exception ex)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

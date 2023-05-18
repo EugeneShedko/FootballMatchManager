@@ -2,7 +2,7 @@
 {
     position: relative;
     margin: 0;
-    padding: 0;
+    padding: 0%;
     border: 5px white solid;
     border-radius: 20px;
 }
@@ -22,7 +22,17 @@
 .message-block-content
 {
     margin: 0;
-    padding: 5% 5% 5% 5%;
+    padding: 0% 2% 5% 2%;
+}
+
+.mess-date-row
+{
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    color: white;
+    display: flex;
+    justify-content: end;
 }
 
 .message-block-column
@@ -51,5 +61,6 @@
 
 .message-text
 {
-    height: 90%;
+    margin: 0;
+    padding: 0;
 }

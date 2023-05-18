@@ -13,12 +13,14 @@ import { TO_EDIT_GAME, TO_GAMES } from "../../../../Utilts/Consts";
 import ParticipantButton from "./GameCardButton/ParticipantButtons";
 import GameParticipantPlayers from "./GameCardButton/GameParticipantPlayers";
 import GameEventsContainer from "../../TeamGames/ViewTeamGameInfoCard/GameEventsContainer";
+import GameUserButtons from "./GameCardButton/GameUserButtons";
+import GameAdminButtons from "./GameCardButton/GameAdminButtons";
 
 export default function GameInfoCard(props) {
 
     const navigate = useNavigate();
     const { userContext } = useContext(Context);
-    const location = useLocation()
+    const location = useLocation();
     const [gameId, setGameId] = useState(useParams().id);
     const [game, setGame] = useState({});
     const [isPart, setIsPart] = useState(false);
@@ -31,8 +33,10 @@ export default function GameInfoCard(props) {
     /* Обновление матча */
     const [refreshGame, setRefreshGame] = useState(false);
     /* Соединение с хабом удаления */
-    const deleteHubConnection = useRef(null);
-    
+    const deleteHubConnection2 = useRef(null);
+    /* Айди пользователя организатора матча */
+    const [gameCreatorId, setGameCreatorId] = useState();
+
     // ---------------------------------------------------------------------------------------- //
 
     useEffect(() => {
@@ -43,16 +47,13 @@ export default function GameInfoCard(props) {
                 setGame(response.data.currgame);
                 setIsPart(response.data.isPart);
                 setIsCreat(response.data.isCreat);
+                setGameCreatorId(response.data.creatorID);
 
                 if (response.data.currgame.status === 3) {
                     getGameEvents();
                 }
 
-                if(response.data.isPart)
-                {
-                    connectToDelete();
-                }
-
+                connectToDelete2();
                 setIsLoading(true);
             })
             .catch(userError => {
@@ -66,11 +67,12 @@ export default function GameInfoCard(props) {
                 }
             });
 
-            return () => {
-                if (deleteHubConnection.current) {
-                    deleteHubConnection.current.stop();
-                }
-            };
+        return () => {
+
+            if (deleteHubConnection2.current) {
+                deleteHubConnection2.current.stop();
+            }
+        };
 
     }, [refreshGame]);
 
@@ -103,20 +105,28 @@ export default function GameInfoCard(props) {
             });
     }, [location.state && location.state.refresh]);
 
+
     // ---------------------  Подключение к хабу удаления -------------------------- //
 
-    const connectToDelete = async () => {
+    const connectToDelete2 = async () => {
 
-        const hubDeleteConnection = new HubConnectionBuilder().withUrl("http://localhost:5004/delete").build();
+        const hubDeleteConnection2 = new HubConnectionBuilder().withUrl("http://localhost:5004/game").build();
 
-        hubDeleteConnection.on("refreshgame", () => {
+        hubDeleteConnection2.on("deleteGame", () => {
+            navigate(TO_GAMES);
+        });
+
+        hubDeleteConnection2.on("refreshgame", () => {
             setRefreshGame(!refreshGame);
         });
 
-        await hubDeleteConnection.start();
+        await hubDeleteConnection2.start();
 
-        deleteHubConnection.current = hubDeleteConnection;
+        await hubDeleteConnection2.invoke("Connect", String(gameId));
+
+        deleteHubConnection2.current = hubDeleteConnection2;
     }
+
 
     // ---------------------------------------------------------------------------------------- //
 
@@ -131,6 +141,8 @@ export default function GameInfoCard(props) {
 
                 setRefreshGame(!refreshGame);
 
+                var conn = userContext.notificonn;
+                conn.invoke("Game", String(gameId), "addtogame");
                 //Убрать вычитывание пользователей на стороне сервера
                 //setGameUsers(response.data.users);
 
@@ -151,8 +163,6 @@ export default function GameInfoCard(props) {
                 }
             });
 
-        var conn = userContext.notificonn;
-        conn.invoke("Game", String(props.gameId), "addtogame");
     }
 
     // ---------------------------------------------------------------------------------------- //
@@ -184,13 +194,12 @@ export default function GameInfoCard(props) {
                         autoClose: 2000,
                         pauseOnFocusLoss: false
                     });
-                
+
                 setRefreshGame(!refreshGame);
 
                 //Убрать вычитывание пользователей на стороне сервера
                 //setGameUsers(response.data.users);
 
-                //setIsPart(false);
             })
             .catch((error) => {
                 if (error.response) {
@@ -219,16 +228,13 @@ export default function GameInfoCard(props) {
                         autoClose: 2000,
                         pauseOnFocusLoss: false
                     });
+
                 navigate(TO_GAMES);
             })
             .catch((error) => {
                 if (error.response) {
-                    toast.error(error.response.data.message,
-                        {
-                            position: toast.POSITION.BOTTOM_RIGHT,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
+                    console.log('DELETE GAME');
+                    console.log(error.response.data.message);
                 }
             });
 
@@ -277,11 +283,6 @@ export default function GameInfoCard(props) {
 
                 game.currPlayers = game.currPlayers - 1;
                 setRefreshGameUsers(!refreshGameUser);
-
-                var conn = userContext.notificonn;
-                conn?.invoke("DeleteUserFromGame", parseInt(gameId), userId);
-
-                deleteHubConnection.current.invoke("DeleteUserFromGame", userId);
 
                 toast.success(response.data.message,
                     {
@@ -339,17 +340,17 @@ export default function GameInfoCard(props) {
                                 {game.currPlayers}/{game.maxPlayers}
                             </div>
                             <div className="row match-join-button-container">
-                                {isCreat ? <CreatorButton gameStatus={game.status}
-                                    editGame={editGame}
-                                    deleteMatch={deleteMatch} />
-                                    :
-                                    <ParticipantButton game={game}
-                                        isPart={isPart}
-                                        leaveMatch={leaveMatch}
-                                        sendRequestForPart={sendRequestForPart}
-                                        addToMatch={addToMatch}
-                                    />}
-
+                                <GameUserButtons isCreat={isCreat}
+                                                 gameStatus={game.status}
+                                                 editGame={editGame}
+                                                 deleteMatch={deleteMatch} 
+                                                 /* Участник */
+                                                 game={game}
+                                                 isPart={isPart}
+                                                 leaveMatch={leaveMatch}
+                                                 sendRequestForPart={sendRequestForPart}
+                                                 addToMatch={addToMatch}
+                                                 />
                             </div>
                         </div>
                         <div className="col-4 match-info-user-container">
@@ -362,11 +363,12 @@ export default function GameInfoCard(props) {
                                         refreshGame={refreshGame}
                                         isCreat={isCreat}
                                         deleteUser={deleteUser}
+                                        gameCreatroId={gameCreatorId}
                                     />
                             }
                         </div>
                         <div className="col-4 h-100 p-0">
-                            {isPart ? <MessagesBlock entityId={gameId}
+                            {isPart || userContext.isAdmin ? <MessagesBlock entityId={gameId}
                                 entityType="game" />
                                 : null}
                         </div>

@@ -15,7 +15,7 @@ export default function GameGenerator(props) {
             {(searchGamse.length === 0 && props.searchString != '') && <div>Пользователей нет</div>}
             {
                 searchGamse?.map((match) => (
-                    <div className="mpinfo-block">
+                    <div key={match.pkId} className="mpinfo-block">
                         <MatchBlock info={match}
                                     setGames={props.setGames}
                                     setContState={props.setContState} />

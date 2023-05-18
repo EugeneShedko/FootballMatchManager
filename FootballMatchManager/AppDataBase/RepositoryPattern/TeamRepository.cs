@@ -1,5 +1,6 @@
 ﻿using FootballMatchManager.DataBase.DBClasses;
 using FootballMatchManager.DataBase.Models;
+using FootballMatchManager.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.RepositoryPattern
@@ -50,7 +51,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<Team> GetAllTeams()
         {
-            List<Team> teams = GetItems().ToList();
+            List<Team> teams = GetItems().Where(t => t.Status == (int)TeamStatus.ACTIVE).ToList();
             /* Очень хреново, что здесь удаляю по айди, пока что так */
             teams?.RemoveAll(team => team.PkId == 1);
             return teams;
@@ -60,7 +61,8 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public Team GetTeamByName(string name)
         {
-            return GetItems().FirstOrDefault(t => t.Name == name);
+            return GetItems().FirstOrDefault(t => t.Name == name
+                                               && t.Status == (int)TeamStatus.ACTIVE);
         }
 
         // -------------------------------------------------------------- //
@@ -72,9 +74,9 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<Team> GetTeamsByPlayerCount(int playerCount)
         {
-            return GetItems().Where(t => t.MemberQnt >= playerCount).ToList();
+            return GetItems().Where(t => t.MemberQnt >= playerCount
+                                      && t.Status == (int)TeamStatus.ACTIVE)
+                             .ToList();
         }
-        /* Вернуть список команд, у которых количество участников больше нужного */
-
     }
 }

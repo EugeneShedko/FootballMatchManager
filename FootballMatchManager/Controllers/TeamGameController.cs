@@ -4,6 +4,8 @@ using FootballMatchManager.DataBase.Models;
 using FootballMatchManager.Enums;
 using FootballMatchManager.IncompleteModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using FootballMatchManager.Hubs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,10 +17,17 @@ namespace FootballMatchManager.Controllers
     {
 
         private UnitOfWork _unitOfWork;
+        private IHubContext<NotificationHub> _notifications;
+        private IHubContext<TeamGameHub> _teamGameHub;
 
-        public TeamGameController(UnitOfWork unitOfWork)
+
+        public TeamGameController(UnitOfWork unitOfWork, 
+                                  IHubContext<NotificationHub> notofocation,
+                                  IHubContext<TeamGameHub> teamGameHub)
         {
-            _unitOfWork = unitOfWork;
+            this._unitOfWork    = unitOfWork;
+            this._notifications = notofocation;
+            this._teamGameHub   = teamGameHub;
         }
 
         // ------------------------------------------------------------------------------------ //
@@ -252,8 +261,8 @@ namespace FootballMatchManager.Controllers
 
                 int userId = int.Parse(HttpContext.User.Identity.Name);
 
-                /* Получаю запись организатора команды */
-                ApUserTeam teamCreator = _unitOfWork.ApUserTeamRepository.GetTeamCreatorByUserId(userId);
+                /* Получаю команду-организаор пользователя */
+                Team teamCreator = _unitOfWork.ApUserTeamRepository.GetTeamByCreator(userId);
 
                 if (teamCreator == null)
                 {
@@ -264,7 +273,7 @@ namespace FootballMatchManager.Controllers
                 int minMembers = int.Parse(shortGame.GameFormat.Substring(0, 1));
 
                 /* Проверяю достаточно ли участников в команде */
-                if (teamCreator.Team.MemberQnt < minMembers)
+                if (teamCreator.MemberQnt < minMembers)
                 {
                     return BadRequest(new {message = "Вы не можете создать командный матч, так как в вашей команде не достаточно участников" });
                 }
@@ -275,7 +284,7 @@ namespace FootballMatchManager.Controllers
                                                  shortGame.GameAdress, 
                                                  shortGame.GameDate, 
                                                  shortGame.GameFormat, 
-                                                 teamCreator.PkFkTeamId);
+                                                 teamCreator.PkId);
 
                 _unitOfWork.TeamGameRepasitory.AddElement(teamGame);
                 _unitOfWork.Save();
@@ -288,12 +297,13 @@ namespace FootballMatchManager.Controllers
 
 
                 /* Получаю список участников команды организатора матча */
-                List<ApUser> teamMembers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamCreator.PkFkTeamId);
+                List<ApUser> teamMembers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamCreator.PkId);
                 for (int i = 0; i < teamMembers.Count; i++)
                 {
                     ApUserTeamGame participant = new ApUserTeamGame(teamGame.PkId, teamMembers[i].PkId, (int)ApUserTeamEnum.PARTICIPANT);
                     _unitOfWork.ApUserTeamGameRepasitory.AddElement(participant);
                 }
+                _unitOfWork.Save();
 
                 return Ok(new { message = "Матч успешно создан!" });
             }
@@ -368,23 +378,89 @@ namespace FootballMatchManager.Controllers
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
+        [Route("edit-teamgame")]
+        [HttpPut]
+        public async Task<ActionResult> PostEditTeamGame([FromBody] ShortGame shortGame)
+        {
+            if (HttpContext.User == null) { return BadRequest(); }
+
+            int userId = int.Parse(HttpContext.User.Identity.Name);
+
+            TeamGame teamGame = _unitOfWork.TeamGameRepasitory.GetItem(shortGame.GameId);
+
+            if (teamGame == null) { return BadRequest();}
+
+            teamGame.Name = shortGame.GameName;
+            teamGame.DateTime = shortGame.GameDate;
+            teamGame.Format = shortGame.GameFormat;
+            teamGame.Adress = shortGame.GameAdress;
+
+            Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("editgame");
+            if (constant != null)
+            {
+                string notiffiMess = constant.StrValue.Replace("{game}", teamGame.Name);
+
+                /* Отправляю уведомление пользователям участникам матча */
+                List<ApUser> teamGameUsers = _unitOfWork.ApUserTeamGameRepasitory.GetTeamGameParticipants(shortGame.GameId);
+                for (int i = 0; i < teamGameUsers.Count; i++)
+                {
+                    if (teamGameUsers[i].PkId == userId) { continue; }
+                    await _notifications.Clients.User(Convert.ToString(teamGameUsers[i].PkId)).SendAsync("displayNotifi", notiffiMess);
+
+                    Notification notification = new Notification(teamGameUsers[i].PkId, constant.Type, notiffiMess, teamGame.PkId, userId);
+                    _unitOfWork.NotificationRepository.AddElement(notification);
+                }
+
+            }
+
+            _unitOfWork.Save();
+
+            return Ok(new { message = "Данные успешно сохранены" });
+        }
+
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
+
         [Route("leave-team-game/{teamgameId}")]
         [HttpDelete]
-        public IActionResult LeaveFromTeamGame(int teamgameId)
+        public async Task<IActionResult> LeaveFromTeamGame(int teamgameId)
         {
             try
             {
+                string notifiMess = null;
                 if (HttpContext.User == null) { return BadRequest(); }
 
                 int userId = int.Parse(HttpContext.User.Identity.Name);
 
-                /* Получаю командный матча */
+                /* Получаю командный матч */
                 TeamGame teamGame = _unitOfWork.TeamGameRepasitory.GetItem(teamgameId);
                 if (teamGame == null) { return BadRequest(); }
 
-                /* !!!!! Возможно потом еще придется удалять пользователей */
+                Team team = _unitOfWork.ApUserTeamRepository.GetTeamByCreator(userId);
+                if (team == null) { return BadRequest(); }
 
-                /* !!!! Плохо, что константой, хорошо бы вынести куда-нибудь */
+                Constant notifiConstant = _unitOfWork.ConstantRepository.GetConstantByName("leaveteamgame");
+                if (notifiConstant != null)
+                    notifiMess = notifiConstant.StrValue.Replace("{team}", team.Name)
+                                                        .Replace("{game}", teamGame.Name);
+
+                List<ApUser> teamParticipants = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(team.PkId);
+                for (int j = 0; j < teamParticipants.Count; j++)
+                {
+                    ApUserTeamGame part = _unitOfWork.ApUserTeamGameRepasitory.GetTeamGameParticiapnt(teamgameId, teamParticipants[j].PkId);
+                    if (part != null)
+                    {
+                        _unitOfWork.ApUserTeamGameRepasitory.DeleteElement(part);
+                        if (notifiConstant != null)
+                        {
+                            await _notifications.Clients.User(Convert.ToString(teamParticipants[j].PkId)).SendAsync("displayNotifiError", notifiMess);
+                            Notification notification = new Notification(teamParticipants[j].PkId, notifiConstant.Type, notifiMess, teamGame.PkId, userId);
+                            _unitOfWork.NotificationRepository.AddElement(notification);
+                        }
+                        _teamGameHub.Clients.Group(Convert.ToString(teamGame.PkId)).SendAsync("refresh");
+                    }
+                }
+
+
                 teamGame.FkSecondTeamId = 1;
                 teamGame.Status = (int)TeamGameStatus.SEARCH;
                 _unitOfWork.Save();
@@ -395,6 +471,108 @@ namespace FootballMatchManager.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        [Route("leave-team-game/{teamgameId}/{teamId}")]
+        [HttpDelete]
+        public async Task<IActionResult> LeaveFromTeamGame(int teamgameId, int teamId)
+        {
+            try
+            {
+                string notifiMess = null;
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                int userId = int.Parse(HttpContext.User.Identity.Name);
+
+                /* Получаю командный матч */
+                TeamGame teamGame = _unitOfWork.TeamGameRepasitory.GetItem(teamgameId);
+                if (teamGame == null) { return BadRequest(); }
+
+                Team team = _unitOfWork.TeamRepository.GetItem(teamId);
+                if (team == null) { return BadRequest(); }
+
+                Constant notifiConstant = _unitOfWork.ConstantRepository.GetConstantByName("LeavTeamGameAdmin");
+                if (notifiConstant != null)
+                    notifiMess = notifiConstant.StrValue.Replace("{team}", team.Name)
+                                                        .Replace("{game}", teamGame.Name);
+
+                /* Список участников команды */
+                List<ApUser> teamParticipants = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamId);
+                for (int j = 0; j < teamParticipants.Count; j++)
+                {
+                    ApUserTeamGame part = _unitOfWork.ApUserTeamGameRepasitory.GetTeamGameParticiapnt(teamgameId, teamParticipants[j].PkId);
+                    if (part != null)
+                    {
+                        _unitOfWork.ApUserTeamGameRepasitory.DeleteElement(part);
+                        if(notifiConstant != null)
+                        {
+                            await _notifications.Clients.User(Convert.ToString(teamParticipants[j].PkId)).SendAsync("displayNotifiError", notifiMess);
+                            Notification notification = new Notification(teamParticipants[j].PkId, notifiConstant.Type, notifiMess, teamGame.PkId, userId);
+                            _unitOfWork.NotificationRepository.AddElement(notification);
+                        }
+                        _teamGameHub.Clients.Group(Convert.ToString(teamGame.PkId)).SendAsync("refresh");
+                    }
+                }
+
+                /* !!!! Плохо, что константой, хорошо бы вынести куда-нибудь */
+                teamGame.FkSecondTeamId = 1;
+                teamGame.Status = (int)TeamGameStatus.SEARCH;
+                _unitOfWork.Save();
+
+                return Ok(new { message = "Команда удалена из матча" });
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
+
+        [Route("delete-team-game/{teamgameId}")]
+        [HttpDelete]
+
+        public async Task<ActionResult> DeleteGame(int teamgameId)
+        {
+
+            if (HttpContext.User == null) { return BadRequest(); }
+
+            Constant constant  = null;
+            string notiffiMess = null;
+            int userId = int.Parse(HttpContext.User.Identity.Name);
+
+            ApUser deletingUser = _unitOfWork.ApUserRepository.GetItem(userId);
+            if (deletingUser == null) { return BadRequest(); }
+
+            TeamGame teamGame = _unitOfWork.TeamGameRepasitory.GetItem(teamgameId);
+            if (teamGame == null) { return BadRequest(); }
+
+            List<ApUser> teamGameUsers = _unitOfWork.ApUserTeamGameRepasitory.GetTeamGameParticipants(teamgameId);
+
+            _unitOfWork.TeamGameRepasitory.DeleteElement(teamgameId);
+            _unitOfWork.Save();
+
+            if (deletingUser.Role == "system")
+               constant = _unitOfWork.ConstantRepository.GetConstantByName("DeleteTeamGameAdmin");
+            else
+               constant = _unitOfWork.ConstantRepository.GetConstantByName("deletegame");
+
+            if (constant != null)
+            {
+                notiffiMess = constant.StrValue.Replace("{game}", teamGame.Name);
+                /* Отправляю уведомление пользователям участникам матча */
+                for (int i = 0; i < teamGameUsers.Count; i++)
+                {
+                    await _notifications.Clients.User(Convert.ToString(teamGameUsers[i].PkId)).SendAsync("displayNotifiError", notiffiMess);
+                    _teamGameHub.Clients.Groups(Convert.ToString(teamGame.PkId)).SendAsync("deleteGame");
+                    Notification notification = new Notification(teamGameUsers[i].PkId, constant.Type, notiffiMess, teamGame.PkId, userId);
+                    _unitOfWork.NotificationRepository.AddElement(notification);
+                }
+
+            }
+
+            return Ok();
         }
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
     }

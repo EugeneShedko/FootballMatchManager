@@ -42,7 +42,7 @@ export default function CreatorButton(props) {
     function DeleteGameButton() {
         return (
             <>
-                <input className="match-join-button"
+                <input className="match-delete-button"
                     type="button"
                     value="Удалить"
                     onClick={props.deleteMatch} />
@@ -52,8 +52,6 @@ export default function CreatorButton(props) {
     }
 
     // --------------- Кнопка завершения матча  ---------------------- //
-
-    /* Пока что кнопка без обработчика */
 
     function FinishGame() {
         return (

@@ -4,10 +4,8 @@ namespace FootballMatchManager.IncompleteModels
 {
     public class ShortMessage
     {
-        /* Пока что не добавлял айди к сообщению, потому что он не нужн */
 
-        /* Попробовать с типом DateTTime */
-
+        public int PkId { get; set; }
         public string UserName { get; set; }
         public DateTime Date { get; set; }
         public string Text {get;set;}
@@ -18,6 +16,7 @@ namespace FootballMatchManager.IncompleteModels
 
         public ShortMessage(Message message)
         {
+            this.PkId = message.PkId;
             this.UserName = message.Sender.FirstName + ' ' + message.Sender.LastName;
             this.Date = message.DateTime;
             this.Text = message.Text;

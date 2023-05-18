@@ -123,10 +123,10 @@
     justify-content: center;
 }
 
-.team-image
+.team-imagee
 {
-    width: 300px;
-    height: 300px;
+    width: 200px;
+    height: 200px;
 }
 
 .team-desc
@@ -173,6 +173,21 @@
     background-color: white;
     color:black;
     font-weight: bold;
+}
+
+.team-delete-buttonn
+{
+    margin:0;
+    margin: 2% 0% 0% 0%;
+    border: 4px white solid;
+    border-radius: 10px;
+    background-color: darkred;
+    color:white;
+}
+
+.team-delete-buttonn:hover
+{
+    background-color: red;
 }
 
 /* ----------------------------------------------------------- */

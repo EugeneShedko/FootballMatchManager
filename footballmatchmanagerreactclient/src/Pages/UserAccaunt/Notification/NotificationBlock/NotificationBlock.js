@@ -9,14 +9,17 @@ import "./../../../../css/Notification/NotificationBlock.css";
 
 export default function NotificationBlock(props) {
 
-    const { userContext } = useContext(Context);
+    const { userContext, setUserContext } = useContext(Context);
 
-    /* Выношу в данное место все функции */
+    // ---------------------------------------------------------------------------------------- //
 
     function dismissRequestGame() {
         /* Плохо сделано, потому что выходит как бы некое разделение */
         /* Может хреново отработать */
         /* Пока что оставлю так*/
+
+        console.log('BLOCK');
+        console.log(userContext);
 
         var conn = userContext.notificonn;
         conn.invoke("DismissReqGame", props.notify.pkId);
@@ -64,7 +67,11 @@ export default function NotificationBlock(props) {
         axios.put('http://localhost:5004/api/notification/read-notifi', data, { withCredentials: true })
             .then((response) => {
                 /* Плохо, что возвращается весь список уведомлений пользователя */
-                props.setNotifiList(response.data);
+                props.setNotifiList(response.data.list);
+
+                setUserContext(prevContext => ({
+                    ...prevContext, notifiCount: response.data.count
+                }));
             })
             .catch(userError => {
                 if (userError.response) {
@@ -221,8 +228,6 @@ export default function NotificationBlock(props) {
         conn.invoke("DismissInvitationToGame", props.notify.pkId);
         readNotifi();
     }
-
-    // ---------------------------------------------------------------------------------------- //
 
     // ------------------------- Приглшание на участие в командном матче ---------------------- //
 

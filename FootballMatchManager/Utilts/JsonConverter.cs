@@ -74,6 +74,7 @@ namespace FootballMatchManager.Utilts
 
                 JsonObject jsonObject = new JsonObject();
 
+                jsonObject.Add("pkId", message.PkId);
                 jsonObject.Add("userName", message.Sender.FirstName + message.Sender.LastName);
                 jsonObject.Add("date", message.DateTime);
                 jsonObject.Add("text", message.Text);

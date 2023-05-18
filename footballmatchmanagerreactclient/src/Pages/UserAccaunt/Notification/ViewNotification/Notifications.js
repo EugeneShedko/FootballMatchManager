@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 import "./../../../../css/Notification/NotificationView.css"
 
-export default function Notifications()
+export default function Notifications(props)
 {
 
     const [notifiList, setNotifiList] = useState([]);
@@ -14,6 +14,7 @@ export default function Notifications()
 
     useEffect(
         () => {
+
             axios.get('http://localhost:5004/api/notification/user-notif', { withCredentials: true })
                  .then((response) => {
                     setNotifiList(response.data);
@@ -27,9 +28,8 @@ export default function Notifications()
                                 pauseOnFocusLoss: false
                             });
                     }
-                });
-        }, []
-    );
+                });   
+        }, []);
 
     // ------------------------------------------------------- //
 
