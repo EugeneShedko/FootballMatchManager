@@ -27,7 +27,9 @@ export const TO_TEAM_GAME_INVITE_CARD = "/teamgameinvite";
 
 export const TO_PLAYERS = "/accaunt/players";
 export const TO_PLAYER_CARD = "/accaunt/playercard";
-export const TO_EDIT_PROFILE = "/editprofile"
+export const TO_EDIT_PROFILE = "/editprofile";
+export const TO_BLOCK_PLAYER = "/blockplayer";
+export const TO_COMPLAIN_WINDOW = "/complain";
 
 export const TO_TEAMS = "/accaunt/teams";
 export const TO_TEAM_CARD = "/accaunt/teamcard";
@@ -39,8 +41,9 @@ export const TO_NOTIFICATION = "/accaunt/notifications";
 
 export const TO_USER_GAMES = "/accaunt/usergames";
 export const TO_USER_GAMES_CREATOR = "/accaunt/usergames/creatgames";
-export const TO_USER_GAMES_PARTICIPANT = "/accaunt/usergames/partgames";
-export const TO_USER_TEAM_GAMES = "/accaunt/usergames/teamgames";
+export const TO_USER_GAMES_PARTICIPANT = "/partgames";
+export const TO_USER_TEAM_GAMES = "/teamgames";
+export const TO_USER_GAMES_PROFILE = "/games";
 
 export const TO_USER_TEAMS = "/accaunt/userteams";
 export const TO_EDIT_TEAM  = "/editteam";

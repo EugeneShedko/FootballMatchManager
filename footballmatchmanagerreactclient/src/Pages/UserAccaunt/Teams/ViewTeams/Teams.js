@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -8,9 +8,11 @@ import CreateTeam from "./CreateTeam";
 import "./../../../../css/Teams/TeamsView.css"
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { TO_CREATE_TEAM } from "../../../../Utilts/Consts";
+import { Context } from "../../../..";
 
 export default function Teams() {
 
+    const { userContext } = useContext(Context);
     const navigate = useNavigate();
     const location = useLocation();
     const [teams, setTeams] = useState([]);
@@ -35,7 +37,7 @@ export default function Teams() {
                     }
                 });
             ;
-        /* Хреново сделано обновление, скорее всего два раза рендерится компонент */    
+            /* Хреново сделано обновление, скорее всего два раза рендерится компонент */
         }, [location.state && location.state.refresh]
     );
 
@@ -53,10 +55,13 @@ export default function Teams() {
             </div>
             <div className="col-3 team-create-block">
                 <div className="row team-create-block-row">
-                    <input className="team-button-style"
-                        type="button"
-                        value="Создать команду"
-                        onClick={() => navigate(TO_CREATE_TEAM)} />
+                    {userContext.isAuth ?
+                        <input className="team-button-style"
+                            type="button"
+                            value="Создать команду"
+                            onClick={() => navigate(TO_CREATE_TEAM)}
+                        />
+                        : null}
                 </div>
                 <div className="row team-create-block-row">
                     <input id="search-team-element"

@@ -7,6 +7,14 @@
     border-radius: 20px;
 }
 
+.prof-r-col
+{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
 .user-comment-img
 {
     width: 75px;
@@ -29,18 +37,44 @@
 .user-comment-text
 {
     margin: 0;
-    padding: 0% 0% 0% 1%;
+    padding: 0;
     height: 60%;
 }
 
-.c-danger-button
+.comment-date
 {
-    margin-top: 5%;
-    color: white;
-    background-color: red;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
 }
 
-.c-danger-button:hover
+.block-cont-head
 {
-    background-color: #8B0000;    
+    margin: 0;
+    padding: 0;
+    color: yellowgreen;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.block-cont-text
+{
+    margin: 0;
+    padding: 0;
+    font-size: 17px;
+}
+
+.delete-comment-button
+{
+    border: 2px white solid;
+    border-radius: 10px;
+    background-color: darkred;
+    color:white;
+}
+
+.delete-comment-button:hover
+{
+    background-color: red;
 }

@@ -75,8 +75,6 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
                              .ToList();
         }
 
-        // ------------------------------------------------------------ //
-
         /// <summary>
         /// Возвращает количество непрочитанных уведомлений пользователя
         /// </summary>
@@ -87,5 +85,19 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             return GetItems().Where(n => n.FkRecipient == userID
                                       && n.Status == (int)NotificationEnum.NotRead).Count();  
         }
+
+        /// <summary>
+        /// Возвращает список жалоб пользователя
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+
+        public List<Notification> GetUserComplains(int userId)
+        {
+            return GetItems().Where(n => n.Type == "complain"
+                                      && n.FkRecipient == userId)
+                             .ToList();
+        }
+
     }
 }

@@ -19,7 +19,8 @@ namespace FootballMatchManager.DataBase.DBClasses
         public DbSet<TeamGame> TeamsGames { get; set; }
         public DbSet<ApUserTeamGame> ApUserTeamGames { get; set; }
         public DbSet<GameEventType> GameEventTypes { get; set; }
-        public DbSet<GameEvent> GameEvents { get; set; }    
+        public DbSet<GameEvent> GameEvents { get; set; }
+        public DbSet<BlockApUser> BlockUsers { get; set; }
 
         public AppDBContext(DbContextOptions<AppDBContext> options):base(options) 
         {
@@ -78,7 +79,25 @@ namespace FootballMatchManager.DataBase.DBClasses
                                                     new Constant() { PkId = 47, Group = "notification", Type = "text", Name = "LeavTeamGameAdmin", StrValue = "Команда {team} была удалена из матча {game} администратором приложения" },
                                                     new Constant() { PkId = 48, Group = "notification", Type = "text", Name = "DeleteTeamGameAdmin", StrValue = "Матч {game} был удален администратором приложения" },
                                                     new Constant() { PkId = 49, Group = "notification", Type = "text", Name = "DeleteTeamUserAdmin", StrValue = "Вы были удалены из команды {team} администратором приложения" },
-                                                    new Constant() { PkId = 50, Group = "notification", Type = "text", Name = "DeleteTeamAdmin", StrValue = "Команда {team} была удалена администратором приложения" }
+                                                    new Constant() { PkId = 50, Group = "notification", Type = "text", Name = "DeleteTeamAdmin", StrValue = "Команда {team} была удалена администратором приложения" },
+                                                    new Constant() { PkId = 51, Group = "notification", Type = "text", Name = "BlockUserTime", StrValue = "Ваш аккаунт заблокирован администратором приложения до {date}. Причина: {reazon}" },                             
+                                                    new Constant() { PkId = 52, Group = "notification", Type = "text", Name = "BlockUserForever", StrValue = "Ваш аккаунт навсегда заблокирован администратором приложения. Причина: {reazon}" },
+                                                    new Constant() { PkId = 53, Group = "complain", Type = "", Name = "offense", StrValue = "Оскорбление участников" },
+                                                    new Constant() { PkId = 54, Group = "complain", Type = "", Name = "spam", StrValue = "Спам" },
+                                                    new Constant() { PkId = 55, Group = "complain", Type = "game", Name = "rudeness", StrValue = "Грубость в игре" },
+                                                    new Constant() { PkId = 56, Group = "complain", Type = "game", Name = "skipGame", StrValue = "Пропуск матча" },
+                                                    new Constant() { PkId = 57, Group = "complain", Type = "game", Name = "organize", StrValue = "Плохая организация матча" },
+                                                    new Constant() { PkId = 58, Group = "complain", Type = "another", Name = "another", StrValue = "Другая причина" },
+                                                    new Constant() { PkId = 59, Group = "notification", Type = "text", Name = "justComplain", StrValue = "Пользователь {userSender} отправил жалобу на пользователя {complainUser}. Причина: {reason}" },
+                                                    new Constant() { PkId = 60, Group = "notification", Type = "text", Name = "gameComplain", StrValue = "Пользователь {userSender} отправил жалобу на пользователя {complainUser}. Причина: {reason} - {game}" },
+                                                    new Constant() { PkId = 61, Group = "blockReason", Type = "", Name = "offense", StrValue = "Оскорбление участников" },
+                                                    new Constant() { PkId = 62, Group = "blockReason", Type = "", Name = "spam", StrValue = "Спам" },
+                                                    new Constant() { PkId = 63, Group = "blockReason", Type = "", Name = "lowActivity", StrValue = "Малая активность" },
+                                                    new Constant() { PkId = 64, Group = "blockReason", Type = "", Name = "systematicViolations", StrValue = "Систематические нарушения" },
+                                                    new Constant() { PkId = 65, Group = "blockReason", Type = "game", Name = "rudeness", StrValue = "Грубость в игре" },
+                                                    new Constant() { PkId = 66, Group = "blockReason", Type = "game", Name = "skipGame", StrValue = "Пропуск матча" },
+                                                    new Constant() { PkId = 67, Group = "blockReason", Type = "game", Name = "organize", StrValue = "Плохая организация матча" },
+                                                    new Constant() { PkId = 68, Group = "blockReason", Type = "another", Name = "another", StrValue = "Другая причина" }
                                                     );
 
             modelBuilder.Entity<Comment>().HasKey(c => c.PkId);
@@ -109,6 +128,8 @@ namespace FootballMatchManager.DataBase.DBClasses
             );
 
             modelBuilder.Entity<GameEvent>().HasKey(ge => ge.PkId);
+            modelBuilder.Entity<BlockApUser>().HasKey(bu => bu.pkId);
+
             //Плохо сделано, переделать связь многие ко многим
             modelBuilder.Entity<Comment>().HasOne(c => c.Sender).WithMany(apu => apu.CommentSenders).HasForeignKey(c => c.FkSenderId).OnDelete(DeleteBehavior.NoAction); 
             modelBuilder.Entity<Comment>().HasOne(c => c.Recipient).WithMany(apu => apu.CommentsRecipients).HasForeignKey(c => c.FkRecipientId).OnDelete(DeleteBehavior.NoAction); 
@@ -128,6 +149,7 @@ namespace FootballMatchManager.DataBase.DBClasses
             modelBuilder.Entity<GameEvent>().HasOne(ge => ge.EventTeam).WithMany(t => t.GameEvents).HasForeignKey(ge => ge.FkTeamId).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<GameEvent>().HasOne(ge => ge.Entity1).WithMany(apu => apu.GameEventsEntity1).HasForeignKey(ge => ge.FkEntityId1).OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<GameEvent>().HasOne(ge => ge.Entity2).WithMany(apu => apu.GameEventsEntity2).HasForeignKey(ge => ge.FkEntityId2).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<BlockApUser>().HasOne(bu => bu.ApUser).WithMany(apu => apu.ApUserBlocks).HasForeignKey(bu => bu.ApUserId).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

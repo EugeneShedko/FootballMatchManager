@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import TeamGameGenerator from "./TeamGamesGenerator";
 
 import "./../../../../css/TeamsGames/Teams.css"
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { TO_CREATE_GAME, TO_CREATE_TEAM_GAME } from "../../../../Utilts/Consts";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { TO_CREATE_TEAM_GAME } from "../../../../Utilts/Consts";
+import { Context } from "../../../..";
 
 export default function TeamGames(props) {
 
-    /* ----------------------------------------------------------------------- */
-
+    const { userContext } = useContext(Context);
     const navigate = useNavigate();
     const location = useLocation();
     const isRefreshed = location.state && location.state.refresh;
@@ -18,12 +18,20 @@ export default function TeamGames(props) {
     const [games, setGames] = useState([]);
     const [searchString, setSearchString] = useState("");
     const [isLoad, setIsLoad] = useState(false);
+    const { id } = useParams();
 
     /* ----------------------------------------------------------------------- */
 
     useEffect(
         () => {
-            axios.get('http://localhost:5004/api/teamgame/' + props.req, { withCredentials: true })
+
+            let requestPath;
+            if (props.mode === 'user')
+                requestPath = 'http://localhost:5004/api/teamgame/user-team-games/' + id;
+            else
+                requestPath = 'http://localhost:5004/api/teamgame/all-team-games';
+
+            axios.get(requestPath, { withCredentials: true })
                 .then((response) => {
                     setGames(response.data);
                     setInitGames(response.data);
@@ -86,7 +94,14 @@ export default function TeamGames(props) {
                 <div className="col-3 tmlefcol">
                     <div className="tm-fixed-container">
                         <div className="row tmlcrow">
-                            <input className="tmbutton-style" type="button" value="Создать матч" onClick={() => navigate(TO_CREATE_TEAM_GAME)} />
+                            {
+                                userContext.isAuth ?
+                                    <input className="tmbutton-style"
+                                        type="button"
+                                        value="Создать матч"
+                                        onClick={() => navigate(TO_CREATE_TEAM_GAME)}
+                                    />
+                                    : null}
                         </div>
                         <div className="row tmlcrow">
                             <input id="search-team-element"
@@ -122,6 +137,6 @@ export default function TeamGames(props) {
                 </div>
                 <Outlet />
             </div>
-    );
-}
+        );
+    }
 }

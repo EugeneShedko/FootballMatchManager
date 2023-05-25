@@ -59,32 +59,50 @@ namespace FootballMatchManager.Controllers
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
-        [Route("user-team-games")]
+        [Route("user-team-games/{userId}")]
         [HttpGet]
-        public IActionResult GetUserTeamGames()
+        public IActionResult GetUserTeamGames(int userId)
         {
             try
             {
                 if (HttpContext.User == null) { return BadRequest(); }
 
-                int userId = int.Parse(HttpContext.User.Identity.Name);
-
                 List<TeamGame> allTeamGames = _unitOfWork.ApUserTeamGameRepasitory.GetPartUserTeamGames(userId);
 
                 if (allTeamGames == null)
-                {
                     return Ok();
-                }
                 else
-                {
                     return Ok(allTeamGames);
-                }
             }
             catch (Exception ex)
             {
                 return BadRequest();
             }
         }
+
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
+
+        [Route("team-games-creat/{userId}")]
+        [HttpGet]
+        public IActionResult GetCreatorTeamGames(int userId)
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                List<TeamGame> allTeamGames = _unitOfWork.ApUserTeamGameRepasitory.GetCreatUserTeamGames(userId);
+
+                if (allTeamGames == null)
+                    return Ok();
+                else
+                    return Ok(allTeamGames);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
 

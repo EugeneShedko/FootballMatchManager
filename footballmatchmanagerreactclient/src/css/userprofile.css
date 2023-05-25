@@ -52,3 +52,7 @@ h1{
     color: white;
     background-color: black;
 }
+
+.custom-toast {
+    white-space: pre-line;
+  }

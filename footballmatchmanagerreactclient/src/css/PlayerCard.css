@@ -145,9 +145,16 @@
     font-weight: bold;
 }
 
+.profile-button-wrap
+{
+    margin: 0;
+    padding: 0;
+    margin-top: 2%;
+}
+
 .profile-button
 {   
-    border: 4px white solid;
+    border: 3px white solid;
     border-radius: 10px;
     background-color: rgba(0,0,0,0.6);
     color:white;
@@ -158,6 +165,76 @@
     color: black;
     font-weight:500;
     background-color: white;
+}
+
+.player-delete-button
+{
+    border: 3px white solid;
+    border-radius: 10px;
+    background-color: darkred;
+    color:white;
+}
+
+.player-delete-button:hover
+{
+    background-color: red;
+}
+
+.un-block-button
+{
+    border: 3px white solid;
+    border-radius: 10px;
+    background-color: green;
+    color: white;
+}
+
+.un-block-button:hover
+{
+    background-color: rgb(0,200,0);
+}
+
+.no-block-title
+{
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    color: green;
+}
+
+.block-title
+{
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    color: darkred;
+}
+
+.player-selected
+{
+    width: 100%;
+    border: 3px white solid;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.6);
+    color:white;
+    font-style: normal; 
+}
+
+.no-complain
+{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 30px;
+}
+
+.container-number
+{
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
 }
 
 /* ------------------------------------------------------ */
@@ -171,7 +248,8 @@
 
 .admin-button
 {
-    height: 7%;
+    margin: 0;
+    padding: 0;
     margin-top: 2%;
 }
 

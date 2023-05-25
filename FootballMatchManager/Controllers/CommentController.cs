@@ -12,11 +12,9 @@ namespace FootballMatchManager.Controllers
     public class CommentController : ControllerBase
     {
         private UnitOfWork _unitOfWork;
-        private JwtService _jwtService;
-        public CommentController(UnitOfWork unitOfWork, JwtService jwtService)
+        public CommentController(UnitOfWork unitOfWork)
         {
             this._unitOfWork = unitOfWork;
-            this._jwtService = jwtService;
         }
 
         // ------------------------------------------------------------------------- //
@@ -41,5 +39,21 @@ namespace FootballMatchManager.Controllers
 
         // ------------------------------------------------------------------------- //
 
+        [HttpDelete]
+        [Route("delete-comment/{commentId}")]
+        public ActionResult DeleteComment(int commentId)
+        {
+            try
+            {
+                _unitOfWork.CommentRepository.DeleteElement(commentId);
+                _unitOfWork.Save();
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+        }
     }
 }

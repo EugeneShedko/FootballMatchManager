@@ -21,7 +21,6 @@ import EditGame from "../Pages/UserAccaunt/Games/ViewGameCard/EditGame";
 import EditProfile from "../Pages/UserAccaunt/Players/ViewPlayerCard/EditProfile";
 import CreateTeam from "../Pages/UserAccaunt/Teams/ViewTeams/CreateTeam";
 import TeamInfoCard from "../Pages/UserAccaunt/Teams/ViewTeamCard/TeamInfoCard";
-import UserMatchesCr from "../Pages/UserAccaunt/Games/GamesCreator";
 import UserMatchesPr from "../Pages/UserAccaunt/Games/GamesParticipant";
 import TeamGames from "../Pages/UserAccaunt/TeamGames/ViewTeamGames/TeamGames";
 import TeamGameCard from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInfoCard/TeamGamInfoCard";
@@ -37,6 +36,8 @@ import GameInfoCardAdmin from "../Pages/UserAccaunt/Games/ViewGameCard/GameInfoC
 import TeamGameCardAdmin from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInfoCard/TeamGameInfoCardAdmin";
 import TeamInfoCardAdmin from "../Pages/UserAccaunt/Teams/ViewTeamCard/TeamInfoCradAdmin";
 import PlayerCardAdmin from "../Pages/UserAccaunt/Players/ViewPlayerCard/PlayerCardAdmin";
+import BlockPlayer from "../Pages/UserAccaunt/Players/ViewPlayerCard/BlockPlayer";
+import ComplainWindow from "../Pages/UserAccaunt/Players/ViewPlayerCard/ComplainWindow";
 
 const AppRouter = observer(() => {
 
@@ -46,12 +47,12 @@ const AppRouter = observer(() => {
 
     return (
         <div className="h-100 w-100">
-            {userContext.isAuth ?
-                <Routes>
-                    <Route path="/" element={<ContentContainer />} />
-                    <Route path="/login" element={<Loginform />} />
-                    <Route path="/registration" element={<FRegistrationform />} />
-                    <Route path="/accaunt" element={userContext.isAuth ? <UserProfile /> : <AdminAccaunt />}>
+            <Routes>
+                <Route path="/" element={<ContentContainer />} />
+                <Route path="/login" element={<Loginform />} />
+                <Route path="/registration" element={<FRegistrationform />} />
+                {userContext.isAuth ?
+                    <Route path="/accaunt" element={<UserProfile />}>
                         <Route index element={<Matches />} />
                         <Route path="games" element={<Matches />}>
                             <Route path="creategame" element={<CreateMatch show={true} />} />
@@ -62,7 +63,7 @@ const AppRouter = observer(() => {
                         <Route path="gamecard/:id/history" element={<FinishGame />} />
                         <Route path="gamecard/:id/gameinvite" element={<InviteCard />} />
 
-                        <Route path="teamgames" element={<TeamGames req="all-team-games" />}>
+                        <Route path="teamgames" element={<TeamGames mode="all" />}>
                             <Route path="creategame" element={<CreateMatch show={true} />} />
                         </Route>
                         <Route path="teamgamecard/:id" element={<TeamGameCard />} >
@@ -75,7 +76,8 @@ const AppRouter = observer(() => {
 
                         <Route path="players" element={<Players />} />
                         <Route path="playercard/:id" element={<Profile />}>
-                            <Route path="editprofile" element={<EditProfile show={true} />} />
+                            <Route path="editprofile" element={<EditProfile    show={true} />} />
+                            <Route path="complain"    element={<ComplainWindow show={true}/>} />
                         </Route>
 
                         <Route path="teams" element={<Teams />}>
@@ -87,44 +89,49 @@ const AppRouter = observer(() => {
 
                         <Route path="notifications" element={<Notifications />} />
 
-                        <Route path="usergames/" element={<UserMatchesNavigator />}>
-                            <Route index element={<UserMatchesCr />} />
+                        <Route path="usergames/:id" element={<UserMatchesNavigator />}>
+                            <Route index element={<UserMatchesPr />} />
                             <Route path="creategame" element={<CreateMatch show={true} />} />
-                            <Route path="creatgames" element={<UserMatchesCr />}>
-                                <Route path="creategame" element={<CreateMatch show={true} />} />
-                            </Route>
                             <Route path="partgames" element={<UserMatchesPr />}>
                                 <Route path="creategame" element={<CreateMatch show={true} />} />
                             </Route>
-                            <Route path="teamgames" element={<TeamGames req="user-team-games" />} />
+                            <Route path="teamgames" element={<TeamGames mode="user" />} />
                         </Route>
                         <Route path="userteams" element={<UserTeamsInfoCard />}>
                             <Route path="editteam" element={<EditTeam show={true} />} />
                         </Route>
                     </Route>
-                    <Route path="*" element={<ContentContainer />} />
-                </Routes>
-                :
-                <Routes >
-                    <Route path="/" element={<ContentContainer />} />
-                    <Route path="/login" element={<Loginform />} />
-                    <Route path="/registration" element={<FRegistrationform />} />
-                    <Route path="/accaunt" element={userContext.isAuth ? <UserProfile /> : <AdminAccaunt />}>
+                    : null}
+                {userContext.isAdmin ?
+                    <Route path="/accaunt" element={<UserProfile />}>
                         <Route index element={<Matches />} />
                         <Route path="games" element={<Matches />} />
                         <Route path="gamecard/:id" element={<GameInfoCardAdmin />} />
-                        
+
                         <Route path="teamgames" element={<TeamGames req="all-team-games" />} />
                         <Route path="teamgamecard/:id" element={<TeamGameCardAdmin />} />
-                        
+
                         <Route path="teams" element={<Teams />} />
                         <Route path="teamcard/:id" element={<TeamInfoCardAdmin />} />
-                        
+
                         <Route path="players" element={<Players />} />
-                        <Route path="playercard/:id" element={<PlayerCardAdmin />} />
+
+                        <Route path="playercard/:id" element={<PlayerCardAdmin />} >
+                            <Route path="blockplayer" element={<BlockPlayer show={true} />} />
+                        </Route>
+                        <Route path="playercard/:id/games" element={<UserMatchesNavigator />} >
+                            <Route index element={<UserMatchesPr />} />
+                            <Route path="partgames" element={<UserMatchesPr />} />
+                            <Route path="teamgames" element={<TeamGames mode="user" />} />
+                        </Route>
+
+                        <Route path="notifications" element={<Notifications />} />
+
                     </Route>
-                </Routes>
-            }
+
+                    : null}
+                <Route path="*" element={<ContentContainer />} />
+            </Routes>
             <ToastContainer />
         </div>
     );

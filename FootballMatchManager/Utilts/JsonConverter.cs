@@ -52,12 +52,11 @@ namespace FootballMatchManager.Utilts
             {
 
                 JsonObject jsonObject = new JsonObject();
-
+                jsonObject.Add("pkId", comment.PkId);
                 jsonObject.Add("userName", comment.Sender.FirstName + comment.Sender.LastName);
                 jsonObject.Add("date", comment.Date);
                 jsonObject.Add("text", comment.Text);
                 jsonObject.Add("senderId", comment.FkSenderId);
-                //jsonObject.Add("commentId", comment.PkId);
                 jsonObject.Add("image", comment.Sender.Image);
 
                 jsonArray.Add(jsonObject);

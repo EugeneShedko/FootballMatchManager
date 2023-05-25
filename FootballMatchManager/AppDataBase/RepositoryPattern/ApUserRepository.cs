@@ -35,7 +35,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         public IEnumerable<ApUser> GetItems()
         {
-            return _dbcontext.ApUsers.AsNoTracking().ToList();
+            return _dbcontext.ApUsers.ToList();
         }
 
         public void UpdateElement(ApUser item)
@@ -44,18 +44,27 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
         }
 
         // ------------------------------------------------------------ //
-
         public List<ApUser> GetAllUsers()
         {
-            return GetItems().Where(u => u.Role != "system" && u.Status != "block")
+            return GetItems().Where(u => u.Role != "system" 
+                                      && u.Status != "block")
                              .ToList();
         }
 
         // ------------------------------------------------------------ //
-
         public ApUser GetUserByEmail(string email)
         {
             return GetItems().FirstOrDefault(u => u.Email == email);
+        }
+
+        // ------------------------------------------------------------ //
+        /// <summary>
+        /// Возвращает пользователя администратора
+        /// </summary>
+        /// <returns></returns>
+        public ApUser GetAdmin()
+        {
+            return GetItems().FirstOrDefault(u => u.Email == "admin@mail.ru");
         }
     }
 }

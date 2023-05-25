@@ -21,10 +21,21 @@ namespace FootballMatchManager.AppDataBase.UnitOfWorkPattern
         private ApUserTeamGameRepasitory _apUserTeamGameRepasitory;
         private GameEventTypeRepository _gameEventTypeRepository;
         private GameEventRepository _gameEventRepository;
+        private BlockApUserRepository _blockApUserRepository;
 
         public UnitOfWork(AppDBContext dBContext)
         {
             this._dbcontext = dBContext;
+        }
+
+        public BlockApUserRepository BlockApUserRepository
+        {
+            get
+            {
+                if (_blockApUserRepository == null)
+                    _blockApUserRepository = new BlockApUserRepository(_dbcontext);
+                return _blockApUserRepository;
+            }
         }
 
         public GameEventRepository GameEventRepository

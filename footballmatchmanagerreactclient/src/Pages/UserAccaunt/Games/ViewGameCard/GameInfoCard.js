@@ -3,18 +3,15 @@ import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { Context } from "../../../../index";
-import CreatorButton from "./GameCardButton/CreatorButtons";
 import MessagesBlock from "./MessagesBlock";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 
 import "./../../../../css/GameInfoCard.css";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { TO_EDIT_GAME, TO_GAMES } from "../../../../Utilts/Consts";
-import ParticipantButton from "./GameCardButton/ParticipantButtons";
 import GameParticipantPlayers from "./GameCardButton/GameParticipantPlayers";
 import GameEventsContainer from "../../TeamGames/ViewTeamGameInfoCard/GameEventsContainer";
 import GameUserButtons from "./GameCardButton/GameUserButtons";
-import GameAdminButtons from "./GameCardButton/GameAdminButtons";
 
 export default function GameInfoCard(props) {
 

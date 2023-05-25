@@ -279,23 +279,21 @@ namespace FootballMatchManager.Controllers
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
-        [Route("user-creat-game")]
-        [HttpPost]
-        public IActionResult PostUserCreatMatch()
+        [Route("user-creat-game/{userId}")]
+        [HttpGet]
+        public IActionResult PostUserCreatMatch(int userId)
         {
             try
             {
-                var userID = int.Parse(Request.Form["userId"]);
 
                 List<Game> games = _unitOfWork.ApUserGameRepository.GetItems()
-                                                                   .Where(ap => ap.PkFkUserId == userID && ap.PkUserType == "creator")
+                                                                   .Where(ap => ap.PkFkUserId == userId 
+                                                                             && ap.PkUserType == "creator")
                                                                    .Select(ap => ap.Game)
                                                                    .ToList();
 
                 if (games == null)
-                {
                     return BadRequest(new { message = "Пользователь не учавствует в матчах" });
-                }
 
                 return Ok(games);
             }
@@ -307,20 +305,21 @@ namespace FootballMatchManager.Controllers
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
-        [Route("user-part-game")]
-        [HttpPost]
-        public IActionResult PostUserPartMatch()
+        [Route("user-part-game/{userId}")]
+        [HttpGet]
+        public IActionResult PostUserPartMatch(int userId)
         {
             try
             {
-                var userID = int.Parse(Request.Form["userId"]);
 
-                List<Game> games = _unitOfWork.ApUserGameRepository.GetItems().Where(ap => ap.PkFkUserId == userID && ap.PkUserType == "participant").Select(ap => ap.Game).ToList();
+                List<Game> games = _unitOfWork.ApUserGameRepository.GetItems()
+                                                                   .Where(ap => ap.PkFkUserId == userId
+                                                                             && ap.PkUserType == "participant")
+                                                                   .Select(ap => ap.Game)
+                                                                   .ToList();
 
                 if (games == null)
-                {
-                    return BadRequest(new { message = "Пользователь не создавал матчей" });
-                }
+                    return BadRequest();
 
                 return Ok(games);
 

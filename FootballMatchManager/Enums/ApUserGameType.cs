@@ -10,5 +10,9 @@
         /* Тип матча в событиях матча */
         public static string EventGameTypePerson = "game";
         public static string EventGameTypeTeam = "teamgame";
+        /* Статус пользователя в приложении */
+        public static string UserStatusActive  = "active";
+        public static string UserStatusBlocked = "block";
+        public static string UserStatusDeleted = "delete";
     }
 }

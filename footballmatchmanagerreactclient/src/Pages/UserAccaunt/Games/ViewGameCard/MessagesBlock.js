@@ -110,7 +110,6 @@ export default function MessagesBlock(props) {
 
     function deleteMessage(messageId)
     {
-        /* Удаление сообщения на сервере */
         axios.delete('http://localhost:5004/api/message/delete-message/' + messageId, { withCredentials: true })
             .then((response) => {
                 setMessages(prevMessages => prevMessages.filter(iteam => iteam.pkId !== messageId));

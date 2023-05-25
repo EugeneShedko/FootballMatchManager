@@ -86,7 +86,7 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------ //
 
-        /* Получаем все матчи, в который пользователь является участником */
+        /* Получаем все матчи, в которых пользователь является участником */
         public List<TeamGame> GetPartUserTeamGames(int userId)
         {
             return GetItems2().Where(aputg => aputg.PkFkUserId == userId
@@ -94,7 +94,20 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
                              .Select(aputg => aputg.TeamGame).ToList();
         }
 
-        // ------------------------------------------------------------ //
+        // ------------------------------------------------------------ /
+
+        /// <summary>
+        /// Возвращает список командных матчей в которых пользователь является организатором
+        /// </summary>
+        /// <param name="userId">Айди пользователя</param>
+        /// <returns></returns>
+
+        public List<TeamGame> GetCreatUserTeamGames(int userId)
+        {
+            return GetItems2().Where(aputg => aputg.PkFkUserId == userId
+                                           && aputg.PkFkUserType == (int)ApUserGameTypeEnum.CREATOR)
+                             .Select(aputg => aputg.TeamGame).ToList();
+        }
 
         /// <summary>
         /// Возвращает список участников командного матча по айди матча

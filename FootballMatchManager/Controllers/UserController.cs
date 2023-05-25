@@ -7,6 +7,10 @@ using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.DataBase.Models;
 using FootballMatchManager.Utilts;
 using FootballMatchManager.IncompleteModels;
+using FootballMatchManager.AppDataBase.Models;
+using FootballMatchManager.Enums;
+using Microsoft.AspNetCore.SignalR;
+using FootballMatchManager.Hubs;
 
 namespace FootballMatchManager.Controllers
 {
@@ -15,9 +19,13 @@ namespace FootballMatchManager.Controllers
     public class UserController : ControllerBase
     {
         private UnitOfWork _unitOfWork;
-        public UserController(UnitOfWork unitOfWork)
+        private IHubContext<NotificationHub> _notifications;
+
+        public UserController(UnitOfWork unitOfWork,
+                              IHubContext<NotificationHub> notofocation)
         {
-            this._unitOfWork = unitOfWork;
+            this._unitOfWork    = unitOfWork;
+            this._notifications = notofocation;
         }
 
         // ------------------------------------------------------------------------------------------------------------------- //
@@ -45,6 +53,96 @@ namespace FootballMatchManager.Controllers
             List<Constant> positions = _unitOfWork.ConstantRepository.GetConstantsByGroup("position");
             return Ok(positions);
 
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------- //
+
+        [HttpGet]
+        [Route("complain-reason")]
+        public ActionResult GetComplainReason()
+        {
+            try
+            {
+                List<Constant> complainReason = _unitOfWork.ConstantRepository.GetConstantsByGroup("complain");
+                return Ok(complainReason);
+
+            }catch(Exception ex) 
+            {
+                return BadRequest();
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------- //
+
+        [HttpGet]
+        [Route("block-reason")]
+        public ActionResult GetBlockReason()
+        {
+            try
+            {
+                List<Constant> blockReason = _unitOfWork.ConstantRepository.GetConstantsByGroup("blockReason");
+                return Ok(blockReason);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------- //
+
+        [HttpGet]
+        [Route("user-complains/{userId}")]
+        public ActionResult GetComplainReason(int userId)
+        {
+            try
+            {
+
+                List<Notification> complains = _unitOfWork.NotificationRepository.GetUserComplains(userId);
+
+                return Ok(complains);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------- //
+
+        [HttpGet]
+        [Route("last-block/{userId}")]
+        public ActionResult GetLastBlock(int userId)
+        {
+            try
+            {
+                BlockApUser userLastBlock = _unitOfWork.BlockApUserRepository.GetUserBlock(userId);
+
+                return Ok(userLastBlock);
+
+            }catch(Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------- //
+
+        [HttpGet]
+        [Route("all-blocks/{userId}")]
+        public ActionResult GetUserBlocks(int userId)
+        {
+            try
+            {
+                List<BlockApUser> userBlocks = _unitOfWork.BlockApUserRepository.GetUserBlocks(userId);
+
+                return Ok(userBlocks);
+
+            }catch(Exception ex) 
+            {
+                return BadRequest();
+            }
         }
 
         // ------------------------------------------------------------------------------------------------------------------- //
@@ -162,6 +260,148 @@ namespace FootballMatchManager.Controllers
 
         // ------------------------------------------------------------------------------- //
 
+        [HttpPost]
+        [Route("block-user")]
+        public ActionResult BlockUser([FromBody] ShortBlockApUser blockInfo)
+        {
+            if (HttpContext.User == null) { return BadRequest(); }
+
+            string notfifMess       = "";
+            string blockReason      = "";
+            Constant notifiConstant = null;
+            DateTime? endBlockDate  = null;
+
+            ApUser apUser = _unitOfWork.ApUserRepository.GetItem(blockInfo.UserId);
+            if(apUser == null) return BadRequest(new { message = "Пользователь не найден" });
+
+            Constant blockConstant = _unitOfWork.ConstantRepository.GetItem(blockInfo.ReasonId);
+            if(blockConstant == null) { return BadRequest(new {message = "Не найдена причина блокировки"}); }
+
+            blockReason = blockConstant.StrValue;
+
+            if (blockInfo.BlockPeriod == -1)
+            {
+                notifiConstant = _unitOfWork.ConstantRepository.GetConstantByName("BlockUserForever");
+                if (notifiConstant != null)
+                    notfifMess = notifiConstant.StrValue.Replace("{reazon}", blockConstant.StrValue); ;
+            }
+            else
+            {
+                endBlockDate = DateTime.Now.AddDays(blockInfo.BlockPeriod);
+                notifiConstant = _unitOfWork.ConstantRepository.GetConstantByName("BlockUserTime");
+                if (notifiConstant != null)
+                    notfifMess = notifiConstant.StrValue.Replace("{date}", endBlockDate.ToString())
+                                                        .Replace("{reazon}", blockConstant.StrValue);
+
+            }
+
+            if (blockConstant.Type == "game")
+            {
+                notfifMess  = notfifMess + " - " + blockInfo.GameName;
+                blockReason = blockReason + " - " + blockInfo.GameName;
+            }
+
+
+            BlockApUser blockUser = new BlockApUser(endBlockDate, blockReason, blockInfo.UserId, notfifMess);
+            /* Если -1, то пользователь заблокирован навсегда */
+            apUser.Status = blockInfo.BlockPeriod == -1 ? ApUserGameType.UserStatusDeleted : ApUserGameType.UserStatusBlocked;
+
+            _notifications.Clients.User(Convert.ToString(blockInfo.UserId)).SendAsync("blockUser", notfifMess);
+            
+            _unitOfWork.BlockApUserRepository.AddElement(blockUser);
+            _unitOfWork.Save();
+
+            return Ok(new {message = "Пользователь успешно заблокирован"});
+        }
+
+        // ------------------------------------------------------------------------------- //
+
+        [HttpPost]
+        [Route("complain-user")]
+        public ActionResult ComplainUser([FromBody] ShortComplain complainInfo)
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                int userId = int.Parse(HttpContext.User.Identity.Name);
+                Constant complainConstant = null;
+                string complainMessage    = null;
+
+                Constant reason = _unitOfWork.ConstantRepository.GetItem(complainInfo.ReasonId);
+                if(reason == null) { return BadRequest(); }
+
+                ApUser userSender = _unitOfWork.ApUserRepository.GetItem(userId);
+                if(userSender == null) { return BadRequest(); }
+
+                ApUser complainUser = _unitOfWork.ApUserRepository.GetItem(complainInfo.UserId);
+                if(complainUser == null) { return BadRequest(); }
+
+                ApUser admin = _unitOfWork.ApUserRepository.GetAdmin();
+                if(admin == null) { return BadRequest(); }
+
+                if (reason.Type == "game")
+                {
+                    complainConstant = _unitOfWork.ConstantRepository.GetConstantByName("gameComplain");
+                   
+                    if(complainConstant == null) { return BadRequest(); }
+                    complainMessage = complainConstant.StrValue.Replace("{userSender}", userSender.FirstName + ' ' + userSender.LastName)
+                                                               .Replace("{complainUser}", complainUser.FirstName + ' ' + complainUser.LastName)
+                                                               .Replace("{reason}", reason.StrValue)
+                                                               .Replace("{game}", complainInfo.GameName);
+                }
+                else
+                {
+                    complainConstant = _unitOfWork.ConstantRepository.GetConstantByName("justComplain");
+                    if (complainConstant == null) { return BadRequest(); }
+                    complainMessage = complainConstant.StrValue.Replace("{userSender}", userSender.FirstName + ' ' + userSender.LastName)
+                                                               .Replace("{complainUser}", complainUser.FirstName + ' ' + complainUser.LastName)
+                                                               .Replace("{reason}", reason.Type == "another" ? complainInfo.ReasonText : reason.StrValue);
+                }
+
+                Notification complain = new Notification(complainUser.PkId, reason.Group, complainMessage, complainUser.PkId, userSender.PkId);
+                _unitOfWork.NotificationRepository.AddElement(complain);
+
+                Notification complainNotifi = new Notification(admin.PkId, complainConstant.Type, complainMessage, userSender.PkId);
+                _unitOfWork.NotificationRepository.AddElement(complainNotifi);
+                _unitOfWork.Save();
+
+                _notifications.Clients.User(Convert.ToString(admin.PkId)).SendAsync("displayNotifiInfo", complainMessage);
+
+                return Ok(new { message = "Ваша жалоба отправлено администратору приложения" });
+
+            }catch(Exception ex) 
+            {
+                return BadRequest();
+            }
+        }
+
+        // ------------------------------------------------------------------------------- //
+
+        [HttpPut]
+        [Route("unblock-user/{userId}")]
+        public ActionResult UnblockUser(int userId)
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                ApUser unblockUser = _unitOfWork.ApUserRepository.GetItem(userId);
+                if(unblockUser == null) { return BadRequest(new {message = "Полльзователь не найден"} ); }
+
+                unblockUser.Status = ApUserGameType.UserStatusActive;
+                _unitOfWork.Save();
+
+                return Ok(new {message = "Пользователь успешно разблокирован!", 
+                               status = unblockUser.Status });
+            }catch(Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        // ------------------------------------------------------------------------------- //
+
         [HttpDelete]
         [Route("deletecomment/{commentId}")]
         public ActionResult DeleteComment(int commentId)
@@ -172,5 +412,7 @@ namespace FootballMatchManager.Controllers
 
             return Ok(new {message = "Комментарий успешно удален"});
         }
+
+        // ------------------------------------------------------------------------------- //
     }
 }

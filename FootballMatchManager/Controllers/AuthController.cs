@@ -1,5 +1,7 @@
-﻿using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
+﻿using FootballMatchManager.AppDataBase.Models;
+using FootballMatchManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.DataBase.Models;
+using FootballMatchManager.Enums;
 using FootballMatchManager.IncompleteModels;
 using FootballMatchManager.Utilts;
 using Microsoft.AspNetCore.Authentication;
@@ -43,7 +45,8 @@ namespace FootballMatchManager.Controllers
                                        shortApUser.UserSex,
                                        shortApUser.UserPosition,
                                        shortApUser.UserBirthDay,
-                                       "active"
+                                       /* В этом классе хранятся строковые константы */
+                                       ApUserGameType.UserStatusActive
                                        );
 
             _unitOfWork.ApUserRepository.AddElement(apUser);
@@ -63,29 +66,38 @@ namespace FootballMatchManager.Controllers
         public async Task<IActionResult> PostAuth()
         {
 
-            var userEmail = Request.Form["userEmail"];
-
-            var loginUser = _unitOfWork.ApUserRepository.GetUserByEmail(userEmail);
+            var userEmail    = Request.Form["userEmail"];
+            var userPassword = Request.Form["userPassword"];
+            var loginUser    = _unitOfWork.ApUserRepository.GetUserByEmail(userEmail);
 
             if (loginUser == null)
-            {
                 return BadRequest(new { message = "Пользователя с таким email не существует" });
-            }
 
-            if (loginUser.Status == "block")
+            if (loginUser.Status == ApUserGameType.UserStatusBlocked || loginUser.Status == ApUserGameType.UserStatusDeleted)
             {
-                return BadRequest(new {message = "Ваш аккаунт был заблокирован администратором"});
-            }
 
-            var userPassword = Request.Form["userPassword"];
+                BlockApUser block = _unitOfWork.BlockApUserRepository.GetUserBlock(loginUser.PkId);
+
+                if(block != null)
+                {
+                    if (loginUser.Status == ApUserGameType.UserStatusDeleted)
+                        return BadRequest(new { message = block.Message });
+
+                    if (block.EndBlockingDate < DateTime.Now)
+                    {
+                        loginUser.Status = ApUserGameType.UserStatusActive;
+                        _unitOfWork.Save();
+                    }
+                    else
+                        return BadRequest(new { message = block.Message });
+                }
+
+            }
 
             MD5 md5 = MD5.Create();
 
-
             if (!string.Equals(loginUser.Password, Convert.ToBase64String(md5.ComputeHash(Encoding.UTF8.GetBytes(userPassword)))))
-            {
                 return BadRequest(new { message = "Некорректный пароль" });
-            }
 
             var claims = new List<Claim> { new Claim(ClaimTypes.Name, Convert.ToString(loginUser.PkId))};
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Cookies");
