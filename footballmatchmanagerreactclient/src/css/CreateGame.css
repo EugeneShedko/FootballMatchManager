@@ -62,3 +62,19 @@
 }
 
 
+.datetime-picker {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: black;
+  }
+
+.datetime-picker input
+{
+    background-color: black;
+    color: white;
+    font-style: italic;
+    border: 3px white solid;
+    border-radius: 10px;
+    padding: 0% 0% 0% 3%;
+}  

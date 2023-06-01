@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { Context } from "../../../index"
 import GameGenerator from "./ViewGames/GameGenerator";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -16,12 +15,22 @@ export default function UserMatchesPr() {
     const [initUserMatchesParticipant, setInitUserMatchesParticipant] = useState([]);
     const [userMatchPr, setUserMatchPr] = useState([]);
     const [searchString, setSearchString] = useState("");
+    const [currentGameStatus, setCurrentGameStatus] = useState('1')
 
     // ------------------------------------------------------------------------------------------------------ //
 
     useEffect(() => {
 
-        axios.get('http://localhost:5004/api/profile/user-part-game/' + userId, { withCredentials: true })
+        getUserPartGamesByStatus();
+
+        /* Плохо сделано обновление */
+    }, [location.state && location.state.refresh, currentGameStatus]);
+
+    // ------------------------------------------------------------------------------------------------------ //
+
+    function getUserPartGamesByStatus() 
+    {
+        axios.get('http://localhost:5004/api/profile/user-part-game/' + userId + '/' + currentGameStatus, { withCredentials: true })
             .then((response) => {
                 setUserMatchPr(response.data);
                 setInitUserMatchesParticipant(response.data);
@@ -31,10 +40,7 @@ export default function UserMatchesPr() {
                     console.log("Ошибка получения матчей");
                 }
             });
-        ;
-        /* Плохо сделано обновление */
-    }, [location.state && location.state.refresh]
-    );
+    }
 
     // ------------------------------------------------------------------------------------------------------ //
 
@@ -78,6 +84,17 @@ export default function UserMatchesPr() {
             </div>
             <div className="col-3 mplefcol">
                 <div className="mp-fixed-container">
+                    <div className="row mplcrow">
+                        <select className="mp-select-style"
+                            onChange={(event) => setCurrentGameStatus(event.target.value)}
+                        >
+                            <option value='1' selected >В ожидании</option>
+                            {userContext.isAdmin || userContext.userId == userId?
+                                <option value='2'>Окончен</option>
+                                : null}
+                            <option value='3'>Завершен</option>
+                        </select>
+                    </div>
                     <div className="row mplcrow">
                         {userContext.isAuth ?
                             <input className="mpbutton-style"

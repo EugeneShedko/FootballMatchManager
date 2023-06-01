@@ -1,5 +1,6 @@
 ﻿using FootballMatchManager.DataBase.DBClasses;
 using FootballMatchManager.DataBase.Models;
+using FootballMatchManager.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballMatchManager.AppDataBase.RepositoryPattern
@@ -48,5 +49,29 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             return GetItems().OrderByDescending(g => g.DateTime)
                              .ToList();
         }
+        /// <summary>
+        /// Возвращает список матчей в определенном статусе
+        /// </summary>
+        /// <param name="status">Статус матча</param>
+        /// <returns></returns>
+        public List<Game> GetGamesByStatus(int status)
+        {
+            if(status == (int)TeamGameStatus.WAIT)
+               return GetItems().Where(g => g.Status == status)
+                                .OrderByDescending(g => g.CurrPlayers)
+                                .ThenByDescending(g => g.DateTime)
+                                .ToList();
+
+            if(status == (int)TeamGameStatus.COMPLETED)
+                return GetItems().Where(g => g.Status == status)
+                                 .OrderByDescending(g => g.DateTime)
+                                 .ToList();
+
+
+            return GetItems().Where(g => g.Status == status)
+                             .OrderByDescending(g => g.DateTime)
+                             .ToList();
+        }
+
     }
 }

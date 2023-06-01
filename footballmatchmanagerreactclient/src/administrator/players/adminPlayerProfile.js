@@ -170,38 +170,6 @@ export default function AdminPlayerProfile(props) {
         setIsEdit(true);
     }
 
-    /*
-    const userComment = [
-        {
-            commentUserImg: "/image/default-profile-icon.jpg",
-            commentUserName: "Евгений Шедько",
-            commentDate: "11.12.2022 15:00",
-            commentText: "Жека, ты крутой1!" 
-        },
-
-        {
-            commentUserImg: "/image/default-profile-icon.jpg",
-            commentUserName: "Евгений Шедько",
-            commentDate: "11.12.2022 15:00",
-            commentText: "Жека, ты крутой2!"             
-        },
-
-        {
-            commentUserImg: "/image/default-profile-icon.jpg",
-            commentUserName: "Евгений Шедько",
-            commentDate: "11.12.2022 15:00",
-            commentText: "Жека, ты крутой3!" 
-        },
-
-        {
-            commentUserImg: "/image/default-profile-icon.jpg",
-            commentUserName: "Евгений Шедько",
-            commentDate: "11.12.2022 15:00",
-            commentText: "Жека, ты крутой4!" 
-        }
-    ]
-    */
-
     return (
         <div className="row profile-container">
             <div className="row profile-info-container m-0">

@@ -5,6 +5,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Context } from "../../../index";
 import { useLocation, useNavigate } from "react-router-dom";
+import DateTime from 'react-datetime';
+//import 'react-datetime/css/react-datetime.css';
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./../../../css/CreateGame.css"
@@ -133,6 +135,9 @@ export default function CreateMatch(props) {
             GameType: matchState.gameType
         }
 
+        console.log('MATCHINFO');
+        console.log(match);
+
         axios.post('http://localhost:5004/api/profile/create-game', match, { withCredentials: true })
             .then((response) => {
                 toast.success(response.data.reqmess, {
@@ -142,9 +147,6 @@ export default function CreateMatch(props) {
                 });
 
                 navigate(location.pathname.replace("/creategame", ""), { state: { refresh: true } });
-
-                //props.setAllMatches(response.data.allgames);
-                //props.onHide(false);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -157,6 +159,15 @@ export default function CreateMatch(props) {
                 }
             });
     }
+
+    // ------------------------------------------------------------------------------------------ //
+
+    const filterPassedTime = (time) => {
+        const currentDate = new Date();
+        const selectedDate = new Date(time);
+    
+        return currentDate.getTime() < selectedDate.getTime();
+      };
 
     // ------------------------------------------------------------------------------------------ //
 
@@ -186,12 +197,28 @@ export default function CreateMatch(props) {
                             <div className="row m-0 p-0">
                                 Дата матча
                             </div>
+                            {/*
+                            <DateTime className="datetime-picker"
+                                dateFormat="YYYY-MM-DD" 
+                                timeFormat="HH:mm:ss"
+                                onChange={dateTimeHandler}
+                                minDate={new Date().getDate() - 1}
+                            />
+                            */}
                             <ReactDatePicker
                                 className="input-stylee"
-                                type="text"
+                                //type="text"
                                 selected={matchState.gameDate}
+                                //selected={new Date()}
                                 placeholder="Введите дату матча"
                                 onChange={(date: Date) => { setMatchState({ ...matchState, gameDate: date }) }}
+                                showTimeSelect={true}
+                                timeIntervals={15}
+                                timeFormat="HH:mm"
+                                timeCaption="Time"
+                                dateFormat="yyyy-MM-dd HH:mm"
+                                minDate={new Date()}
+                                filterTime={filterPassedTime}
                             />
                         </div>
                         <div className="row input-containerr">

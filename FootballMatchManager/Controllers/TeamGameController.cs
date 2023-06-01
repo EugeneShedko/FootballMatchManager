@@ -32,24 +32,20 @@ namespace FootballMatchManager.Controllers
 
         // ------------------------------------------------------------------------------------ //
 
-        [Route("all-team-games")]
+        [Route("all-team-games/{status}")]
         [HttpGet]
-        public IActionResult GetTeamGames()
+        public IActionResult GetTeamGames(int status)
         {
             try
             {
                 if (HttpContext.User == null) { return BadRequest(); }
 
-                List<TeamGame> allTeamGames = _unitOfWork.TeamGameRepasitory.GetAllTeamGames();
+                List<TeamGame> allTeamGames = _unitOfWork.TeamGameRepasitory.GetTeamGamesByStatus(status);
 
                 if (allTeamGames == null)
-                {
                     return Ok();
-                }
                 else
-                {
                     return Ok(allTeamGames);
-                }
             }
             catch (Exception ex)
             {
@@ -75,6 +71,25 @@ namespace FootballMatchManager.Controllers
                     return Ok(allTeamGames);
             }
             catch (Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
+        [HttpGet]
+        [Route("user-team-games/{userId}/{teamGameStatus}")]
+        public ActionResult GetUserPartTeamGamesByGameStatus(int userId, int teamGameStatus)
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                List<TeamGame> userPartTeamGame = _unitOfWork.ApUserTeamGameRepasitory.GetUserPartTeamGamesByGameStatus(userId, teamGameStatus);
+
+                return Ok(userPartTeamGame);
+
+            }catch(Exception ex)
             {
                 return BadRequest();
             }
@@ -189,13 +204,9 @@ namespace FootballMatchManager.Controllers
                 List<ApUser> teamUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamGameId);
 
                 if (teamUsers == null)
-                {
-                    return Ok();
-                }
+                   return Ok();
                 else
-                {
-                    return Ok(teamUsers);
-                }
+                   return Ok(teamUsers);
             }
             catch (Exception ex)
             {
@@ -272,7 +283,6 @@ namespace FootballMatchManager.Controllers
         [HttpPost]
         public IActionResult PostCreateTeamGame([FromBody] ShortGame shortGame)
         {
-            /* Проврека на то, хватает ли у пользователя человек в команде, для создания матча */
             try
             {
                 if (HttpContext.User == null) { return BadRequest(); }
@@ -281,20 +291,15 @@ namespace FootballMatchManager.Controllers
 
                 /* Получаю команду-организаор пользователя */
                 Team teamCreator = _unitOfWork.ApUserTeamRepository.GetTeamByCreator(userId);
-
                 if (teamCreator == null)
-                {
                     return BadRequest(new { message = "Вы не можете создать командный матч, так как не являетесь организатором ни одной команды" });
-                }
-
+ 
                 /* Определяю минимальное количество участников матча команды */
                 int minMembers = int.Parse(shortGame.GameFormat.Substring(0, 1));
 
                 /* Проверяю достаточно ли участников в команде */
                 if (teamCreator.MemberQnt < minMembers)
-                {
                     return BadRequest(new {message = "Вы не можете создать командный матч, так как в вашей команде не достаточно участников" });
-                }
 
 
                 /* Создаю командный матч */

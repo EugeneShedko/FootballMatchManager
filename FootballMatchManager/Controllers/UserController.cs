@@ -32,16 +32,33 @@ namespace FootballMatchManager.Controllers
 
         [HttpGet]
         [Route("all-players")]
-        public ActionResult Get()
+        public ActionResult GetAllPlayers()
         {
             List<ApUser> apUsers =  _unitOfWork.ApUserRepository.GetAllUsers();
 
             if(apUsers == null)
-            {
                 return BadRequest(new {message = "Нет зарегистрированных пользователей"});
-            }
 
             return Ok(apUsers);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------- //
+
+        [HttpGet]
+        [Route("all-players/{status}")]
+        public ActionResult GetPlayersByStatus(string status)
+        {
+            try
+            {
+
+                List<ApUser> apUsers = _unitOfWork.ApUserRepository.GetUsersByStatus(status);
+
+                return Ok(apUsers);
+
+            }catch(Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         // ------------------------------------------------------------------------------------------------------------------- //
@@ -397,6 +414,32 @@ namespace FootballMatchManager.Controllers
             }catch(Exception ex)
             {
                 return BadRequest();
+            }
+        }
+
+        // ------------------------------------------------------------------------------- //
+
+        [HttpPost]
+        [Route("update-stat/{userId}")]
+        public ActionResult UpdateStatistic(int userId)
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest();}
+
+                ApUser updateUser = _unitOfWork.ApUserRepository.GetItem(userId);
+                if(updateUser == null) { return BadRequest(new {log = "Пользователь не найден"}); }
+
+                updateUser.GamesQnt   = int.Parse(Request.Form["GamesQnt"]);
+                updateUser.GoalsQnt   = int.Parse(Request.Form["GoalsQnt"]);
+                updateUser.AssistsQnt = int.Parse(Request.Form["AssistsQnt"]);
+                _unitOfWork.Save();
+
+                return Ok(new {message = "Статистика успешно обнолвена!", user = updateUser});
+
+            }catch(Exception ex)
+            {
+                return BadRequest(new {message = "Ошибка обновления статистики"});
             }
         }
 

@@ -32,11 +32,11 @@ namespace FootballMatchManager.Controllers
 
         // --------------------------------------------------------------------------------------------- //
 
-        [Route("get-all-games")]
+        [Route("get-all-games/{status}")]
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetGamesByStatus(int status)
         {
-            List<Game> allgames = _unitOfWork.GameRepository.GetAllGamesForUser();
+            List<Game> allgames = _unitOfWork.GameRepository.GetGamesByStatus(status);
 
             if (allgames == null)
             {
@@ -155,58 +155,47 @@ namespace FootballMatchManager.Controllers
                 gameId = int.Parse(Request.Form["gameId"]);
                 userId = int.Parse(Request.Form["userId"]);
 
-            }catch(Exception ex) 
+                /* Получаем игру к которой хочет присоединиться пользователь */
+                Game game = _unitOfWork.GameRepository.GetItem(gameId);
+
+                if (game == null)
+                    return BadRequest(new { message = "Матч не найден!" });
+
+                if (game.CurrPlayers >= game.MaxPlayers)
+                    return BadRequest(new { message = "Пользователей достаточное количество" });
+
+                /* Получаем участника матча */
+                ApUserGame apUserGameEx = _unitOfWork.ApUserGameRepository.GetGameParticipant(gameId, userId);
+
+                if (apUserGameEx != null)
+                    return BadRequest(new { message = "Пользователь уже присоединился к матчу" });
+
+                /* Учеличиваем количество пользователей на матче */
+                game.CurrPlayers += 1;
+
+                ApUserGame apUserGame = new ApUserGame()
+                {
+                    PkFkGameId = gameId,
+                    PkFkUserId = userId,
+                    PkUserType = "participant"
+                };
+
+                _unitOfWork.ApUserGameRepository.AddElement(apUserGame);
+                _unitOfWork.Save();
+
+                List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetGameUsers(gameId);
+
+                /* Зачем нужно вот это условие */
+                if (apUsers == null)
+                    return Ok(new { message = "Вы присоеденились к матчу", currgame = game });
+                else
+                    return Ok(new { message = "Вы присоеденились к матчу", users = apUsers, currgame = game });
+
+            }
+            catch (Exception ex) 
             {
                 return BadRequest("Ошибка преобразования");
             }
-
-            /* Получаем игру к которой хочет присоединиться пользователь */
-            Game game = _unitOfWork.GameRepository.GetItem(gameId);
-
-            /* нужно как-то различать сообщения, которые можно пользователю показывать и которые нельзя */ 
-            if(game == null)
-            {
-                return BadRequest(new {message = "Матч не найден!"});
-            }
-
-            if(game.CurrPlayers >= game.MaxPlayers)
-            {
-                return BadRequest(new { message = "Пользователей достаточное количество" });
-            }
-
-            /* Получаем участника матча */
-            ApUserGame apUserGameEx = _unitOfWork.ApUserGameRepository.GetGameParticipant(gameId, userId);
-
-            if (apUserGameEx != null)
-            {
-                return BadRequest(new { message = "Пользователь уже присоединился к матчу" });
-            }
-
-            /* Учеличиваем количество пользователей на матче */
-            game.CurrPlayers += 1;
-
-            ApUserGame apUserGame = new ApUserGame()
-            {
-                PkFkGameId = gameId,
-                PkFkUserId = userId,
-                PkUserType = "participant"
-            };
-
-            _unitOfWork.ApUserGameRepository.AddElement(apUserGame);
-            _unitOfWork.Save();
-
-            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetGameUsers(gameId);
-
-            /* Зачем нужно вот это условие */
-            if (apUsers == null)
-            {
-                return Ok(new { message = "Вы присоеденились к матчу", currgame = game});
-            }
-            else
-            {
-                return Ok(new { message = "Вы присоеденились к матчу", users = apUsers, currgame = game });
-            }
-
         }
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
@@ -217,59 +206,60 @@ namespace FootballMatchManager.Controllers
         {
             try
             {
-            if (HttpContext.User == null) { return BadRequest(); }
+                if (HttpContext.User == null) { return BadRequest(); }
 
-            int userId = int.Parse(HttpContext.User.Identity.Name);
+                int userId = int.Parse(HttpContext.User.Identity.Name);
 
-            int gameMaxPlayers;
-            int gameType;
+                int gameMaxPlayers;
+                int gameType;
 
-            //Хорошо бы это на клиенте сделать, а сюда передавать числовое значение
-            //Не очень хорошо скорее всего присваить нулевое значение
-            switch (shortGame.GameFormat)
-            {
-                case "5x5": gameMaxPlayers = 10; break;
-                case "9x9": gameMaxPlayers = 18; break;
-                case "11x11": gameMaxPlayers = 22; break;
-                default: gameMaxPlayers = 0; break;
-            }
+                //Хорошо бы это на клиенте сделать, а сюда передавать числовое значение
+                //Не очень хорошо скорее всего присваить нулевое значение
+                switch (shortGame.GameFormat)
+                {
+                    case "5x5": gameMaxPlayers = 10; break;
+                    case "9x9": gameMaxPlayers = 18; break;
+                    case "11x11": gameMaxPlayers = 22; break;
+                    default: gameMaxPlayers = 0; break;
+                }  
 
-            switch(shortGame.GameType)
-            {
-                case "Публичный": gameType = (int)GameEnum.PUBLIC; break;
-                case "Закрытый": gameType = (int)GameEnum.CLOSED; break;
-                default: gameType = (int)GameEnum.PUBLIC; break;
-            }
-
-
-            Game game = new Game(shortGame.GameName, shortGame.GameAdress, shortGame.GameDate, gameMaxPlayers, shortGame.GameFormat, gameType);
+                switch(shortGame.GameType)
+                {
+                    case "Публичный": gameType = (int)GameEnum.PUBLIC; break;
+                    case "Закрытый": gameType = (int)GameEnum.CLOSED; break;
+                    default: gameType = (int)GameEnum.PUBLIC; break;
+                }
 
 
-            _unitOfWork.GameRepository.AddElement(game);
-            _unitOfWork.Save();
+                Game game = new Game(shortGame.GameName, 
+                                     shortGame.GameAdress, 
+                                     shortGame.GameDate, 
+                                     gameMaxPlayers, 
+                                     shortGame.GameFormat, 
+                                     gameType);
 
-            ApUserGame apUserGameCr = new ApUserGame()
-            {
-                PkFkGameId = game.PkId,
-                PkFkUserId = userId,
-                PkUserType = "creator",
-            };
+                _unitOfWork.GameRepository.AddElement(game);
+                _unitOfWork.Save();
 
-            ApUserGame apUserGamePt = new ApUserGame()
-            {
-                PkFkGameId = game.PkId,
-                PkFkUserId = userId,
-                PkUserType = "participant",
-            };
+                ApUserGame apUserGameCr = new ApUserGame()
+                {
+                    PkFkGameId = game.PkId,
+                    PkFkUserId = userId,
+                    PkUserType = "creator",
+                };
 
+                ApUserGame apUserGamePt = new ApUserGame()
+                {
+                    PkFkGameId = game.PkId,
+                    PkFkUserId = userId,
+                    PkUserType = "participant",
+                };
 
-            _unitOfWork.ApUserGameRepository.AddElement(apUserGameCr);
-            _unitOfWork.ApUserGameRepository.AddElement(apUserGamePt);
-            _unitOfWork.Save();
+                _unitOfWork.ApUserGameRepository.AddElement(apUserGameCr);
+                _unitOfWork.ApUserGameRepository.AddElement(apUserGamePt);
+                _unitOfWork.Save();
 
-            List<Game> allgames = _unitOfWork.GameRepository.GetAllGamesForUser();
-
-            return Ok(new { reqmess = "Матч успешно создан!", allgames = allgames });
+                return Ok(new { reqmess = "Матч успешно создан!"});
             }
             catch(Exception ex)
             {
@@ -311,15 +301,7 @@ namespace FootballMatchManager.Controllers
         {
             try
             {
-
-                List<Game> games = _unitOfWork.ApUserGameRepository.GetItems()
-                                                                   .Where(ap => ap.PkFkUserId == userId
-                                                                             && ap.PkUserType == "participant")
-                                                                   .Select(ap => ap.Game)
-                                                                   .ToList();
-
-                if (games == null)
-                    return BadRequest();
+                List<Game> games = _unitOfWork.ApUserGameRepository.GetUserPartGame(userId);
 
                 return Ok(games);
 
@@ -330,6 +312,23 @@ namespace FootballMatchManager.Controllers
             } 
         }
 
+        // ------------------------------------------------------------------------------- //
+
+        [HttpGet]
+        [Route("user-part-game/{userId}/{status}")]
+        public ActionResult GetUserPartGamesByStatus(int userId, int status)
+        {
+            try
+            {
+                List<Game> userPartGames = _unitOfWork.ApUserGameRepository.GetUserPartGameByGameStatus(userId, status);
+
+                return Ok(userPartGames);
+
+            }catch(Exception ex)
+            {
+                return BadRequest();
+            }
+        }
         // ------------------------------------------------------------------------------- //
 
         [HttpPost]
@@ -378,69 +377,42 @@ namespace FootballMatchManager.Controllers
 
         // ------------------------------------------------------------------------------- //
 
-        /* Не понятно, чтот это за метод */
-        [HttpPost]
-        [Route("addmessage")]
-        public ActionResult PostAddMessage()
-        {
-            /*
-            Message message = new Message()
-            {
-                Text = Request.Form["MessageText"],
-                DateTime = DateTime.Now,
-                FkGameId = int.Parse(Request.Form["GameRecipient"]),
-                FkSenderId = int.Parse(Request.Form["MessageSender"])
-            };
-
-            _unitOfWork.MessageRepository.AddElement(message);
-
-            _unitOfWork.Save();
-
-            */
-            //return Ok(message)
-            return Ok();
-        }
-
-        // ------------------------------------------------------------------------------- //
-
         [HttpDelete]
         [Route("leave-from-game/{gameId}/{userId}")]
         public ActionResult DeleteLeaveFromGame(int gameId, int userId)
         {
 
-
-            Game game = _unitOfWork.GameRepository.GetItem(gameId);
-
-            if(game == null)
+            try
             {
-                return BadRequest(new { message = "Матч не найден!" });
+
+                Game game = _unitOfWork.GameRepository.GetItem(gameId);
+
+                if (game == null)
+                    return BadRequest(new { message = "Матч не найден!" });
+ 
+                if (game.CurrPlayers <= 0)
+                    return BadRequest(new { message = "Ошибка количества пользователей не матче" });
+
+                ApUserGame apUserGame = _unitOfWork.ApUserGameRepository.GetGameParticipant(gameId, userId);
+
+                if (apUserGame == null)
+                    return BadRequest(new { message = "Вы не зарегистрированы на матч" });
+
+                _unitOfWork.ApUserGameRepository.DeleteElement(apUserGame);
+                game.CurrPlayers -= 1;
+                _unitOfWork.Save();
+
+                List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetGameUsers(gameId);
+
+                if (apUsers == null)
+                    return Ok(new { message = "Вы покинули матч", currgame = game });
+                else
+                    return Ok(new { message = "Вы покинули матч", users = apUsers, currgame = game });
+
             }
-
-            if(game.CurrPlayers <= 0)
+            catch (Exception ex)
             {
-                return BadRequest(new {message = "Ошибка количества пользователей не матче"});
-            }
-
-            ApUserGame apUserGame = _unitOfWork.ApUserGameRepository.GetGameParticipant(gameId, userId);
-
-            if (apUserGame == null)
-            {
-                return BadRequest(new { message = "Вы не зарегистрированы на матч" });
-            }
-
-            _unitOfWork.ApUserGameRepository.DeleteElement(apUserGame);
-            game.CurrPlayers -= 1;
-            _unitOfWork.Save();
-
-            List<ApUser> apUsers = _unitOfWork.ApUserGameRepository.GetGameUsers(gameId);
-
-            if (apUsers == null)
-            {
-                return Ok(new { message = "Вы покинули матч", currgame = game });
-            }
-            else
-            {
-                return Ok(new { message = "Вы покинули матч", users = apUsers, currgame = game });
+                return BadRequest();
             }
         }
 

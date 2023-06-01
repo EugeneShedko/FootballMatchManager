@@ -43,21 +43,45 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             _dbcontext.Entry(item).State= EntityState.Modified;
         }
 
-        // ------------------------------------------------------------ //
+     
+        /// <summary>
+        /// Возвращает список пользователей(для пользователя)
+        /// </summary>
+        /// <returns></returns>
         public List<ApUser> GetAllUsers()
         {
-            return GetItems().Where(u => u.Role != "system" 
-                                      && u.Status != "block")
-                             .ToList();
+            List<ApUser> users = GetItems().ToList();
+            /* ПЛОХО СДЕЛАНО, БУДЕТ ПЛОХОЙ ЗАПРОС ПО ИНДЕКСУ */
+            /* ПОКА ЧТО ТАК, ПОТОМ ОБЯЗАТЕЛЬНО ПЕРЕДЕЛАТЬ ДАННЫЙ ЗАПРОС */
+            users.RemoveAll(apu => apu.Role == "system");
+            users.RemoveAll(apu => apu.Role == "block");
+            users.RemoveAll(apu => apu.Role == "delete");
+
+            return users;
         }
 
-        // ------------------------------------------------------------ //
+        /// <summary>
+        /// Возвращает список пользователей в определенном статусе
+        /// </summary>
+        /// <param name="status">Статус пользователя</param>
+        /// <returns></returns>
+        public List<ApUser> GetUsersByStatus(string status)
+        {
+            List<ApUser> users = GetItems().Where(apu => apu.Status == status).ToList();
+            users.RemoveAll(apu => apu.Role == "system");
+            return users;
+        }
+
+        /// <summary>
+        /// Возвращает пользователя по email
+        /// </summary>
+        /// <param name="email">email пользователя</param>
+        /// <returns></returns>
         public ApUser GetUserByEmail(string email)
         {
             return GetItems().FirstOrDefault(u => u.Email == email);
         }
 
-        // ------------------------------------------------------------ //
         /// <summary>
         /// Возвращает пользователя администратора
         /// </summary>

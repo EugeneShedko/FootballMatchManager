@@ -84,17 +84,51 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
                                                    && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT);
         }
 
-        // ------------------------------------------------------------ //
-
-        /* Получаем все матчи, в которых пользователь является участником */
+        /// <summary>
+        /// Возвращает список матчей в которых пользователь является участником
+        /// </summary>
+        /// <param name="userId">Айди пользователя</param>
+        /// <returns></returns>
         public List<TeamGame> GetPartUserTeamGames(int userId)
         {
             return GetItems2().Where(aputg => aputg.PkFkUserId == userId
                                           && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT)
-                             .Select(aputg => aputg.TeamGame).ToList();
+                             .Select(aputg => aputg.TeamGame)
+                             .ToList();
         }
 
-        // ------------------------------------------------------------ /
+        /// <summary>
+        /// Возвращает список матчей в которых пользователья является участником в определенном статусе матча
+        /// </summary>
+        /// <param name="userId">Айди пользователя</param>
+        /// <param name="teamGameStatus">Статус матча</param>
+        /// <returns></returns>
+        public List<TeamGame> GetUserPartTeamGamesByGameStatus(int userId, int teamGameStatus)
+        {
+
+            if ((teamGameStatus == (int)TeamGameStatus.WAIT) || (teamGameStatus == (int)TeamGameStatus.SEARCH))
+                return GetItems2().Where(aputg => aputg.PkFkUserId == userId
+                                               && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT
+                                               && aputg.TeamGame.Status == teamGameStatus)
+                              .OrderBy(aputg => aputg.TeamGame.DateTime)
+                              .Select(aputg => aputg.TeamGame)
+                              .ToList();
+
+            if ((teamGameStatus == (int)TeamGameStatus.COMPLETED) || (teamGameStatus == (int)TeamGameStatus.FINISHED))
+                return GetItems2().Where(aputg => aputg.PkFkUserId == userId
+                                               && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT
+                                               && aputg.TeamGame.Status == teamGameStatus)
+                              .OrderByDescending(aputg => aputg.TeamGame.DateTime)
+                              .Select(aputg => aputg.TeamGame)
+                              .ToList();
+
+            return GetItems2().Where(aputg => aputg.PkFkUserId == userId
+                                          && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT
+                                          && aputg.TeamGame.Status == teamGameStatus)
+              .OrderBy(aputg => aputg.TeamGame.DateTime)
+              .Select(aputg => aputg.TeamGame)
+              .ToList();
+        }
 
         /// <summary>
         /// Возвращает список командных матчей в которых пользователь является организатором

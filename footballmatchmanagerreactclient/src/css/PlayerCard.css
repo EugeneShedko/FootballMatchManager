@@ -152,6 +152,14 @@
     margin-top: 2%;
 }
 
+.profile-edit-butt-cont
+{
+    margin: 0;
+    padding: 0;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
 .profile-button
 {   
     border: 3px white solid;
@@ -276,9 +284,9 @@
 
 .admin-edit
 {
-    font-size: 30px;
+    border-radius: 5px;
+    font-size: 24px;
     width: 90%;
-    height: 60%;
 }
 
 .edit-input

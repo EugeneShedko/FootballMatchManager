@@ -8,7 +8,7 @@ export default function UserMatchesNavigator() {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const [initialPath, setInitialPath] = useState(location.pathname);
+    const [initialPath, setInitialPath] = useState(location.pathname.replace(TO_USER_GAMES_PARTICIPANT, "").replace(TO_USER_TEAM_GAMES, ""));
 
     // --------------------------------------------------------------------------- //
 

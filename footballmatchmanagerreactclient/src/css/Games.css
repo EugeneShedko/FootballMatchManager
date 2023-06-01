@@ -1,116 +1,109 @@
-.mpmatches-main-container
-{
+.mpmatches-main-container {
     margin: 0;
     padding: 2% 0% 0% 0%;
     height: 100%;
     overflow: auto;
 }
 
-.mpmatches-container
-{
+.mpmatches-container {
     position: relative;
 }
 
-.mpmatches-absolute-container
-{
+.mpmatches-absolute-container {
     width: 100%;
     display: flex;
     justify-content: space-evenly;
     margin: 0;
-    position: absolute;    
+    position: absolute;
 }
 
-.mplefcol
-{
+.mplefcol {
     position: relative;
 }
 
-.mp-fixed-container
-{
+.mp-fixed-container {
     padding: 0% 3% 0% 0%;
     position: fixed;
 }
 
-.mplcrow
-{
+.mplcrow {
     height: 5%;
     margin: 0% 0% 4% 0%;
 }
 
-.mpinfo-block
-{
+.mpinfo-block {
     margin: 0% 0% 1.5% 0%;
-    padding:0;
+    padding: 0;
     width: 24vw;
     height: 20vh;
 }
 
-.mpinfo-block:hover
-{
+.mpinfo-block:hover {
     margin: -1% 0% 1.5% 0%;
     cursor: pointer;
 }
 
-#search-match-element
-{
-    border: 4px white solid;
+#search-match-element {
+    border: 3px white solid;
     border-radius: 10px;
-    background-color: rgba(0,0,0,0.6);
-    color:white;
-    font-style: italic; 
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-style: italic;
 }
 
-.mpbutton-style
+.mp-select-style 
 {
-    border: 4px solid white;
+    border: 3px white solid;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    font-style: normal;
+
+}
+
+.mpbutton-style {
+    border: 3px solid white;
     border-radius: 10px;
     background-color: black;
     color: white;
 }
 
-.mpbutton-style:hover
-{
+.mpbutton-style:hover {
     background-color: white;
     color: black;
     font-weight: bold;
 }
 
-.filter-match-container
-{
+.filter-match-container {
     margin: 0;
     padding: 3% 3% 3% 3%;
-    border: 4px white solid;
+    border: 3px white solid;
     border-radius: 10px;
-    background-color: rgba(0,0,0,0.6);    
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
-label
-{
+label {
     font-size: 18px;
-    color :white;
+    color: white;
 }
 
-.checkbox-style
-{
+.checkbox-style {
     margin: 0% 2% 0% 0%;
     height: 15px;
-    width:  15px;
+    width: 15px;
 }
 
-.lock-game-icon-cont
-{
+.lock-game-icon-cont {
     margin: 0;
     margin-top: 10%;
     display: flex;
     align-items: end;
 }
 
-.lock-game-icon
-{
+.lock-game-icon {
     margin: 0;
     padding: 0;
     width: 25px;
     height: 25px;
     filter: invert(100%)
 }
-

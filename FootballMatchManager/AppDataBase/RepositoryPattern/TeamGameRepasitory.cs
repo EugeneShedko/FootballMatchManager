@@ -47,12 +47,27 @@ namespace FootballMatchManager.AppDataBase.RepositoryPattern
             _dbcontext.Entry(item).State = EntityState.Modified;
         }
 
-        // ---------------------------------------------------------- //
 
-        /* Возвращает список всех командных матчей */
+        /// <summary>
+        /// Возвращает список всех командных матчей
+        /// </summary>
+        /// <returns></returns>
         public List<TeamGame> GetAllTeamGames()
         {
             return GetItems().OrderByDescending(tg => tg.DateTime).ToList();
+        }
+
+        /// <summary>
+        /// Возвращает список всех матчей в определенном статусе
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+
+        public List<TeamGame> GetTeamGamesByStatus(int status)
+        {
+            return GetItems().Where(tg => tg.Status == status)
+                             .OrderByDescending(tg => tg.DateTime)
+                             .ToList();
         }
 
         // ---------------------------------------------------------- //

@@ -19,37 +19,47 @@ export default function TeamGames(props) {
     const [searchString, setSearchString] = useState("");
     const [isLoad, setIsLoad] = useState(false);
     const { id } = useParams();
+    const [currentTeamGameStatus, setCurrentTeamGameStatus] = useState('0');
 
     /* ----------------------------------------------------------------------- */
 
     useEffect(
         () => {
 
-            let requestPath;
-            if (props.mode === 'user')
-                requestPath = 'http://localhost:5004/api/teamgame/user-team-games/' + id;
-            else
-                requestPath = 'http://localhost:5004/api/teamgame/all-team-games';
+            getTeamGamesByStatus();
 
-            axios.get(requestPath, { withCredentials: true })
-                .then((response) => {
-                    setGames(response.data);
-                    setInitGames(response.data);
-                    setIsLoad(true);
-                })
-                .catch(userError => {
-                    if (userError.response) {
-                        toast.error(userError.response.message,
-                            {
-                                position: toast.POSITION.TOP_CENTER,
-                                autoClose: 2000,
-                                pauseOnFocusLoss: false
-                            });
-                    }
-                });
-            ;
-        }, [isRefreshed]
+        }, [isRefreshed, currentTeamGameStatus]
     );
+
+    /* ----------------------------------------------------------------------- */
+
+    function getTeamGamesByStatus() 
+    {
+
+        let requestPath;
+        if (props.mode === 'user')
+            requestPath = 'http://localhost:5004/api/teamgame/user-team-games/' + id;
+        else
+            requestPath = 'http://localhost:5004/api/teamgame/all-team-games';
+
+        axios.get(requestPath + '/' + currentTeamGameStatus, { withCredentials: true })
+            .then((response) => {
+                setGames(response.data);
+                setInitGames(response.data);
+                setIsLoad(true);
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.error(userError.response.message,
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+                }
+            });
+
+    }
 
     /* ----------------------------------------------------------------------- */
 
@@ -93,6 +103,18 @@ export default function TeamGames(props) {
                 </div>
                 <div className="col-3 tmlefcol">
                     <div className="tm-fixed-container">
+                        <div className="row tmlcrow">
+                            <select className="mp-select-style"
+                            onChange={(event) => setCurrentTeamGameStatus(event.target.value)}
+                            >
+                                <option value='0' selected >В поиске</option>
+                                <option value='1'>В ожидании</option>
+                                {userContext.isAdmin || (props.mode === 'user' && userContext.userId === parseInt(id)) ?
+                                    <option value='2'>Окончен</option>
+                                    : null}
+                                <option value='3'>Завершен</option>
+                            </select>
+                        </div>
                         <div className="row tmlcrow">
                             {
                                 userContext.isAuth ?

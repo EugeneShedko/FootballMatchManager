@@ -31,7 +31,6 @@ import InviteCard from "../Pages/UserAccaunt/Games/ViewGameInviteCard/InviteCard
 import TeamGameInviteCard from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInviteCard/TeamGameInviteCard";
 import EditTeamGame from "../Pages/UserAccaunt/TeamGames/EditTeamGame";
 import EditTeam from "../Pages/UserAccaunt/UserTeams/EditTeam";
-import AdminAccaunt from "../Pages/AdminAccauntPage";
 import GameInfoCardAdmin from "../Pages/UserAccaunt/Games/ViewGameCard/GameInfoCardAdmin";
 import TeamGameCardAdmin from "../Pages/UserAccaunt/TeamGames/ViewTeamGameInfoCard/TeamGameInfoCardAdmin";
 import TeamInfoCardAdmin from "../Pages/UserAccaunt/Teams/ViewTeamCard/TeamInfoCradAdmin";
@@ -78,6 +77,11 @@ const AppRouter = observer(() => {
                         <Route path="playercard/:id" element={<Profile />}>
                             <Route path="editprofile" element={<EditProfile    show={true} />} />
                             <Route path="complain"    element={<ComplainWindow show={true}/>} />
+                        </Route>
+                        <Route path="playercard/:id/games" element={<UserMatchesNavigator />} >
+                            <Route index element={<UserMatchesPr />} />
+                            <Route path="partgames" element={<UserMatchesPr />} />
+                            <Route path="teamgames" element={<TeamGames mode="user" />} />
                         </Route>
 
                         <Route path="teams" element={<Teams />}>

@@ -24,7 +24,15 @@ export default function PlayerCardAdmin() {
     const [userComplain, setUserComplain] = useState([]);
     const [userBlocks, setUserBlocks] = useState([]);
     const [currentContainer, setCurrentContainer] = useState('1');
+    /* Количество чего-то */
     const [number, setNumber] = useState(0);
+    const [isEditMode, setIsEditMode] = useState(false);
+    /* Измененная статистика */
+    const [changeStat, setChangeStat] = useState({
+        gamesQnt: '',
+        goalsQnt: '',
+        assistsQnt: ''
+    });
 
     const commentContainer = useRef(null);
     const connection = useRef(null);
@@ -324,6 +332,99 @@ export default function PlayerCardAdmin() {
 
     // ------------------------------------------------------------------------------------------------ //
 
+    function cancelEditStat() {
+
+        setIsEditMode(false)
+        setChangeStat({
+            gamesQnt: '',
+            goalsQnt: '',
+            assistsQnt: ''
+        });
+    }
+
+    function saveEditStat() {
+
+        var data = new FormData();
+        data.append("gamesQnt", changeStat.gamesQnt);
+        data.append("goalsQnt", changeStat.goalsQnt);
+        data.append("assistsQnt", changeStat.assistsQnt);
+
+        axios.post('http://localhost:5004/api/profile/update-stat/' + userId, data, { withCredentials: true })
+            .then((response) => {
+
+                setProfileInfo(response.data.user);
+                setIsEditMode(false)
+
+                setChangeStat({
+                    gamesQnt: '',
+                    goalsQnt: '',
+                    assistsQnt: ''
+                });
+
+                toast.success(response.data.message,
+                    {
+                        position: toast.POSITION.TOP_CENTER,
+                        autoClose: 2000,
+                        pauseOnFocusLoss: false
+                    });
+
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    toast.success("Ошибка обновления статистики",
+                        {
+                            position: toast.POSITION.TOP_CENTER,
+                            autoClose: 2000,
+                            pauseOnFocusLoss: false
+                        });
+
+                   console.log(userError.respone.data.log);
+                   
+                   setIsEditMode(false)
+
+                   setChangeStat({
+                       gamesQnt: '',
+                       goalsQnt: '',
+                       assistsQnt: ''
+                   });
+                }
+            });
+
+    }
+
+    // ------------------------------------------------------------------------------------------------ //
+
+    function getEditModeButton() {
+        if (!isEditMode)
+            return (<input type="button"
+                value="Изменить статистику"
+                className="profile-button"
+                onClick={() => setIsEditMode(true)}
+            />
+            );
+        else
+            return (<div className="profile-edit-butt-cont">
+                <div className="row profile-button-wrap">
+                    <input type="button"
+                        value="Сохранить"
+                        className="un-block-button"
+                        onClick={saveEditStat}
+                    />
+                </div>
+                <div className="row profile-button-wrap">
+                    <input type="button"
+                        value="Отмена"
+                        className="player-delete-button"
+                        onClick={cancelEditStat}
+                    />
+                </div>
+            </div>
+            );
+    }
+
+    // ------------------------------------------------------------------------------------------------ //
+
+
     if (isLoad) {
 
         return (
@@ -351,16 +452,22 @@ export default function PlayerCardAdmin() {
                         </div>
                         <div className="row icon-row">
                             <div className="col-3 p-0">
-                                <div className="row">
-                                    <div className="col-6 p-0">
+                                <div className="row m-0 p-0">
+                                    <div className="col-6 p-0 m-0">
                                         <img className="foot-field-img" src="/image/soccer-field.png" alt="" />
                                     </div>
-                                    <div className="col-6 p-0">
+                                    <div className="col-6 p-0 m-0">
                                         <div className="row img-text">
                                             Игры
                                         </div>
                                         <div className="row img-number align-items-start">
-                                            {profileInfo.gamesQnt}
+                                            {isEditMode ? <input type="text"
+                                                placeholder={profileInfo.gamesQnt}
+                                                value={changeStat.gamesQnt}
+                                                className="admin-edit"
+                                                onChange={(event) => setChangeStat({ ...changeStat, gamesQnt: event.target.value })}
+                                            />
+                                                : profileInfo.gamesQnt}
                                         </div>
                                     </div>
                                 </div>
@@ -375,7 +482,13 @@ export default function PlayerCardAdmin() {
                                             Голы
                                         </div>
                                         <div className="row img-number align-items-start">
-                                            {profileInfo.goalsQnt}
+                                            {isEditMode ? <input type="text"
+                                                placeholder={profileInfo.goalsQnt}
+                                                value={changeStat.goalsQnt}
+                                                className="admin-edit"
+                                                onChange={(event) => setChangeStat({ ...changeStat, goalsQnt: event.target.value })}
+                                            />
+                                                : profileInfo.goalsQnt}
                                         </div>
                                     </div>
                                 </div>
@@ -390,7 +503,13 @@ export default function PlayerCardAdmin() {
                                             Передачи
                                         </div>
                                         <div className="row img-number align-items-start">
-                                            {profileInfo.assistsQnt}
+                                            {isEditMode ? <input type="text"
+                                                placeholder={profileInfo.assistsQnt}
+                                                value={changeStat.assistsQnt}
+                                                className="admin-edit"
+                                                onChange={(event) => setChangeStat({ ...changeStat, assistsQnt: event.target.value })}
+                                            />
+                                                : profileInfo.assistsQnt}
                                         </div>
                                     </div>
                                 </div>
@@ -406,7 +525,9 @@ export default function PlayerCardAdmin() {
                                 onClick={() => navigate(location.pathname + TO_USER_GAMES_PROFILE)}
                             />
                         </div>
-
+                        <div className="row profile-button-wrap">
+                            {getEditModeButton()}
+                        </div>
                         <div className="row profile-button-wrap">
                             {getBlockButton()}
                         </div>

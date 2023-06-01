@@ -68,14 +68,10 @@ namespace FootballMatchManager.Controllers
                 int userCreatorId = int.Parse(HttpContext.User.Identity.Name);
 
                 if (_unitOfWork.ApUserTeamRepository.GetTeamByCreator(userCreatorId) != null)
-                {
                     return BadRequest("Невозможно создать команду, так как вы уже являетесь организатором команды.");
-                }
 
                 if (_unitOfWork.TeamRepository.GetTeamByName(teamName) != null) 
-                {
                     return BadRequest("Команда с таким наименованием уже существует"); 
-                }
 
                 var imageFile = Request.Form.Files["teamImage"];
 
@@ -119,7 +115,6 @@ namespace FootballMatchManager.Controllers
 
         [Route("team/{teamid}")]
         [HttpGet]
-
         public IActionResult TeamProfile(int teamId)
         {
             
@@ -136,16 +131,12 @@ namespace FootballMatchManager.Controllers
                 Team team = _unitOfWork.TeamRepository.GetItem(teamId);
 
                 if (team == null)
-                {
                     return BadRequest();
-                }
 
                 ApUserTeam apUserTeamPt = _unitOfWork.ApUserTeamRepository.GetTeamParticipant(team.PkId, userId);
 
                 if (apUserTeamPt != null)
-                {
                     isParticipant = true;
-                }
 
                 ApUserTeam teamCreator = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId);
 

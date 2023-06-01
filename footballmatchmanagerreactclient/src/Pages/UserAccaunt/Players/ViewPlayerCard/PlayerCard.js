@@ -8,7 +8,7 @@ import { Context } from "../../../../index";
 import "./../../../../css/PlayerCard.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
-import { TO_COMPLAIN_WINDOW, TO_EDIT_PROFILE } from "../../../../Utilts/Consts";
+import { TO_COMPLAIN_WINDOW, TO_EDIT_PROFILE, TO_USER_GAMES_PROFILE } from "../../../../Utilts/Consts";
 
 export default function Profile() {
 
@@ -100,8 +100,8 @@ export default function Profile() {
     // ---------------- Скролл  ------------------------------------------- //
 
     useEffect(() => {
-        if(commentContainer.current)
-           commentContainer.current.scrollTop = commentContainer.current.scrollHeight;
+        if (commentContainer.current)
+            commentContainer.current.scrollTop = commentContainer.current.scrollHeight;
     }, [userComment]);
 
     // ------------------------------------------------------------------------------------------------ //
@@ -256,6 +256,13 @@ export default function Profile() {
                         </div>
                     </div>
                     <div className="col-2 p-0 m-0 h-100">
+                        <div className="row profile-button-wrap">
+                            <input type="button"
+                                value="Матчи"
+                                className="profile-button"
+                                onClick={() => navigate(location.pathname + TO_USER_GAMES_PROFILE)}
+                            />
+                        </div>
                         {
                             userContext.userId === userId ?
                                 <div className="row profile-button-wrap">

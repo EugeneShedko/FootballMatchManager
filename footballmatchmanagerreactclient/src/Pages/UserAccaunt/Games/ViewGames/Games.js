@@ -19,29 +19,40 @@ export default function Matches() {
     const [initGames, setInitGames] = useState([]);
     const [games, setGames] = useState([]);
     const [searchString, setSearchString] = useState("");
+    const [currentGameStatus, setCurrentGameStatus] = useState('1')
 
     /* ----------------------------------------------------------------------- */
 
     useEffect(
         () => {
-            axios.get('http://localhost:5004/api/profile/get-all-games', { withCredentials: true })
-                .then((response) => {
-                    setGames(response.data);
-                    setInitGames(response.data);
-                })
-                .catch(userError => {
-                    if (userError.response) {
-                        toast.error(userError.response.message,
-                            {
-                                position: toast.POSITION.TOP_CENTER,
-                                autoClose: 2000,
-                                pauseOnFocusLoss: false
-                            });
-                    }
-                });
-            ;
+
+            getGamesByStatus();
+
         }, [isRefreshed]
     );
+
+    useEffect(() => {
+
+        getGamesByStatus();
+
+    }, [currentGameStatus])
+
+    /* ----------------------------------------------------------------------- */
+
+    function getGamesByStatus() {
+
+        axios.get('http://localhost:5004/api/profile/get-all-games/' + currentGameStatus, { withCredentials: true })
+            .then((response) => {
+                setGames(response.data);
+                setInitGames(response.data);
+            })
+            .catch(userError => {
+                if (userError.response) {
+                    console.log("Ошибка получения матчей");
+                    console.log(userError.response.data.message);
+                }
+            });;
+    }
 
     /* ----------------------------------------------------------------------- */
 
@@ -84,6 +95,18 @@ export default function Matches() {
             </div>
             <div className="col-3 mplefcol">
                 <div className="mp-fixed-container">
+                    <div className="row mplcrow">
+                        {/* !Плохо, что здесь кнстантами задаю */}
+                        <select className="mp-select-style"
+                            onChange={(event) => setCurrentGameStatus(event.target.value)}
+                        >
+                            <option value='1' selected >В ожидании</option>
+                            {userContext.isAdmin ?
+                                <option value='2'>Окончен</option>
+                                : null}
+                            <option value='3'>Завершен</option>
+                        </select>
+                    </div>
                     {userContext.isAuth ?
                         <div className="row mplcrow">
                             <input className="mpbutton-style"
