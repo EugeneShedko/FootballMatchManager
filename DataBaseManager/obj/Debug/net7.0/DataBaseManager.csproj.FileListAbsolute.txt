@@ -1,0 +1,13 @@
+D:\Учеба\Diplom\Project\DataBaseManager\bin\Debug\net7.0\AppDataBase\ConfigurationFiles\mssqlconfig.json
+D:\Учеба\Diplom\Project\DataBaseManager\bin\Debug\net7.0\DataBaseManager.deps.json
+D:\Учеба\Diplom\Project\DataBaseManager\bin\Debug\net7.0\DataBaseManager.dll
+D:\Учеба\Diplom\Project\DataBaseManager\bin\Debug\net7.0\DataBaseManager.pdb
+D:\Учеба\Diplom\Project\DataBaseManager\obj\Debug\net7.0\DataBaseManager.csproj.AssemblyReference.cache
+D:\Учеба\Diplom\Project\DataBaseManager\obj\Debug\net7.0\DataBaseManager.GeneratedMSBuildEditorConfig.editorconfig
+D:\Учеба\Diplom\Project\DataBaseManager\obj\Debug\net7.0\DataBaseManager.AssemblyInfoInputs.cache
+D:\Учеба\Diplom\Project\DataBaseManager\obj\Debug\net7.0\DataBaseManager.AssemblyInfo.cs
+D:\Учеба\Diplom\Project\DataBaseManager\obj\Debug\net7.0\DataBaseManager.csproj.CoreCompileInputs.cache
+D:\Учеба\Diplom\Project\DataBaseManager\obj\Debug\net7.0\DataBaseManager.dll
+D:\Учеба\Diplom\Project\DataBaseManager\obj\Debug\net7.0\refint\DataBaseManager.dll
+D:\Учеба\Diplom\Project\DataBaseManager\obj\Debug\net7.0\DataBaseManager.pdb
+D:\Учеба\Diplom\Project\DataBaseManager\obj\Debug\net7.0\ref\DataBaseManager.dll
