@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "data source= DESKTOP-H66HRKQ; Initial Catalog= FootballManagerDB; Integrated Security=True; trustservercertificate=True"
+  }
+}

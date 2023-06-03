@@ -1,4 +1,5 @@
 ﻿using DataBaseManager.AppDataBase.Models;
+using DataBaseManager.AppDataBase.RepositoryPattern;
 using DataBaseManager.AppDataBase.UnitOfWorkPattern;
 using FootballMatchManager.Enums;
 using FootballMatchManager.IncompleteModels;
@@ -68,6 +69,7 @@ namespace FootballMatchManager.Controllers
             var userEmail    = Request.Form["userEmail"];
             var userPassword = Request.Form["userPassword"];
             var loginUser    = _unitOfWork.ApUserRepository.GetUserByEmail(userEmail);
+
 
             if (loginUser == null)
                 return BadRequest(new { message = "Пользователя с таким email не существует" });
