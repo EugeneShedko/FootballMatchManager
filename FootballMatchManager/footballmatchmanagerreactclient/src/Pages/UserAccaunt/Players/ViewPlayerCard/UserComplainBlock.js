@@ -14,7 +14,7 @@ export default function UserComplainBlock(props)
             </div>
             <div className="col-9 p-0 m-0">
                 <div>
-                    <div className="row m-0 p-0">
+                    <div className="row m-0 p-0" style={{color: 'yellowgreen'}}>
                         {props.complainInfo.recipient.firstName + ' ' + props.complainInfo.recipient.lastName}
                     </div>
                     <div className="row user-comment-text">

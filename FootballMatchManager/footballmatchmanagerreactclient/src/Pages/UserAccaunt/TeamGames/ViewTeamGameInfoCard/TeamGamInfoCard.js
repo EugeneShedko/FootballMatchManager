@@ -15,7 +15,6 @@ import { TO_EDIT_TEAM_GAME, TO_TEAM_GAMES } from "../../../../Utilts/Consts";
 
 export default function TeamGameCard() {
 
-    /* Можно было много чего в какой-то один объект запихнуть */
     const { userContext } = useContext(Context);
     const navigate = useNavigate();
     const location = useLocation();
@@ -261,6 +260,7 @@ export default function TeamGameCard() {
                                             />
                                             :
                                             <ParticipanButtons game={game}
+                                                isPart={isPart}
                                                 sendReqForTeamGamePart={sendReqForTeamGamePart}
                                                 secTeamCreatorId={secTeamCreatorId}
                                                 leavFromTeamGame={leavFromTeamGame}

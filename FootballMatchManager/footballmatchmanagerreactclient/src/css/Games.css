@@ -32,14 +32,14 @@
 }
 
 .mpinfo-block {
-    margin: 0% 0% 1.5% 0%;
+    margin: 0;
     padding: 0;
     width: 24vw;
     height: 20vh;
 }
 
 .mpinfo-block:hover {
-    margin: -1% 0% 1.5% 0%;
+    margin: -1% 0% 0% 0%;
     cursor: pointer;
 }
 

@@ -17,8 +17,7 @@ export default function Loginform(props) {
     const [logInState, setLogInState] = useState({
         userEmail: "",
         userPassword: ""
-    }
-    );
+    });
 
     const [inputDirty, setInputDirty] = useState({
         emailDirty: false,
@@ -102,8 +101,7 @@ export default function Loginform(props) {
                     pauseOnFocusLoss: false
                 });
 
-                if (response.data.user.role === "user") 
-                {
+                if (response.data.user.role === "user") {
                     setUserContext({
                         ...userContext,
                         isAuth: true,
@@ -120,7 +118,6 @@ export default function Loginform(props) {
                         isAuth: false,
                         isAdmin: true,
                         userId: response.data.user.pkId,
-                        /* Можно добавить наименование администратору в БД */
                         userName: 'Администратор'
                     });
 
@@ -143,7 +140,7 @@ export default function Loginform(props) {
     // ---------------------------------------------------------------------------------------------- //
 
     return (
-        <div className="row justify-content-center m-0">
+        <div className="row main-login-container">
             <div className={loginContainerStyle}>
                 <div className="row justify-content-end">
                     <img id="closeicon" src="/image/closecross.png" alt="" onClick={closeLoginForm} />

@@ -21,7 +21,7 @@ export default function TeamGenerator(props) {
             {
                 isInvite ?
                     searchTeams?.map((team) =>
-                        <div className="mpinfo-block-no-hover">
+                        <div className="tpinfo-block-no-hover">
                             <TeamBlock info={team}
                                 isVisable={!props.notifiTeams?.some(notifiTeam => notifiTeam.pkId === team.pkId)}
                                 sendInviteToAddTeamGame={props.sendInviteToAddTeamGame}
@@ -30,7 +30,7 @@ export default function TeamGenerator(props) {
                     )
                     :
                     searchTeams?.map((team) =>
-                        <div className="mpinfo-block">
+                        <div className="tpinfo-block">
                             <TeamBlock info={team} />
                         </div>
                     )

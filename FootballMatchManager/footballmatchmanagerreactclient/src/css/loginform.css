@@ -3,14 +3,27 @@ div {
     margin: 0;
 }
 
+.main-login-container
+{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    z-index: 1;
+}
+
 .logincontainer
 {
     padding: 1% 2% 2% 2%;
     height: 60%;
-    margin: 12% 0% 0% 0%;
+    margin: 5% 0% 0% 0%;
     border: 5px white solid;
     border-radius: 20px;
-    background-color: rgba(0,0,0,0.6);
+    background-color: rgba(0,0,0,0.8);
     color: white;
     animation-duration: 0.9s;
     animation-name: loginformin;
@@ -38,7 +51,7 @@ div {
     }
     to
     {
-        margin-top: 12%;
+        margin-top: 5%;
     }
 }
 
@@ -46,7 +59,7 @@ div {
 {
     from
     {
-        margin-top: 12%;
+        margin-top: 5%;
     }
     to
     {

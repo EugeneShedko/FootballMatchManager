@@ -23,7 +23,7 @@
 }
 
 #body-content {
-    padding: 9% 0 0 0;
+    padding: 10% 0 0 0;
     height: 100%;
 }
 
@@ -49,12 +49,14 @@
 
 .search-block
 {
-    position: relative;
-    margin: 5% 0% 3% 0%;
-    width: 24vw;
-    height: 5vh;
-    border: 3px white solid;
-    border-radius: 10px; 
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+    font-style: italic;
+    text-align: center;
 }
 
 .serach-element

@@ -53,6 +53,25 @@ namespace FootballMatchManager.Controllers
         }
 
         // ----------------------------------------------------------------------------------------------------------------------------------------- //
+        [HttpGet]
+        [Route("less-team-games/{status}")]
+        public IActionResult GetTeamGamesLessStatus(int status)
+        {
+            try
+            {
+                if (HttpContext.User == null) { return BadRequest(); }
+
+                List<TeamGame> allTeamGames = _unitOfWork.TeamGameRepasitory.GetTeamGamesLessStatus(status);
+                return Ok(allTeamGames);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+        }
+
+        // ----------------------------------------------------------------------------------------------------------------------------------------- //
 
         [Route("user-team-games/{userId}")]
         [HttpGet]
@@ -136,9 +155,7 @@ namespace FootballMatchManager.Controllers
                 /* Получаю командную игру */
                 TeamGame teamGame = _unitOfWork.TeamGameRepasitory.GetItem(teamGameId);
                 if (teamGame == null)
-                {
                     return BadRequest();
-                }
 
                 /* Проверка на завершенность матча */
                 if(teamGame.Status < (int)TeamGameStatus.FINISHED && teamGame.DateTime < DateTime.Now)
@@ -151,9 +168,7 @@ namespace FootballMatchManager.Controllers
                 ApUserTeamGame userPart = _unitOfWork.ApUserTeamGameRepasitory.GetTeamGameParticiapnt(teamGame.PkId, userId);
 
                 if (userPart != null)
-                {
                     isParticipant = true;
-                }
 
                 /* Получаю организатора командной игры */
                 ApUserTeamGame gameCratetor = _unitOfWork.ApUserTeamGameRepasitory.GetTeamGameCreatorRecord(teamGame.PkId);
@@ -300,7 +315,7 @@ namespace FootballMatchManager.Controllers
                 /* Создаю командный матч */
                 TeamGame teamGame = new TeamGame(shortGame.GameName, 
                                                  shortGame.GameAdress, 
-                                                 shortGame.GameDate, 
+                                                 shortGame.GameDate.AddHours(3), 
                                                  shortGame.GameFormat, 
                                                  teamCreator.PkId);
 
@@ -409,9 +424,11 @@ namespace FootballMatchManager.Controllers
             if (teamGame == null) { return BadRequest();}
 
             teamGame.Name = shortGame.GameName;
-            teamGame.DateTime = shortGame.GameDate;
             teamGame.Format = shortGame.GameFormat;
             teamGame.Adress = shortGame.GameAdress;
+
+            if (teamGame.DateTime != shortGame.GameDate)
+                teamGame.DateTime = shortGame.GameDate.AddHours(3);
 
             Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("editgame");
             if (constant != null)

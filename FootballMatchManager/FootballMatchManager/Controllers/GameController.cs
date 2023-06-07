@@ -220,10 +220,9 @@ namespace FootballMatchManager.Controllers
                     default: gameType = (int)GameEnum.PUBLIC; break;
                 }
 
-
                 Game game = new Game(shortGame.GameName, 
                                      shortGame.GameAdress, 
-                                     shortGame.GameDate, 
+                                     shortGame.GameDate.AddHours(3), 
                                      gameMaxPlayers, 
                                      shortGame.GameFormat, 
                                      gameType);
@@ -337,9 +336,12 @@ namespace FootballMatchManager.Controllers
             }
 
             game.Name = shortGame.GameName;
-            game.DateTime = shortGame.GameDate;
             game.Format = shortGame.GameFormat;
             game.Adress = shortGame.GameAdress;
+
+            if(game.DateTime != shortGame.GameDate)
+                game.DateTime = shortGame.GameDate.AddHours(3);
+
 
             DataBaseManager.AppDataBase.Models.Constant constant = _unitOfWork.ConstantRepository.GetConstantByName("editgame");
             if (constant != null) 
@@ -351,7 +353,7 @@ namespace FootballMatchManager.Controllers
                 for (int i = 0; i < gameUsers.Count; i++)
                 {
                     if (gameUsers[i].PkId == userId) { continue; }
-                    await _notifications.Clients.User(Convert.ToString(gameUsers[i].PkId)).SendAsync("displayNotifi", notiffiMess);
+                    await _notifications.Clients.User(Convert.ToString(gameUsers[i].PkId)).SendAsync("displayNotifiInfo", notiffiMess);
 
                     Notification notification = new Notification(gameUsers[i].PkId, constant.Type, notiffiMess, game.PkId, userId);
 

@@ -62,6 +62,15 @@ export default function EditTeamGame(props) {
 
     // ------------------------------------------------------------------------------------------ //
 
+    const filterPassedTime = (time) => {
+        const currentDate = new Date();
+        const selectedDate = new Date(time);
+    
+        return currentDate.getTime() < selectedDate.getTime();
+      };
+
+    // ------------------------------------------------------------------------------------------ //
+
     return (
         <Modal show={props.show}
             onHide={() => navigate(TO_TEAM_GAME_CARD + '/' + gameInfo.gameId)}
@@ -85,10 +94,20 @@ export default function EditTeamGame(props) {
                         </div>
                         <div className="row input-containerr">
                             <div className="m-0 p-0">Дата матча</div>
-                            <ReactDatePicker className="input-stylee"
+                            <ReactDatePicker 
+                                className="input-stylee"
                                 selected={gameInfo.gameDate}
                                 onChange={(date: Date) => { setGameInfo({ ...gameInfo, gameDate: date }) }}
+                                showTimeSelect={true}
+                                timeIntervals={15}
+                                timeFormat="HH:mm"
+                                timeCaption="Time"
+                                dateFormat="yyyy-MM-dd HH:mm"
+                                minDate={new Date()}
+                                filterTime={filterPassedTime}
                             />
+
+
                         </div>
                         <div className="row input-containerr">
                             <input className="input-stylee"

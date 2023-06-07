@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import MatchBlock from "./GameBlock";
+import "./../../../../css/Games.css";
 
 
 export default function GameGenerator(props) {

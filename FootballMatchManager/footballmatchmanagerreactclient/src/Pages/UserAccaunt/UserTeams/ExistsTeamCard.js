@@ -18,7 +18,6 @@ export default function ExistsTeamCard(props) {
     const location = useLocation();
     const { userContext } = useContext(Context);
     const [team, setTeam] = useState({});
-    //const [teamUsers, setTeamUsers] = useState([]);
     /* Является ли пользователь организатором команды */
     const [isCreat, setIsCreat] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -32,6 +31,9 @@ export default function ExistsTeamCard(props) {
     // ----------------------------------------------------------------------------------- //
 
     useEffect(() => {
+
+        console.log('EFFECT');
+
         getTeamInfo(props.teamId)
         connectToDelete();
 
@@ -58,9 +60,6 @@ export default function ExistsTeamCard(props) {
         });
 
         await hubDeleteConnection.start();
-
-        console.log('TEAMID');
-        console.log(props.teamId);
 
         hubDeleteConnection.invoke("Connect", String(props.teamId));
 
@@ -95,27 +94,58 @@ export default function ExistsTeamCard(props) {
 
     // ----------------------------------------------------------------------------------- //
 
+    function leaveTeam2()
+    {
+
+        console.log('LEAVE METHOD2')
+
+        axios.delete('http://localhost:5004/api/team/leave-from-team/' + team.pkId, { withCredentials: true })
+        .then((response) => {
+
+            console.log('RESPONSE')
+
+            toast.success(response.data.message,
+                {
+                    position: toast.POSITION.TOP_CENTER,
+                    autoClose: 2000,
+                    pauseOnFocusLoss: false
+                });
+            props.update();
+        })
+        .catch((error) => {
+            console.log('ERROR');
+
+            if (error.response) {
+
+                console.log("Ошибка выхода из команды");
+
+            }
+        });
+    }
+
     function leaveTeam() {
+
+        console.log('LEAVE METHOD')
 
         axios.delete('http://localhost:5004/api/team/leave-from-team/' + team.pkId, { withCredentials: true })
             .then((response) => {
+
+                console.log('RESPONSE')
                 toast.success(response.data.message,
                     {
                         position: toast.POSITION.TOP_CENTER,
                         autoClose: 2000,
                         pauseOnFocusLoss: false
                     });
-                //setTeamUsers(response.data.users);
-                props.update();
+                //props.update();
             })
             .catch((error) => {
+                console.log('ERROR');
+
                 if (error.response) {
-                    toast.error(error.response.data.message,
-                        {
-                            position: toast.POSITION.TOP_CENTER,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
+
+                    console.log("Ошибка выхода из команды");
+
                 }
             });
     }
@@ -221,7 +251,7 @@ export default function ExistsTeamCard(props) {
                                         />
                                             : <TeamParticipantButtons
                                                 isPart={true}
-                                                leaveTeam={leaveTeam}
+                                                leaveTeam={leaveTeam2}
                                             />}
                                     </div>
                                 </div>

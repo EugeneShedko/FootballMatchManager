@@ -33,7 +33,7 @@ export default function ParticipanButtons(props) {
 
     function selectButtons(gameStatus) {
         switch (gameStatus) {
-            case 0: return <JoinButton />;
+            case 0: return !props.isPart ? <JoinButton /> : <></>;
             case 1: return props.secTeamCreatorId === userContext.userId ? <LeavButton /> : null;
             case 2: return <></>;
             case 3: return <></>;

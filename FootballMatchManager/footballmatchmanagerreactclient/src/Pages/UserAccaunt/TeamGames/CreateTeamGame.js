@@ -143,6 +143,15 @@ export default function CreateTeamGame(props) {
 
     // ------------------------------------------------------------------------------------------ //
 
+    const filterPassedTime = (time) => {
+        const currentDate = new Date();
+        const selectedDate = new Date(time);
+    
+        return currentDate.getTime() < selectedDate.getTime();
+      };
+
+    // ------------------------------------------------------------------------------------------ //
+
     return (
         <Modal show={props.show}
             onHide={() => navigate(TO_TEAM_GAMES)}
@@ -169,10 +178,16 @@ export default function CreateTeamGame(props) {
                             <div className="row m-0 p-0">Дата матча</div>
                             <ReactDatePicker
                                 className="input-stylee"
-                                type="text"
                                 selected={matchState.gameDate}
                                 placeholder="Введите дату матча"
                                 onChange={(date: Date) => { setMatchState({ ...matchState, gameDate: date }) }}
+                                showTimeSelect={true}
+                                timeIntervals={15}
+                                timeFormat="HH:mm"
+                                timeCaption="Time"
+                                dateFormat="yyyy-MM-dd HH:mm"
+                                minDate={new Date()}
+                                filterTime={filterPassedTime}
                             />
                         </div>
                         <div className="row input-containerr">

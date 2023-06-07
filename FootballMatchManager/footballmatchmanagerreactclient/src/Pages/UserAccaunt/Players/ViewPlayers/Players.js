@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import PlayerGenerator from "./PlayerGenerator";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 
 import "./../../../../css/PlayersPage.css";
@@ -16,7 +15,6 @@ export default function Players() {
     const [players, setPlayers] = useState([]);
     const [searchString, setSearchString] = useState("");
     /* Статусы пользователья */
-    /* Там скорее всего строк получается */
     const [currentPlayersStatus, setCurrentPlayersStatus] = useState('active');
 
     // ------------------------------------------------------------------------------------------- //

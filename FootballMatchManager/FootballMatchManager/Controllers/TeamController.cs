@@ -371,18 +371,8 @@ namespace FootballMatchManager.Controllers
                     team.MemberQnt = team.MemberQnt - 1;
                 }
                 _unitOfWork.Save();
-
-                /* Получаем обновленный список пользователей команды */
-                List<ApUser> teamUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamId);
-
-                if (teamUsers == null)
-                {
-                    return Ok(new { message = "Вы покинули команду"});
-                }
-                else
-                {
-                    return Ok(new { message = "Вы покинули команду", users = teamUsers, });
-                }
+                
+                return Ok(new { message = "Вы покинули команду"});
             }
             catch (Exception ex)
             {
@@ -456,12 +446,14 @@ namespace FootballMatchManager.Controllers
 
                 if(notifiConstant != null)
                 {
-                    string notiffiMess = notifiConstant.StrValue.Replace("{game}", team.Name);
+                    string notiffiMess = notifiConstant.StrValue.Replace("{team}", team.Name);
                     _notifications.Clients.User(Convert.ToString(deleteUserId)).SendAsync("displayNotifiError", notiffiMess);
 
                     Notification notification = new Notification(deleteUserId, notifiConstant.Type, notiffiMess, team.PkId, deletingUserId);
                     _unitOfWork.NotificationRepository.AddElement(notification);
                 }
+
+                _unitOfWork.Save();
 
                 _teamHub.Clients.User(Convert.ToString(deleteUserId)).SendAsync("refreshteamcard");
 

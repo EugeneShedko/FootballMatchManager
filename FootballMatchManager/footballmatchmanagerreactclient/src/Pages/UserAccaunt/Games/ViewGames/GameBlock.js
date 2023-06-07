@@ -1,8 +1,4 @@
-/*Нужно чтобы страница матча и турнира отображалась корректно на главной страница
-  и на странице в профиле пользователя, так как контейнеры имеют разные размеры*/
-import { useState } from "react";
 import "./../../../../css/Game.css";
-import GameInfoCard from "../ViewGameCard/GameInfoCard";
 import { useNavigate } from "react-router-dom";
 import { TO_GAME_CARD } from "../../../../Utilts/Consts";
 

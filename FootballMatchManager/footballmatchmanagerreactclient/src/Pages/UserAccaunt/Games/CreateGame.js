@@ -5,8 +5,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Context } from "../../../index";
 import { useLocation, useNavigate } from "react-router-dom";
-import DateTime from 'react-datetime';
-//import 'react-datetime/css/react-datetime.css';
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./../../../css/CreateGame.css"
@@ -112,7 +110,6 @@ export default function CreateMatch(props) {
     // ------------------------------------------------------------------------------------------ //
 
     function gameAdressHandler(e) {
-        console.log("adress");
         setMatchState({ ...matchState, gameAdress: e.target.value })
         if (e.target.value !== '') {
             setInputError({ ...inputError, gameAdressError: "" })
@@ -135,8 +132,6 @@ export default function CreateMatch(props) {
             GameType: matchState.gameType
         }
 
-        console.log('MATCHINFO');
-        console.log(match);
 
         axios.post('http://localhost:5004/api/profile/create-game', match, { withCredentials: true })
             .then((response) => {
@@ -165,10 +160,25 @@ export default function CreateMatch(props) {
     const filterPassedTime = (time) => {
         const currentDate = new Date();
         const selectedDate = new Date(time);
-    
-        return currentDate.getTime() < selectedDate.getTime();
-      };
 
+        return currentDate.getTime() < selectedDate.getTime();
+    };
+
+    // ------------------------------------------------------------------------------------------ //
+
+    axios.get('https://overpass-api.de/api/interpreter', {
+        params: {
+            data: '[out:json];area["ISO3166-1"="BY"]->.a;(node(area.a)["place"="city"];);out body;'
+        }
+    })
+        .then(response => {
+            const cities = response.data.elements.map(city => city.tags.name);
+            console.log(cities);
+        })
+        .catch(error => {
+            console.error('Ошибка при получении списка городов:', error);
+        });    
+        
     // ------------------------------------------------------------------------------------------ //
 
     return (
@@ -197,19 +207,9 @@ export default function CreateMatch(props) {
                             <div className="row m-0 p-0">
                                 Дата матча
                             </div>
-                            {/*
-                            <DateTime className="datetime-picker"
-                                dateFormat="YYYY-MM-DD" 
-                                timeFormat="HH:mm:ss"
-                                onChange={dateTimeHandler}
-                                minDate={new Date().getDate() - 1}
-                            />
-                            */}
                             <ReactDatePicker
                                 className="input-stylee"
-                                //type="text"
                                 selected={matchState.gameDate}
-                                //selected={new Date()}
                                 placeholder="Введите дату матча"
                                 onChange={(date: Date) => { setMatchState({ ...matchState, gameDate: date }) }}
                                 showTimeSelect={true}

@@ -84,7 +84,7 @@ export default function FRegistrationform(props) {
    }
 
    return (
-      <div className="row justify-content-center h-100 m-0">
+      <div className="row main-login-container">
          <div className={loginContainerStyle}>
             <div className="row justify-content-end">
                <img id="closeicon" src="/image/closecross.png" alt="" onClick={closeLoginForm} />

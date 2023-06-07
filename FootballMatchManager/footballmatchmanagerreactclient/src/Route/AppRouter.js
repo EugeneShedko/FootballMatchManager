@@ -47,9 +47,10 @@ const AppRouter = observer(() => {
     return (
         <div className="h-100 w-100">
             <Routes>
-                <Route path="/" element={<ContentContainer />} />
-                <Route path="/login" element={<Loginform />} />
-                <Route path="/registration" element={<FRegistrationform />} />
+                <Route path="/" element={<ContentContainer />}>
+                    <Route path="/login" element={<Loginform />} />
+                    <Route path="/registration" element={<FRegistrationform />} />
+                </Route>                
                 {userContext.isAuth ?
                     <Route path="/accaunt" element={<UserProfile />}>
                         <Route index element={<Matches />} />
@@ -75,8 +76,8 @@ const AppRouter = observer(() => {
 
                         <Route path="players" element={<Players />} />
                         <Route path="playercard/:id" element={<Profile />}>
-                            <Route path="editprofile" element={<EditProfile    show={true} />} />
-                            <Route path="complain"    element={<ComplainWindow show={true}/>} />
+                            <Route path="editprofile" element={<EditProfile show={true} />} />
+                            <Route path="complain" element={<ComplainWindow show={true} />} />
                         </Route>
                         <Route path="playercard/:id/games" element={<UserMatchesNavigator />} >
                             <Route index element={<UserMatchesPr />} />

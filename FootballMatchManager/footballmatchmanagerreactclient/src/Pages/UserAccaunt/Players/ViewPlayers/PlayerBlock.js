@@ -14,22 +14,17 @@ export default function PlayerBlock(props) {
     /* Отображаени кнопки удаления пользователя из матча */
     const [isDisplayDelButton, setIsDisplayDelButton] = useState(
         useLocation().pathname.includes(TO_GAME_CARD)
-        /* Не карточка приглашения */
-        && isInvite === false
-        /* Является организатором матча */
-        &&
-        (props.isCreat === true || userContext.isAdmin === true)
-        /* Блок пользователя не блок организатора матча */
-        && props.gameCreatroId !== props.info.pkId
-        ? true : false);
+            /* Не карточка приглашения */
+            && isInvite === false
+            /* Является организатором матча */
+            &&
+            (props.isCreat === true || userContext.isAdmin === true)
+            /* Блок пользователя не блок организатора матча */
+            && props.gameCreatroId !== props.info.pkId
+            ? true : false);
     /* Отображение кнопки удаления пользователя из команды */
     /* Пока что такое отображение */
     const [locatinPath, setLocationPath] = useState(useLocation().pathname);
-    const [isDisplayDelTeamButton, setIsDisplayDelTeamButton] = useState(
-        (locatinPath.includes(TO_USER_TEAMS) || locatinPath.includes(TO_TEAM_CARD))
-            && (props.isCreat === true || userContext.isAdmin === true)
-            /* Здесь нужно айди организатора команды !!! */
-            && props.teamCreatorId !== props.info.pkId ? true : false);
 
     // ----------------------------------------------------------------------------- //
 
@@ -37,6 +32,28 @@ export default function PlayerBlock(props) {
 
         if (event.target.name !== 'invitebutton')
             navigate(TO_PLAYER_CARD + '/' + props.info.pkId);
+    }
+
+    // ----------------------------------------------------------------------------- //
+
+    function GetDelTeamButton() {
+        const isDisplay = (locatinPath.includes(TO_USER_TEAMS) || locatinPath.includes(TO_TEAM_CARD))
+            && (props.isCreat === true || userContext.isAdmin === true)
+            /* Здесь нужно айди организатора команды !!! */
+            && props.teamCreatorId !== props.info.pkId ? true : false;
+
+        if (!isDisplay) return <></>
+
+        return (
+            <div className="row m-0 p-0">
+                <input name="invitebutton"
+                    className="delete-user-button"
+                    type="button"
+                    value="Удалить"
+                    onClick={() => props.deleteUserTeam(props.info.pkId)}
+                />
+            </div>
+        );
     }
 
     // ----------------------------------------------------------------------------- //
@@ -97,19 +114,7 @@ export default function PlayerBlock(props) {
                     </div>
                     : null
             }
-            {/* Кнопка удаления пользователя из команды */}
-            {
-                isDisplayDelTeamButton ?
-                    <div className="row m-0 p-0">
-                        <input name="invitebutton"
-                            className="delete-user-button"
-                            type="button"
-                            value="Удалить"
-                            onClick={() => props.deleteUserTeam(props.info.pkId)}
-                        />
-                    </div>
-                    : null
-            }
+            {GetDelTeamButton()}
         </div>
     );
 }

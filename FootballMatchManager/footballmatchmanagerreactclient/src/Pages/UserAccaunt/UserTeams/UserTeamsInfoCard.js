@@ -8,8 +8,6 @@ import NoExistTeamCard from "./NoExistTeamCard";
 import { useLocalObservable } from "mobx-react-lite";
 import { useLocation } from "react-router-dom";
 
-/* Можно было бы функции вынести просто в отдельный файл, вид карточки один */
-/* А у меня получилось два компонента для этого */
 
 export default function UserTeamsInfoCard() {
 
@@ -53,6 +51,7 @@ export default function UserTeamsInfoCard() {
 
     function updateCard()
     {
+        console.log('UPDATE METHOD')
         setReloadTeams(true);
     }
 

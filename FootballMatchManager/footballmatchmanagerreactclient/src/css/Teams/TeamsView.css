@@ -32,7 +32,7 @@
     margin: 0% 0% 4% 0%;
 }
 
-.mpinfo-block
+.tpinfo-block
 {
     margin: 0% 0% 2% 0%;
     padding:0;
@@ -40,13 +40,13 @@
     height: 20vh;
 }
 
-.mpinfo-block:hover
+.tpinfo-block:hover
 {
     margin: -1% 0% 1.5% 0%;
     cursor: pointer;
 }
 
-.mpinfo-block-no-hover
+.tpinfo-block-no-hover
 {
     margin: 0% 0% 2% 0%;
     padding:0;
