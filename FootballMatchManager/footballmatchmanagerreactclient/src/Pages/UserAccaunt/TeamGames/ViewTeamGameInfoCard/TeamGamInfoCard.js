@@ -300,7 +300,7 @@ export default function TeamGameCard() {
                                         {game.secondTeam.name}
                                     </div>
                                     <div className="row m-0 p-0">
-                                        <img className="team-image"
+                                        <img className="team-image-default"
                                             src={"http://localhost:5004/" + game.secondTeam.image}
                                             alt=""
                                         />

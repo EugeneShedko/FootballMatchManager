@@ -68,10 +68,15 @@
     font-weight: bold;
 }
 
-.team-image {
+.team-image-default {
     width: 150px;
     height: 150px;
     filter: invert(100%);
+}
+
+.team-image {
+    width: 150px;
+    height: 150px;
 }
 
 .team-user-container {
