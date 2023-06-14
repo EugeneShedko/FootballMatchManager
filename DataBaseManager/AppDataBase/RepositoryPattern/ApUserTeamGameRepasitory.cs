@@ -66,21 +66,31 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------ //
 
-        /* Возвращает запись организатора командного матча по идентификатору командного матча */
+        /// <summary>
+        /// Возвращает запись организатора командного матча
+        /// </summary>
+        /// <param name="teamGameId">Идентификатор командного матча</param>
+        /// <returns></returns>
         public ApUserTeamGame GetTeamGameCreatorRecord(int teamGameId)
         {
-            return GetItems().FirstOrDefault(aputg => aputg.PkFkTeamGameId == teamGameId
+            return _dbcontext.ApUserTeamGames.FirstOrDefault(aputg => aputg.PkFkTeamGameId == teamGameId
                                                    && aputg.PkFkUserType == (int)ApUserGameTypeEnum.CREATOR);
         }
 
         // ------------------------------------------------------------ //
 
-        /* Возвращает запись участника командного матча по его айди и айди матча */
+        /// <summary>
+        /// Возвращает запись участника командного матча
+        /// </summary>
+        /// <param name="teamGameId">Айди матча</param>
+        /// <param name="userId">Айди пользователя</param>
+        /// <returns></returns>
         public ApUserTeamGame GetTeamGameParticiapnt(int teamGameId, int userId)
         {
-            return GetItems().FirstOrDefault(aputg => aputg.PkFkTeamGameId == teamGameId
-                                                   && aputg.PkFkUserId == userId
-                                                   && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT);
+
+            return _dbcontext.ApUserTeamGames.FirstOrDefault(aputg => aputg.PkFkTeamGameId == teamGameId
+                                       && aputg.PkFkUserId == userId
+                                       && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT);
         }
 
         /// <summary>
@@ -90,10 +100,10 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<TeamGame> GetPartUserTeamGames(int userId)
         {
-            return GetItems2().Where(aputg => aputg.PkFkUserId == userId
-                                          && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT)
-                             .Select(aputg => aputg.TeamGame)
-                             .ToList();
+            return _dbcontext.ApUserTeamGames.Where(aputg => aputg.PkFkUserId == userId
+                                                          && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT)
+                                             .Select(aputg => aputg.TeamGame)
+                                             .ToList();
         }
 
         /// <summary>
@@ -106,27 +116,42 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         {
 
             if ((teamGameStatus == (int)TeamGameStatus.WAIT) || (teamGameStatus == (int)TeamGameStatus.SEARCH))
-                return GetItems2().Where(aputg => aputg.PkFkUserId == userId
-                                               && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT
-                                               && aputg.TeamGame.Status == teamGameStatus)
-                              .OrderBy(aputg => aputg.TeamGame.DateTime)
-                              .Select(aputg => aputg.TeamGame)
-                              .ToList();
+                return _dbcontext.ApUserTeamGames.Include(up => up.ApUser)
+                                                 .Include(up => up.TeamGame)
+                                                    .ThenInclude(t => t.FirstTeam)
+                                                 .Include(up => up.TeamGame)
+                                                    .ThenInclude(t => t.SecondTeam)
+                                                .Where(aputg => aputg.PkFkUserId == userId
+                                                             && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT
+                                                             && aputg.TeamGame.Status == teamGameStatus)
+                                                .OrderBy(aputg => aputg.TeamGame.DateTime)
+                                                .Select(aputg => aputg.TeamGame)
+                                                .ToList();
 
             if ((teamGameStatus == (int)TeamGameStatus.COMPLETED) || (teamGameStatus == (int)TeamGameStatus.FINISHED))
-                return GetItems2().Where(aputg => aputg.PkFkUserId == userId
-                                               && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT
-                                               && aputg.TeamGame.Status == teamGameStatus)
-                              .OrderByDescending(aputg => aputg.TeamGame.DateTime)
-                              .Select(aputg => aputg.TeamGame)
-                              .ToList();
+                return _dbcontext.ApUserTeamGames.Include(up => up.ApUser)
+                                                 .Include(up => up.TeamGame)
+                                                    .ThenInclude(t => t.FirstTeam)
+                                                 .Include(up => up.TeamGame)
+                                                    .ThenInclude(t => t.SecondTeam)
+                                                 .Where(aputg => aputg.PkFkUserId == userId
+                                                              && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT
+                                                              && aputg.TeamGame.Status == teamGameStatus)
+                                                 .OrderByDescending(aputg => aputg.TeamGame.DateTime)
+                                                 .Select(aputg => aputg.TeamGame)
+                                                 .ToList();
 
-            return GetItems2().Where(aputg => aputg.PkFkUserId == userId
-                                          && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT
-                                          && aputg.TeamGame.Status == teamGameStatus)
-              .OrderBy(aputg => aputg.TeamGame.DateTime)
-              .Select(aputg => aputg.TeamGame)
-              .ToList();
+            return _dbcontext.ApUserTeamGames.Include(up => up.ApUser)
+                                             .Include(up => up.TeamGame)
+                                                .ThenInclude(t => t.FirstTeam)
+                                             .Include(up => up.TeamGame)
+                                                .ThenInclude(t => t.SecondTeam)
+                                             .Where(aputg => aputg.PkFkUserId == userId
+                                                          && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT
+                                                          && aputg.TeamGame.Status == teamGameStatus)
+                                             .OrderBy(aputg => aputg.TeamGame.DateTime)
+                                             .Select(aputg => aputg.TeamGame)
+                                             .ToList();
         }
 
         /// <summary>
@@ -137,9 +162,9 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
 
         public List<TeamGame> GetCreatUserTeamGames(int userId)
         {
-            return GetItems2().Where(aputg => aputg.PkFkUserId == userId
-                                           && aputg.PkFkUserType == (int)ApUserGameTypeEnum.CREATOR)
-                             .Select(aputg => aputg.TeamGame).ToList();
+            return _dbcontext.ApUserTeamGames.Where(aputg => aputg.PkFkUserId == userId
+                                                          && aputg.PkFkUserType == (int)ApUserGameTypeEnum.CREATOR)
+                                             .Select(aputg => aputg.TeamGame).ToList();
         }
 
         /// <summary>
@@ -150,10 +175,11 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
 
         public List<ApUser> GetTeamGameParticipants(int teamGameId)
         {
-            return GetItems().Where(aputg => aputg.PkFkTeamGameId == teamGameId
-                                   && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT)
-                      .Select(aputg => aputg.ApUser)
-                      .ToList();
+
+            return _dbcontext.ApUserTeamGames.Where(aputg => aputg.PkFkTeamGameId == teamGameId
+                                                          && aputg.PkFkUserType == (int)ApUserGameTypeEnum.PARTICIPANT)
+                                             .Select(aputg => aputg.ApUser)
+                                             .ToList();
         }
 
         // ------------------------------------------------------------ //

@@ -60,11 +60,10 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<ApUser> GetGameUsers(int gameid)
         {
-            return GetItems().Where(apug => apug.PkFkGameId == gameid
-                                         && apug.PkUserType == "participant")
-                             .Select(apug => apug.ApUser)
-                             .ToList();
-
+            return _dbcontext.ApUsersGames.Where(apug => apug.PkFkGameId == gameid
+                                                      && apug.PkUserType == "participant")
+                                          .Select(apug => apug.ApUser)
+                                          .ToList();
         }
 
         /// <summary>
@@ -73,13 +72,14 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <param name="gameId">Айди матча</param>
         /// <param name="userId">Айди пользователя</param>
         /// <returns></returns>
-
         public ApUserGame GetGameParticipant(int gameId, int userId)
         {
-            return GetItems().FirstOrDefault(apug => apug.PkFkGameId == gameId
-                                                  && apug.PkFkUserId == userId
-                                                  && apug.PkUserType == "participant");
+            return _dbcontext.ApUsersGames.FirstOrDefault(apug => apug.PkFkGameId == gameId
+                                                               && apug.PkFkUserId == userId
+                                                               && apug.PkUserType == "participant");
         }
+
+
         /// <summary>
         /// Возвращает список матчей в которых пользователь является участником
         /// </summary>
@@ -87,11 +87,13 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<Game> GetUserPartGame(int userId)
         {
-            return GetItems().Where(ap => ap.PkFkUserId == userId
-                                       && ap.PkUserType == ApUserGameType.Partisipant)
-                             .Select(ap => ap.Game)
-                             .ToList();
+            return _dbcontext.ApUsersGames.Where(ap => ap.PkFkUserId == userId
+                                                    && ap.PkUserType == ApUserGameType.Partisipant)
+                                          .Select(ap => ap.Game)
+                                          .ToList();
         }
+
+        /* Не уверен, что хорошо поменял данный метод */
 
         /// <summary>
         /// Возвращает список матчей в которых пользователь является участником в определенном статусе матча
@@ -103,15 +105,15 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         public List<Game> GetUserPartGameByGameStatus(int userId, int status)
         {
             if (status == (int)TeamGameStatus.WAIT)
-                return GetItems().Where(apug => apug.PkFkUserId == userId
+                return _dbcontext.ApUsersGames.Where(apug => apug.PkFkUserId == userId
                                          && apug.PkUserType == ApUserGameType.Partisipant
                                          && apug.Game.Status == status)
                               .OrderBy(apug => apug.Game.DateTime)
                               .Select(apug => apug.Game)
                               .ToList();
-            
+
             if (status == (int)TeamGameStatus.COMPLETED)
-                return GetItems().Where(apug => apug.PkFkUserId == userId
+                return _dbcontext.ApUsersGames.Where(apug => apug.PkFkUserId == userId
                                          && apug.PkUserType == ApUserGameType.Partisipant
                                          && apug.Game.Status == status)
                               .OrderByDescending(apug => apug.Game.DateTime)
@@ -119,19 +121,18 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
                               .ToList();
 
             if (status == (int)TeamGameStatus.FINISHED)
-                return GetItems().Where(apug => apug.PkFkUserId == userId
+                return _dbcontext.ApUsersGames.Where(apug => apug.PkFkUserId == userId
                                              && apug.PkUserType == ApUserGameType.Partisipant
                                              && apug.Game.Status == status)
                                  .OrderByDescending(apug => apug.Game.DateTime)
                                  .Select(apug => apug.Game)
                                  .ToList();
 
-            return GetItems().Where(apug => apug.PkFkUserId == userId
+            return _dbcontext.ApUsersGames.Where(apug => apug.PkFkUserId == userId
                                          && apug.PkUserType == ApUserGameType.Partisipant
                                          && apug.Game.Status == status)
                              .Select(apug => apug.Game)
                              .ToList();
-
 
         }
 
@@ -142,8 +143,8 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public ApUserGame GetGameCreator(int gameId)
         {
-            return GetItems().FirstOrDefault(apug => apug.PkFkGameId == gameId
-                                                  && apug.PkUserType == ApUserGameType.Creator);
+            return _dbcontext.ApUsersGames.FirstOrDefault(apug => apug.PkFkGameId == gameId
+                                                               && apug.PkUserType == ApUserGameType.Creator);
         }
 
     }

@@ -46,7 +46,7 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
             _dbcontext.Entry(item).State = EntityState.Modified;
         }
 
-
+        /* Этот метод не используется */
         /// <summary>
         /// Возвращает список всех командных матчей
         /// </summary>
@@ -61,17 +61,29 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// </summary>
         /// <param name="status"></param>
         /// <returns></returns>
-
         public List<TeamGame> GetTeamGamesByStatus(int status)
         {
-            return GetItems().Where(tg => tg.Status == status)
-                             .OrderByDescending(tg => tg.DateTime)
-                             .ToList();
+            return _dbcontext.TeamsGames.Include(t => t.FirstTeam)
+                                        .Include(t => t.SecondTeam)
+                                        .Where(tg => tg.Status == status)
+                                        .OrderByDescending(tg => tg.DateTime)
+                                        .ToList();
         }
 
-        // ---------------------------------------------------------- //
+        /// <summary>
+        /// Возврщает список матчей статус которых менее определенного
+        /// </summary>
+        /// <param name="status">Статус матча</param>
+        /// <returns></returns>
+        public List<TeamGame> GetTeamGamesLessStatus(int status)
+        {
+            return _dbcontext.TeamsGames.Include(t => t.FirstTeam)
+                                        .Include(t => t.SecondTeam)
+                                        .Where(tg => tg.Status <= status)
+                                        .OrderByDescending(tg => tg.DateTime)
+                                        .ToList();
 
-        /* Пока что удаляю не со всех матчей */
+        }
 
         /// <summary>
         /// Возвращает список командных матчей в определенном статусе(и менее), в которых команда является организатором
@@ -81,9 +93,9 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<TeamGame> GetMatchesByCreatorTeam(int teamId, int teamGameStatus)
         {
-            return GetItems().Where(tg => tg.FkFirstTeamId == teamId
-                                       && tg.Status <= teamGameStatus)
-                             .ToList();
+            return _dbcontext.TeamsGames.Where(tg => tg.FkFirstTeamId == teamId
+                                                  && tg.Status <= teamGameStatus)
+                                        .ToList();
         }
 
         /// <summary>
@@ -94,9 +106,9 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<TeamGame> GetMatchesByParticipantTeam(int teamId, int teamGameStatus)
         {
-            return GetItems().Where(tg => tg.FkSecondTeamId == teamId
-                                       && tg.Status <= teamGameStatus)
-                             .ToList();
+            return _dbcontext.TeamsGames.Where(tg => tg.FkSecondTeamId == teamId
+                                                  && tg.Status <= teamGameStatus)
+                                        .ToList();
         }
 
     }

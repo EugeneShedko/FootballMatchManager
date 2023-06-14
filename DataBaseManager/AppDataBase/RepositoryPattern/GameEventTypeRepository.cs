@@ -49,13 +49,14 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
 
         // ---------------------------------------------------------- //
 
-        //Возвращет тип события матча по его наименованию
-
+        /// <summary>
+        /// Возвращает тип события по его наименованию
+        /// </summary>
+        /// <param name="typeName">Наименование события</param>
+        /// <returns></returns>
         public GameEventType GetGameEventTypeByName(string typeName)
         {
-            /* Продолжить здесь */
-            return GetItems().FirstOrDefault(ge => ge.EventTypeId == typeName);
+            return _dbcontext.GameEventTypes.FirstOrDefault(ge => ge.EventTypeId == typeName);
         }
-
     }
 }

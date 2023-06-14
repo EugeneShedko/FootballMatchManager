@@ -85,10 +85,7 @@ namespace FootballMatchManager.Controllers
             }
             
             if (apUserGamePt != null) 
-            {
                 isParticipant = true;
-            }
-
 
             return Ok(new { currgame = game, 
                             isPart = isParticipant, 
@@ -456,7 +453,7 @@ namespace FootballMatchManager.Controllers
                 }
 
                 _unitOfWork.Save();
-                return Ok();
+                return Ok(new {message = "Матч успешно удален!"});
 
             }
             catch (Exception ex)

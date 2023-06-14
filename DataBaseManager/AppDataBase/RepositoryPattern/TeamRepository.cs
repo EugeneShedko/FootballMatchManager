@@ -51,21 +51,23 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<Team> GetAllTeams()
         {
-            List<Team> teams = GetItems().Where(t => t.Status == (int)TeamStatus.ACTIVE).ToList();
-            /* Очень хреново, что здесь удаляю по айди, пока что так */
+            List<Team> teams = _dbcontext.Teams.Where(t => t.Status == (int)TeamStatus.ACTIVE)
+                                               .ToList();
+
             teams?.RemoveAll(team => team.PkId == 1);
             return teams;
         }
          
-        // -------------------------------------------------------------- //
-
+        /// <summary>
+        /// Возвращает команду по наименованию команды
+        /// </summary>
+        /// <param name="name">Наименование команды</param>
+        /// <returns></returns>
         public Team GetTeamByName(string name)
         {
-            return GetItems().FirstOrDefault(t => t.Name == name
-                                               && t.Status == (int)TeamStatus.ACTIVE);
+            return _dbcontext.Teams.FirstOrDefault(t => t.Name == name
+                                                     && t.Status == (int)TeamStatus.ACTIVE);
         }
-
-        // -------------------------------------------------------------- //
 
         /// <summary>
         /// Возвращает список команд у которых количество участников больше определенного значени
@@ -74,9 +76,9 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<Team> GetTeamsByPlayerCount(int playerCount)
         {
-            return GetItems().Where(t => t.MemberQnt >= playerCount
-                                      && t.Status == (int)TeamStatus.ACTIVE)
-                             .ToList();
+            return _dbcontext.Teams.Where(t => t.MemberQnt >= playerCount
+                                            && t.Status == (int)TeamStatus.ACTIVE)
+                                   .ToList();
         }
     }
 }

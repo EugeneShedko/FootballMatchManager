@@ -155,7 +155,7 @@ namespace FootballMatchManager.Controllers
                 /* Получаю командную игру */
                 TeamGame teamGame = _unitOfWork.TeamGameRepasitory.GetItem(teamGameId);
                 if (teamGame == null)
-                    return BadRequest();
+                    return BadRequest(new {log = "Командный матч не найден"});
 
                 /* Проверка на завершенность матча */
                 if(teamGame.Status < (int)TeamGameStatus.FINISHED && teamGame.DateTime < DateTime.Now)
@@ -172,14 +172,14 @@ namespace FootballMatchManager.Controllers
 
                 /* Получаю организатора командной игры */
                 ApUserTeamGame gameCratetor = _unitOfWork.ApUserTeamGameRepasitory.GetTeamGameCreatorRecord(teamGame.PkId);
-                if (gameCratetor == null) { return BadRequest(); }
+                if (gameCratetor == null) { return BadRequest(new {log = "Организатор командного матча не найден"}); }
 
                 /* Можно было бы вычитывать айди в переменную */
                 if (teamGame.Status == (int)TeamGameStatus.WAIT)
                 {
                     /* Нужно найти организатора второй команды */
                     ApUserTeam secTeamCreator = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamGame.SecondTeam.PkId);
-                    if (secTeamCreator == null) { return BadRequest(); }
+                    if (secTeamCreator == null) { return BadRequest(new {log = "Организатор второй команды не найден"}); }
 
                     return Ok(new
                     {
@@ -245,10 +245,11 @@ namespace FootballMatchManager.Controllers
 
                 /* Получаю список команд, у которых пользователей достаточное количество для участия в матче */
                 List<Team> inviteTeams = _unitOfWork.TeamRepository.GetTeamsByPlayerCount(minMembers);
-                
-                inviteTeams.RemoveAll(team => team.PkId == teamGame.FkFirstTeamId);
+
 
                 /* Удаляю команду организатора матча из списка команд на приглашение */
+                inviteTeams.RemoveAll(team => team.PkId == teamGame.FkFirstTeamId);
+
                 return Ok(inviteTeams);
 
             }
@@ -376,9 +377,7 @@ namespace FootballMatchManager.Controllers
                 if (teamCreator == null) { return BadRequest(); }
 
                 if (teamCreator.MemberQnt < minMembers)
-                {
                     return BadRequest(new { message = "Недостаточное количество участников в команде для присоединения к матче" });
-                }
 
                 /* Добавляю команду к матчу */
                 teamGame.FkSecondTeamId = teamCreator.PkId;
@@ -500,7 +499,7 @@ namespace FootballMatchManager.Controllers
                 teamGame.Status = (int)TeamGameStatus.SEARCH;
                 _unitOfWork.Save();
 
-                return Ok(new { message = "Ваша команда покинула матча" });
+                return Ok(new { message = "Ваша команда покинула матч" });
             }
             catch
             {

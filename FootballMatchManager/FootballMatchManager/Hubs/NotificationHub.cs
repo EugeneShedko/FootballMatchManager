@@ -189,7 +189,7 @@ namespace FootballMatchManager.Hubs
                 }
 
                 /* Получаем создателя матча */
-                ApUserTeam apUserTeam = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId);
+                ApUserTeam apUserTeam = _unitOfWork.ApUserTeamRepository.GetTeamCreatorWithTeam(teamId);
 
                 if (apUserTeam == null) { return; }
 
@@ -316,8 +316,10 @@ namespace FootballMatchManager.Hubs
                 int userIdSender;
 
                 if (Context.User == null) { return; }
-
                 userIdSender = int.Parse(Context.User.Identity.Name);
+
+                TeamGame teamGame = _unitOfWork.TeamGameRepasitory.GetItem(teamGameId);
+                if(teamGame == null) { return; }
 
                 /* Получаем запись организатора командного матча */
                 ApUserTeamGame userCreatRec = _unitOfWork.ApUserTeamGameRepasitory.GetTeamGameCreatorRecord(teamGameId);
@@ -334,13 +336,12 @@ namespace FootballMatchManager.Hubs
 
                 if (senderTeamCreat == null)
                 {
-                    /* !!!!! Потом добавить данную константу в таблицу Constant */
                     await Clients.User(Convert.ToString(userIdSender))?.SendAsync("displayNotifiError", "Вы не может отправить запрос на присоединение к командной игре, так как не являетесь организатором команды");
                     return;
                 }
 
                 /* Получаю минимальное количество участников в матче */
-                int minMembers = int.Parse(userCreatRec.TeamGame.Format.Substring(0, 1));
+                int minMembers = int.Parse(teamGame.Format.Substring(0, 1));
 
                 if(senderTeamCreat.MemberQnt < minMembers)
                 {
@@ -367,9 +368,7 @@ namespace FootballMatchManager.Hubs
                 Constant sendReq = _unitOfWork.ConstantRepository.GetConstantByName("teamgamereqsend");
 
                 if(sendReq != null)
-                {
                     await Clients.User(Convert.ToString(userIdSender))?.SendAsync("displayNotifi", sendReq.StrValue);
-                }
 
             }
             catch(Exception ex)
@@ -469,7 +468,7 @@ namespace FootballMatchManager.Hubs
             }
             catch (Exception ex)
             {
-
+                return;
             }
         }
         public async Task LeavFromTeamGame(int teamGameId)

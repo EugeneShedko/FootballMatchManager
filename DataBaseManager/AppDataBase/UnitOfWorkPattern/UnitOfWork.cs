@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataBaseManager.AppDataBase.UnitOfWorkPattern
 {
-    public class UnitOfWork
+    public class UnitOfWork : IDisposable
     {
         private AppDBContext _dbcontext;
         private ApUserGameRepository _apUserGameRepository;
@@ -166,6 +166,10 @@ namespace DataBaseManager.AppDataBase.UnitOfWorkPattern
         public void Save()
         {
             _dbcontext.SaveChanges();
+        }
+        public void Dispose()
+        {
+            _dbcontext.Dispose();
         }
     }
 }

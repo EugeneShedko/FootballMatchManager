@@ -209,14 +209,7 @@ namespace FootballMatchManager.Controllers
         {
             List<ApUser> teamUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamId);
 
-            if (teamUsers.Count == 0)
-            {
-               return Ok();
-            }
-            else
-            {
-                return Ok(teamUsers);
-            }
+            return Ok(teamUsers);
         }
 
         // ------------------------------------------------------------------------------------------------------ //
@@ -243,9 +236,7 @@ namespace FootballMatchManager.Controllers
                 ApUserTeam apUserTeamEx = _unitOfWork.ApUserTeamRepository.GetTeamParticipant(teamId, userId);
 
                 if (apUserTeamEx != null)
-                {
                     return BadRequest();
-                }
 
                 ApUserTeam apUserTeam = new ApUserTeam(teamId, userId, (int)ApUserTeamEnum.PARTICIPANT);
 
@@ -253,16 +244,7 @@ namespace FootballMatchManager.Controllers
                 team.MemberQnt = team.MemberQnt + 1;
                 _unitOfWork.Save();
 
-                List<ApUser> apUsers = _unitOfWork.ApUserTeamRepository.GetTeamParticipants(teamId);
-
-                if (apUsers.Count == 0)
-                {
-                    return Ok(new { message = "Вы присоеденились к команде", currteam = team });
-                }
-                else
-                {
-                    return Ok(new { message = "Вы присоеденились к команде", users = apUsers, currteam = team });
-                }
+                return Ok(new { message = "Вы присоеденились к команде", currteam = team });
 
             }
             catch (Exception ex) 
@@ -335,9 +317,7 @@ namespace FootballMatchManager.Controllers
                 ApUserTeam userCreat = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId, userId);
 
                 if(userCreat != null)
-                {
                     return BadRequest(new {message = "Не возможно покинуть команду, так как вы являетесь организатором."});
-                }
 
                 /* Получаем записи командных матчей, в которых команда является организатором */
                 List<TeamGame> teamGames = _unitOfWork.TeamGameRepasitory.GetMatchesByCreatorTeam(teamId, (int)TeamGameStatus.WAIT);
@@ -367,9 +347,8 @@ namespace FootballMatchManager.Controllers
                 _unitOfWork.ApUserTeamRepository.DeleteElement(userPart);
                 /* Уменьшаю количество участников в комнде */
                 if(team.MemberQnt > 0)
-                {
                     team.MemberQnt = team.MemberQnt - 1;
-                }
+
                 _unitOfWork.Save();
                 
                 return Ok(new { message = "Вы покинули команду"});
@@ -399,9 +378,7 @@ namespace FootballMatchManager.Controllers
                 /* Проверка на организатора */
                 ApUserTeam userCreat = _unitOfWork.ApUserTeamRepository.GetTeamCreator(teamId, deleteUserId);
                 if (userCreat != null)
-                {
                     return BadRequest(new { message = "Не возможно покинуть команду, так как вы являетесь организатором." });
-                }
 
                 /* Получаем записи командных матчей, в которых команда является организатором */
                 List<TeamGame> teamGames = _unitOfWork.TeamGameRepasitory.GetMatchesByCreatorTeam(teamId, (int)TeamGameStatus.WAIT);
@@ -429,9 +406,7 @@ namespace FootballMatchManager.Controllers
                 _unitOfWork.ApUserTeamRepository.DeleteElement(userPart);
                 /* Уменьшаю количество участников в комнде */
                 if (team.MemberQnt > 0)
-                {
                     team.MemberQnt = team.MemberQnt - 1;
-                }
 
                 _unitOfWork.Save();
 

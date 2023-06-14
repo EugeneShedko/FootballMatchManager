@@ -23,9 +23,7 @@ namespace FootballMatchManager.Controllers
         [Route("user-card-comment/{userId}")]
         public ActionResult GetAllComments(int userId)
         {
-            List<Comment> comments = _unitOfWork.CommentRepository.GetItems()
-                                                                  .Where(c => c.FkRecipientId == userId)
-                                                                  .ToList();
+            List<Comment> comments = _unitOfWork.CommentRepository.GetUserComments(userId);
 
             if (comments == null)
                 return Ok();

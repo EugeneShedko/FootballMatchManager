@@ -45,11 +45,13 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// </summary>
         /// <param name="userId">Айди пользователя</param>
         /// <returns></returns>
-
         public BlockApUser GetUserBlock(int userId)
         {
-            return GetItems().Where(bu => bu.ApUserId == userId).Last();
+            return _dbcontext.BlockUsers.Where(bu => bu.ApUserId == userId)
+                                        .OrderBy(bu => bu.EndBlockingDate)
+                                        .Last();
         }
+
         /// <summary>
         /// Возвращает все блокировки пользователя
         /// </summary>
@@ -57,8 +59,7 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<BlockApUser> GetUserBlocks(int userId)
         {
-            return GetItems().Where(bu => bu.ApUserId == userId).ToList();
+            return _dbcontext.BlockUsers.Where(bu => bu.ApUserId == userId).ToList();
         }
-
     }
 }

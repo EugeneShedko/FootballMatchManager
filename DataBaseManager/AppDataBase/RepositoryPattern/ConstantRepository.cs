@@ -44,13 +44,16 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------------- //
 
+        /// <summary>
+        /// Возвращает константу по её наименованию
+        /// </summary>
+        /// <param name="name">Наименование константы</param>
+        /// <returns></returns>
         public Constant GetConstantByName(string name)
         {
-            return GetItems().FirstOrDefault(c => c.Name == name);
-
+            return _dbcontext.Constants.FirstOrDefault(c => c.Name == name);
         }
 
-        // ------------------------------------------------------------------- //
         /// <summary>
         /// Возвращает список констант определенной группы
         /// </summary>
@@ -58,10 +61,7 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<Constant> GetConstantsByGroup(string group)
         {
-            return GetItems().Where(c => c.Group == group).ToList();
+            return _dbcontext.Constants.Where(c => c.Group == group).ToList();
         }
-
-        // ------------------------------------------------------------------- //
-
     }
 }

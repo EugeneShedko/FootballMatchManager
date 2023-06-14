@@ -42,5 +42,12 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         {
             _dbcontext.Entry(item).State = EntityState.Modified;
         }
+
+        public List<Comment> GetUserComments(int userId)
+        {
+            return _dbcontext.Comments.Include(c => c.Sender)
+                                      .Where(c => c.FkRecipientId == userId)
+                                      .ToList();
+        }
     }
 }

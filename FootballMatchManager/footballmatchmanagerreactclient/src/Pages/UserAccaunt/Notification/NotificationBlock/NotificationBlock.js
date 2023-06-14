@@ -17,10 +17,7 @@ export default function NotificationBlock(props) {
         /* Плохо сделано, потому что выходит как бы некое разделение */
         /* Может хреново отработать */
         /* Пока что оставлю так*/
-
-        console.log('BLOCK');
-        console.log(userContext);
-
+        
         var conn = userContext.notificonn;
         conn.invoke("DismissReqGame", props.notify.pkId);
 

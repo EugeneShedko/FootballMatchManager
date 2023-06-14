@@ -1,5 +1,6 @@
 ﻿using DataBaseManager.AppDataBase.Context;
 using DataBaseManager.AppDataBase.Models;
+using DataBaseManager.Utilts;
 using Microsoft.EntityFrameworkCore;
 
 namespace DataBaseManager.AppDataBase.RepositoryPattern
@@ -41,21 +42,15 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         {
             _dbcontext.Entry(item).State= EntityState.Modified;
         }
-
-     
+        
         /// <summary>
         /// Возвращает список пользователей(для пользователя)
         /// </summary>
         /// <returns></returns>
         public List<ApUser> GetAllUsers()
         {
-            List<ApUser> users = GetItems().ToList();
-            /* ПЛОХО СДЕЛАНО, БУДЕТ ПЛОХОЙ ЗАПРОС ПО ИНДЕКСУ */
-            /* ПОКА ЧТО ТАК, ПОТОМ ОБЯЗАТЕЛЬНО ПЕРЕДЕЛАТЬ ДАННЫЙ ЗАПРОС */
+            List<ApUser> users = _dbcontext.ApUsers.Where(apu => apu.Status == ApUserGameType.UserStatusActive).ToList();
             users.RemoveAll(apu => apu.Role == "system");
-            users.RemoveAll(apu => apu.Role == "block");
-            users.RemoveAll(apu => apu.Role == "delete");
-
             return users;
         }
 
@@ -66,7 +61,7 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<ApUser> GetUsersByStatus(string status)
         {
-            List<ApUser> users = GetItems().Where(apu => apu.Status == status).ToList();
+            List<ApUser> users = _dbcontext.ApUsers.Where(apu => apu.Status == status).ToList();
             users.RemoveAll(apu => apu.Role == "system");
             return users;
         }
@@ -78,7 +73,7 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public ApUser GetUserByEmail(string email)
         {
-            return GetItems().FirstOrDefault(u => u.Email == email);
+            return _dbcontext.ApUsers.FirstOrDefault(u => u.Email == email);
         }
 
         /// <summary>
@@ -87,7 +82,7 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public ApUser GetAdmin()
         {
-            return GetItems().FirstOrDefault(u => u.Email == "admin@mail.ru");
+            return _dbcontext.ApUsers.FirstOrDefault(u => u.Email == "admin@mail.ru");
         }
     }
 }

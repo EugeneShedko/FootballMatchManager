@@ -35,6 +35,12 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
                                            .FirstOrDefault(n => n.PkId == firstid);
         }
 
+        public Notification GetBaseItem(int firstid)
+        {
+            return _dbcontext.Notifications.FirstOrDefault(n => n.PkId == firstid);
+
+        }
+
         public IEnumerable<Notification> GetItems()
         {
             return _dbcontext.Notifications.Include(n => n.Sender)
@@ -49,17 +55,21 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------ //
 
+        /// <summary>
+        /// Возвращает список уведомлений пользователя
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public List<Notification> GetUserNotification(int userId)
         {
-            return GetItems().Where(n => n.FkRecipient == userId)
-                             .OrderBy(n => n.Status)
-                             .ThenByDescending(n => n.Date)
-                             .ToList();
+            return _dbcontext.Notifications.Where(n => n.FkRecipient == userId)
+                                           .OrderBy(n => n.Status)
+                                           .ThenByDescending(n => n.Date)
+                                           .ToList();
 
         }
 
-        // ------------------------------------------------------------ //
-
+        /* Здесь не совсем эффективно, так как джойн в одном случае не нужен */
         /// <summary>
         /// Возвращает список записей которым отправлены определенные запросы связанные с определенной сущностью
         /// Но ответ на данный запрос не был получен
@@ -69,10 +79,12 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<Notification> GetSendRequest(int entityId, string requestType)
         {
-            return GetItems().Where(n => n.EntityId == entityId
-                                      && n.Type == requestType
-                                      && n.Status == (int)NotificationEnum.NotRead)
-                             .ToList();
+            return _dbcontext.Notifications.Include(n => n.Sender)
+                                           .Include(n => n.Recipient)
+                                           .Where(n => n.EntityId == entityId
+                                                    && n.Type == requestType
+                                                    && n.Status == (int)NotificationEnum.NotRead)
+                                           .ToList();
         }
 
         /// <summary>
@@ -82,8 +94,8 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public int GetUserNotReamNotifiCount(int userID)
         {
-            return GetItems().Where(n => n.FkRecipient == userID
-                                      && n.Status == (int)NotificationEnum.NotRead).Count();  
+            return _dbcontext.Notifications.Where(n => n.FkRecipient == userID
+                                                    && n.Status == (int)NotificationEnum.NotRead).Count();  
         }
 
         /// <summary>
@@ -91,12 +103,12 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-
         public List<Notification> GetUserComplains(int userId)
         {
-            return GetItems().Where(n => n.Type == "complain"
-                                      && n.FkRecipient == userId)
-                             .ToList();
+            return _dbcontext.Notifications.Include(n => n.Sender)
+                                           .Where(n => n.Type == "complain"
+                                                    && n.FkRecipient == userId)
+                                           .ToList();
         }
 
     }

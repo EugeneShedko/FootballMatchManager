@@ -49,13 +49,24 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
 
         // ---------------------------------------------------------- //
 
+        /// <summary>
+        /// Возвращает события матча
+        /// </summary>
+        /// <param name="gameId">Идентификатор матча</param>
+        /// <param name="gameType">Тип матча</param>
+        /// <returns></returns>
+
         /* Возвращает события матча по идентификатору матча и типу матча */
         public List<GameEvent> GatGameEventsByGameId(int gameId, string gameType)
         {
-            /* Нужна подгрузка данныx */
-            return GetItems().Where(ge => ge.GameId == gameId
-                                       && ge.GameType == gameType)
-                             .ToList();
+            return _dbcontext.GameEvents.Include(ge => ge.GameEventType)
+                                        .Include(ge => ge.Player)
+                                        .Include(ge => ge.EventTeam)
+                                        .Include(ge => ge.Entity1)
+                                        .Include(ge => ge.Entity2)
+                                        .Where(ge => ge.GameId == gameId
+                                                  && ge.GameType == gameType)
+                                        .ToList();
         }
     }
 }

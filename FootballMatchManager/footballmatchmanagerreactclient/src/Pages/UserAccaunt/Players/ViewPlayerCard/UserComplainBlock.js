@@ -9,13 +9,13 @@ export default function UserComplainBlock(props)
         <div className="row user-comment-container">
             <div className="col-1 d-flex justify-content-center p-0">
                 <img className="user-comment-img"
-                    src={"http://localhost:5004/" + props.complainInfo.recipient.image}
+                    src={"http://localhost:5004/" + props.complainInfo.sender.image}
                     alt="" />
             </div>
             <div className="col-9 p-0 m-0">
                 <div>
                     <div className="row m-0 p-0" style={{color: 'yellowgreen'}}>
-                        {props.complainInfo.recipient.firstName + ' ' + props.complainInfo.recipient.lastName}
+                        {props.complainInfo.sender.firstName + ' ' + props.complainInfo.sender.lastName}
                     </div>
                     <div className="row user-comment-text">
                         {props.complainInfo.text}

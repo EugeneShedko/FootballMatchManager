@@ -55,23 +55,34 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
 
         // ------------------------------------------------------------- //
 
-        /* Возвращает участника конкретной команды(скорее всего так) */
+        /// <summary>
+        /// Возвращает запись участника команды
+        /// </summary>
+        /// <param name="teamId">Айди команды</param>
+        /// <param name="userId">Айди пользователя</param>
+        /// <returns></returns>
         public ApUserTeam GetTeamParticipant(int teamId, int userId)
         {
-            return GetItems().FirstOrDefault(aput => aput.PkFkTeamId == teamId
-                                                  && aput.PkFkUserId == userId
-                                                  && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT);
+            return _dbcontext.ApUsersTeams.FirstOrDefault(aput => aput.PkFkTeamId == teamId
+                                                               && aput.PkFkUserId == userId
+                                                               && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT);
         }
 
         // ------------------------------------------------------------- //
 
-        /* Возвращает всех участников команды */
+        /// <summary>
+        /// Возвращает список участников команды
+        /// </summary>
+        /// <param name="teamId">Айди команды</param>
+        /// <returns></returns>
+
         public List<ApUser> GetTeamParticipants(int teamId)
         {
-            return GetItems().Where(aput => aput.PkFkTeamId == teamId
-                                         && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT)
-                             .Select(aput => aput.ApUser)
-                             .ToList();
+
+            return _dbcontext.ApUsersTeams.Where(aput => aput.PkFkTeamId == teamId
+                                                      && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT)
+                                          .Select(aput => aput.ApUser)
+                                          .ToList();
         }
 
         // ------------------------------------------------------------- //
@@ -80,8 +91,16 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /* Возможно просто проверка на организатора сам объект не нужен(но это не точно) */
         public ApUserTeam GetTeamCreator(int teamId)
         {
-            return GetItems().FirstOrDefault(t => t.PkFkTeamId == teamId
+            return _dbcontext.ApUsersTeams.FirstOrDefault(t => t.PkFkTeamId == teamId
                                                && t.PkUserType == (int)ApUserTeamEnum.CREATOR);
+
+        }
+
+        public ApUserTeam GetTeamCreatorWithTeam(int teamId)
+        {
+            return _dbcontext.ApUsersTeams.Include(t => t.Team)
+                                          .FirstOrDefault(t => t.PkFkTeamId == teamId
+                                                            && t.PkUserType == (int)ApUserTeamEnum.CREATOR);
 
         }
 
@@ -92,12 +111,13 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public ApUser GetTeamCreatorObj(int teamId)
         {
-            return GetItems().Where(t => t.PkFkTeamId == teamId
+            return _dbcontext.ApUsersTeams.Where(t => t.PkFkTeamId == teamId
                                                && t.PkUserType == (int)ApUserTeamEnum.CREATOR)
                              .Select(aput => aput.ApUser)
                              .FirstOrDefault();
         }
 
+        /* Остановился в этом месте */
         /// <summary>
         /// Возвращает список команд, по списку организаторов команд
         /// </summary>
@@ -105,21 +125,28 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         /// <returns></returns>
         public List<Team> GetTeamsByCreators(List<ApUser> creatorsList)
         {
-            return GetItems().Where(aput => aput.PkUserType == (int)ApUserTeamEnum.CREATOR
-                                         && aput.Team.Status == (int)TeamStatus.ACTIVE
-                                         && creatorsList.Any(creator => creator.PkId == aput.PkFkUserId))
-                             .Select(aput => aput.Team)
-                             .ToList();
+            return _dbcontext.ApUsersTeams.Include(t => t.Team)
+                                          .Where(aput => aput.PkUserType == (int)ApUserTeamEnum.CREATOR
+                                                      && aput.Team.Status == (int)TeamStatus.ACTIVE)
+                                          .AsEnumerable()
+                                          .Where(aput => creatorsList.Any(creator => creator.PkId == aput.PkFkUserId))
+                                          .Select(aput => aput.Team)
+                                          .ToList();
         }
 
         // ------------------------------------------------------------- //
 
-        /* Возвращает запись организатора команды по айдикоманды и айди пользователя */
+        /// <summary>
+        /// Возвращает запись организатора команды
+        /// </summary>
+        /// <param name="teamId">Айди команды</param>
+        /// <param name="userId">Айди пользователя</param>
+        /// <returns></returns>
         public ApUserTeam GetTeamCreator(int teamId, int userId)
         {
-            return GetItems().FirstOrDefault(t => t.PkFkTeamId == teamId
-                                               && t.PkFkUserId == userId
-                                               && t.PkUserType == (int)ApUserTeamEnum.CREATOR);
+            return _dbcontext.ApUsersTeams.FirstOrDefault(t => t.PkFkTeamId == teamId
+                                                            && t.PkFkUserId == userId
+                                                            && t.PkUserType == (int)ApUserTeamEnum.CREATOR);
         }
 
         // ------------------------------------------------------------- //
@@ -132,38 +159,41 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
 
         public Team GetTeamByCreator(int userId)
         {
-            return GetItems().Where(aput => aput.PkFkUserId == userId
+
+            return _dbcontext.ApUsersTeams.Where(aput => aput.PkFkUserId == userId
                                                   && aput.PkUserType == (int)ApUserTeamEnum.CREATOR
                                                   && aput.Team.Status == (int)TeamStatus.ACTIVE)
                              .Select(aput => aput.Team)
                              .FirstOrDefault();
-
-                                       
-        }
-
-        // ------------------------------------------------------------- //
-
-        /* Возвращает первую команду, в которой пользователь является участником */
-        public Team GetTeamByParticipant(int userId)
-        {
-            return GetItems().Where(aput => aput.PkFkUserId == userId
-                                         && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT
-                                         && aput.Team.Status == (int)TeamStatus.ACTIVE)
-                             .Select(aput => aput.Team)
-                             .FirstOrDefault();
-                              
         }
 
         // ------------------------------------------------------------- //
 
         /// <summary>
-        /// Возвращает список команд, в который пользователь явялется участниоком
+        /// Возвращает первую команду, в которой пользователь является участником
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public Team GetTeamByParticipant(int userId)
+        {
+            return _dbcontext.ApUsersTeams.Where(aput => aput.PkFkUserId == userId
+                                         && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT
+                                         && aput.Team.Status == (int)TeamStatus.ACTIVE)
+                             .Select(aput => aput.Team)
+                             .FirstOrDefault();
+        }
+
+        // ------------------------------------------------------------- //
+
+        /// <summary>
+        /// Возвращает список команд, в которых пользователь явялется участниоком
         /// </summary>
         /// <param name="userId">Айди пользователя</param>
         /// <returns></returns>
         public List<Team> GetTeamsByParticipant(int userId)
         {
-            return GetItems().Where(aput => aput.PkFkUserId == userId
+
+            return _dbcontext.ApUsersTeams.Where(aput => aput.PkFkUserId == userId
                                          && aput.PkUserType == (int)ApUserTeamEnum.PARTICIPANT
                                          && aput.Team.Status == (int)TeamStatus.ACTIVE)
                               .Select(aput => aput.Team)

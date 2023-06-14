@@ -58,12 +58,9 @@ export default function TeamGameCard() {
             })
             .catch(userError => {
                 if (userError.response) {
-                    toast.error(userError.response.message,
-                        {
-                            position: toast.POSITION.TOP_CENTER,
-                            autoClose: 2000,
-                            pauseOnFocusLoss: false
-                        });
+
+                    console.log("Ошибка командной игры");
+                    console.log(userError.response.log);
                 }
             });
 

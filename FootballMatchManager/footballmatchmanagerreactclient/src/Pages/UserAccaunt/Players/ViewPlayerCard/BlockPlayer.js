@@ -92,6 +92,7 @@ export default function BlockPlayer(props) {
                 }
             });
 
+        /* Оргнизатор командных матчей */   
         axios.get('http://localhost:5004/api/teamgame/team-games-creat/' + id, { withCredentials: true })
             .then((response) => {
                 setTeamGameCreator(response.data)

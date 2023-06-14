@@ -34,14 +34,9 @@ namespace FootballMatchManager.Controllers
                 List<Notification> notifLst = _unitOfWork.NotificationRepository.GetUserNotification(userId);
 
                 if (notifLst == null)
-                {
                     return Ok();
-                }
                 else
-                {
                     return Ok(notifLst);
-                }
-
             }
             catch (Exception ex) 
             {
@@ -91,7 +86,7 @@ namespace FootballMatchManager.Controllers
             /* Получаю список уведомлений определенного типа, связанных с командным матчем */
             List<Notification> notifications = _unitOfWork.NotificationRepository.GetSendRequest(teamGameId, "requesttoinviteteamgame");
 
-            /* Получаю список команд, которым отправлено уведолмние по списку организаторов */
+            /* Получаю список команд, которым отправлено уведомление по списку организаторов */
             List<Team> notifiTeams = _unitOfWork.ApUserTeamRepository.GetTeamsByCreators(notifications.Select(n => n.Recipient).ToList());
             return Ok(notifiTeams);
         }
@@ -113,7 +108,7 @@ namespace FootballMatchManager.Controllers
                 userId = int.Parse(HttpContext.User.Identity.Name);
                 notifId = int.Parse(Request.Form["notifId"]);
 
-                Notification notif = _unitOfWork.NotificationRepository.GetItem(notifId);
+                Notification notif = _unitOfWork.NotificationRepository.GetBaseItem(notifId);
 
                 if (notif == null) { return BadRequest(); }
 
@@ -122,11 +117,12 @@ namespace FootballMatchManager.Controllers
 
                 List<Notification> notifLst = _unitOfWork.NotificationRepository.GetUserNotification(userId);
 
-
                 if (notifLst == null)
                     return Ok();
                 else
-                    return Ok(new {list = notifLst, count = notifLst.Where(n => n.Status == (int)NotificationEnum.NotRead).Count()});
+                    return Ok(new {list = notifLst, 
+                                   count = notifLst.Where(n => n.Status == (int)NotificationEnum.NotRead)
+                                                   .Count()});
 
             }
             catch (Exception ex)

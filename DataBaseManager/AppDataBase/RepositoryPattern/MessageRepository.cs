@@ -42,5 +42,21 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         {
             _dbcontext.Entry(item).State = EntityState.Modified;
         }
+
+        // --------------------------------------------------------------------------- //
+        /// <summary>
+        /// Возвращает список сообщений определенной сущности
+        /// </summary>
+        /// <param name="entityType">Тип сущности</param>
+        /// <param name="entityId">Айди сущности</param>
+        /// <returns></returns>
+
+        public List<Message> GetEntityMessages(string entityType, int entityId)
+        {
+            return _dbcontext.Messages.Include(m => m.Sender)
+                                      .Where(m => m.EntityType == entityType
+                                               && m.EntityId == entityId)
+                                      .ToList();
+        }
     }
 }

@@ -44,6 +44,7 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         }
 
         // ---------------------------------------------------------- //
+
         public List<Game> GetAllGamesForUser()
         {
             return GetItems().OrderByDescending(g => g.DateTime)
@@ -57,21 +58,20 @@ namespace DataBaseManager.AppDataBase.RepositoryPattern
         public List<Game> GetGamesByStatus(int status)
         {
             if(status == (int)TeamGameStatus.WAIT)
-               return GetItems().Where(g => g.Status == status)
-                                .OrderByDescending(g => g.CurrPlayers)
-                                .ThenByDescending(g => g.DateTime)
-                                .ToList();
+               return _dbcontext.Games.Where(g => g.Status == status)
+                                      .OrderByDescending(g => g.CurrPlayers)
+                                      .ThenByDescending(g => g.DateTime)
+                                      .ToList();
 
             if(status == (int)TeamGameStatus.COMPLETED)
-                return GetItems().Where(g => g.Status == status)
-                                 .OrderByDescending(g => g.DateTime)
-                                 .ToList();
+                return _dbcontext.Games.Where(g => g.Status == status)
+                                       .OrderByDescending(g => g.DateTime)
+                                       .ToList();
 
 
-            return GetItems().Where(g => g.Status == status)
-                             .OrderByDescending(g => g.DateTime)
-                             .ToList();
+            return _dbcontext.Games.Where(g => g.Status == status)
+                                   .OrderByDescending(g => g.DateTime)
+                                   .ToList();
         }
-
     }
 }

@@ -32,7 +32,7 @@ export default function TeamParticipants(props) {
     return (<>
         <div className="team-info-user-absolute-container">
             {
-                teamUsers.map((player) => (
+                teamUsers?.map((player) => (
                     <div key={player.pkId} className="row m-0 p-0">
                         <PlayerBlock info={player}
                             teamCreatorId={props.teamCreatorId}

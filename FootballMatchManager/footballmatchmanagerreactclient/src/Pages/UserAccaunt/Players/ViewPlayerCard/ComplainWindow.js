@@ -91,6 +91,7 @@ export default function ComplainWindow(props) {
                 }
             });
 
+        /* Организатор командных матчей */    
         axios.get('http://localhost:5004/api/teamgame/team-games-creat/' + id, { withCredentials: true })
             .then((response) => {
                 console.log('TEAM GAME ORGANIZE');

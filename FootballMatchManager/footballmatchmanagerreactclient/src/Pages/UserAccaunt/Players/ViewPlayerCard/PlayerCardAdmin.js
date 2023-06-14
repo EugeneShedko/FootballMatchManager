@@ -73,6 +73,8 @@ export default function PlayerCardAdmin() {
         axios.get('http://localhost:5004/api/profile/last-block/' + userId, { withCredentials: true })
             .then((response) => {
                 setProfileDopInfo({ ...profileDopInfo, lastBlock: response.data });
+                console.log('RESPONSE BLOCK');
+                console.log(response.data);
             })
             .catch(userError => {
                 if (userError.response) {
@@ -371,7 +373,7 @@ export default function PlayerCardAdmin() {
             })
             .catch(userError => {
                 if (userError.response) {
-                    toast.success("Ошибка обновления статистики",
+                    toast.error("Ошибка обновления статистики",
                         {
                             position: toast.POSITION.TOP_CENTER,
                             autoClose: 2000,

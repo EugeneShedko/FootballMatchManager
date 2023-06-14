@@ -23,10 +23,7 @@ namespace FootballMatchManager.Controllers
         public ActionResult GetAllMessage(string entityType, int entityId)
         {
 
-            List<Message> messages = _unitOfWork.MessageRepository.GetItems()
-                                                                  .Where(m => m.EntityType == entityType
-                                                                           && m.EntityId == entityId)
-                                                                  .ToList();
+            List<Message> messages = _unitOfWork.MessageRepository.GetEntityMessages(entityType, entityId);
 
             if (messages == null)
                 return Ok();
